@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\Norge360.Auth.TestKit\Norge360.Auth.TestKit.csproj" />
+    <ProjectReference Include="..\..\src\Norge360.Auth.Contracts\Norge360.Auth.Contracts.csproj" />
+  </ItemGroup>
+</Project>

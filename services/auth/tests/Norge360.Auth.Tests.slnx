@@ -1,0 +1,20 @@
+<Solution>
+  <Project Path="../../../packages/dotnet/src/Norge360.AspNetCore.TrustedGateway/Norge360.AspNetCore.TrustedGateway.csproj" />
+  <Project Path="../../../packages/dotnet/src/Norge360.AspNetCore/Norge360.AspNetCore.csproj" />
+  <Project Path="../../../packages/dotnet/src/Norge360.Localization/Norge360.Localization.csproj" />
+  <Project Path="../../../packages/dotnet/src/Norge360.Messaging.Abstractions/Norge360.Messaging.Abstractions.csproj" />
+  <Project Path="../../../packages/dotnet/src/Norge360.Messaging.RabbitMq/Norge360.Messaging.RabbitMq.csproj" />
+  <Project Path="../src/Norge360.Auth.API/Norge360.Auth.API.csproj" />
+  <Project Path="../src/Norge360.Auth.Application/Norge360.Auth.Application.csproj" />
+  <Project Path="../src/Norge360.Auth.Contracts/Norge360.Auth.Contracts.csproj" />
+  <Project Path="../src/Norge360.Auth.Domain/Norge360.Auth.Domain.csproj" />
+  <Project Path="../src/Norge360.Auth.Infrastructure/Norge360.Auth.Infrastructure.csproj" />
+  <Project Path="../benchmarks/Norge360.Auth.Benchmarks/Norge360.Auth.Benchmarks.csproj" />
+  <Project Path="Norge360.Auth.Api.FunctionalTests/Norge360.Auth.Api.FunctionalTests.csproj" />
+  <Project Path="Norge360.Auth.Application.UnitTests/Norge360.Auth.Application.UnitTests.csproj" />
+  <Project Path="Norge360.Auth.ArchitectureTests/Norge360.Auth.ArchitectureTests.csproj" />
+  <Project Path="Norge360.Auth.Contracts.Tests/Norge360.Auth.Contracts.Tests.csproj" />
+  <Project Path="Norge360.Auth.Domain.UnitTests/Norge360.Auth.Domain.UnitTests.csproj" />
+  <Project Path="Norge360.Auth.Infrastructure.IntegrationTests/Norge360.Auth.Infrastructure.IntegrationTests.csproj" />
+  <Project Path="Norge360.Auth.TestKit/Norge360.Auth.TestKit.csproj" />
+</Solution>

@@ -1,0 +1,87 @@
+services:
+  auth:
+    build:
+      context: .
+      dockerfile: services/auth/deploy/Dockerfile
+    container_name: norge360-auth
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      LocalDevelopment__DisableHttpsRedirection: "true"
+      Kestrel__Endpoints__Http__Url: "http://+:8080"
+      Kestrel__Endpoints__Https__Url: "http://+:8081"
+      ConnectionStrings__IdentityConnection: "${ConnectionStrings__IdentityConnection}"
+      Database__Provider: "PostgreSql"
+      Messaging__RabbitMq__Uri: "${Messaging__RabbitMq__Uri}"
+      InvitationDelivery__Provider: "${InvitationDelivery__Provider}"
+      InvitationDelivery__SmtpHost: "${InvitationDelivery__SmtpHost}"
+      InvitationDelivery__SmtpPort: "${InvitationDelivery__SmtpPort}"
+      InvitationDelivery__SmtpUseStartTls: "${InvitationDelivery__SmtpUseStartTls}"
+      InvitationDelivery__SmtpUserName: "${InvitationDelivery__SmtpUserName}"
+      InvitationDelivery__SmtpPassword: "${InvitationDelivery__SmtpPassword}"
+      InvitationDelivery__SenderAddress: "${InvitationDelivery__SenderAddress}"
+      InvitationDelivery__SenderName: "${InvitationDelivery__SenderName}"
+      InvitationDelivery__DisableDelivery: "${InvitationDelivery__DisableDelivery}"
+      Security__TrustedGateway__Keys__0__Secret: "norge360_gateway_auth_shared_secret_2026!"
+      Security__TrustedGateway__Keys__1__Secret: "norge360_account_internal_secret_2026!"
+      Security__TrustedGateway__AllowedGatewayNetworks__0: "172.16.0.0/12"
+      Jwt__Issuer: "https://auth.local"
+      Jwt__Audience: "api://norge360"
+    ports:
+      - "5297:8080"
+    depends_on:
+      rabbitmq:
+        condition: service_started
+
+  gateway:
+    build:
+      context: .
+      dockerfile: platform/gateway/src/Norge360.ApiGateway/Dockerfile
+    container_name: norge360-gateway
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      LocalDevelopment__DisableHttpsRedirection: "true"
+      Kestrel__Endpoints__Http__Url: "http://+:8080"
+      Kestrel__Endpoints__Https__Url: "http://+:8081"
+      Security__TrustedGateway__Keys__0__Secret: "norge360_gateway_auth_shared_secret_2026!"
+      ReverseProxy__Clusters__auth-api-cluster__Destinations__destination1__Address: "http://auth:8080/"
+    depends_on:
+      auth:
+        condition: service_started
+    ports:
+      - "5030:8080"
+
+  notification-worker:
+    build:
+      context: .
+      dockerfile: services/notification/src/Norge360.Notification.Worker/Dockerfile
+    container_name: norge360-notification-worker
+    environment:
+      DOTNET_ENVIRONMENT: Development
+      ConnectionStrings__NotificationConnection: "${ConnectionStrings__NotificationConnection}"
+      Notification__Database__ApplyMigrationsOnStartup: "true"
+      Messaging__RabbitMq__Uri: "${Messaging__RabbitMq__Uri}"
+      Notification__RabbitMq__Host: "rabbitmq"
+      Notification__RabbitMq__Port: "5672"
+      Notification__RabbitMq__Username: "${Notification__RabbitMq__Username}"
+      Notification__RabbitMq__Password: "${Notification__RabbitMq__Password}"
+      Notification__IntegrationConsumer__Enabled: "true"
+      Notification__Email__Provider: "smtp"
+      Notification__Email__Smtp__Host: "${Notification__Email__Smtp__Host}"
+      Notification__Email__Smtp__Port: "${Notification__Email__Smtp__Port}"
+      Notification__Email__Smtp__UserName: "${Notification__Email__Smtp__UserName}"
+      Notification__Email__Smtp__Password: "${Notification__Email__Smtp__Password}"
+      Notification__Email__Smtp__FromAddress: "${Notification__Email__Smtp__FromAddress}"
+      Notification__Email__Smtp__FromName: "${Notification__Email__Smtp__FromName}"
+      Notification__Email__Smtp__UseStartTls: "${Notification__Email__Smtp__UseStartTls}"
+    depends_on:
+      rabbitmq:
+        condition: service_started
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: norge360-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"

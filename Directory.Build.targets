@@ -1,0 +1,32 @@
+<Project>
+
+  <PropertyGroup>
+    <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true' or '$(TF_BUILD)' == 'True'">
+      true</ContinuousIntegrationBuild>
+    <RunNorge360RuntimeProcessStop Condition="'$(RunNorge360RuntimeProcessStop)' == ''">false</RunNorge360RuntimeProcessStop>
+  </PropertyGroup>
+
+  <Target Name="StopNorge360RuntimeProcessesBeforeBuild"
+    BeforeTargets="BeforeBuild"
+    Condition="'$(DesignTimeBuild)' != 'true'
+                     and '$(ContinuousIntegrationBuild)' != 'true'
+                     and '$(RunNorge360RuntimeProcessStop)' == 'true'">
+
+    <Exec
+      Command='powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(MSBuildThisFileDirectory)scripts\Stop-Norge360DotNetProcesses.ps1" -RepositoryRoot "$(MSBuildThisFileDirectory)."' />
+  </Target>
+
+  <Target Name="ShowRepositoryBuildBanner"
+    BeforeTargets="BeforeBuild"
+    Condition="'$(ContinuousIntegrationBuild)' != 'true'">
+    <Message Importance="Low"
+      Text="" />
+  </Target>
+
+  <Target Name="EnsureIntermediateOutputPathExists"
+    BeforeTargets="CoreGenerateMSBuildEditorConfigFile;GenerateMSBuildEditorConfigFile;CoreCompile"
+    Condition="'$(DesignTimeBuild)' != 'true' and '$(IntermediateOutputPath)' != ''">
+    <MakeDir Directories="$(IntermediateOutputPath)" />
+  </Target>
+
+</Project>

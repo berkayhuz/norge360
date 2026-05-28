@@ -1,0 +1,5 @@
+CTOR PermissionAuthorizationHandler()
+CTOR PermissionRequirement(System.String permission)
+PROP System.String Permission { get; }
+TYPE class Norge360.Authorization.AspNetCore.PermissionAuthorizationHandler
+TYPE class Norge360.Authorization.AspNetCore.PermissionRequirement

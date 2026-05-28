@@ -1,0 +1,173 @@
+<Solution>
+  <Folder Name="/packages/" />
+  <Folder Name="/packages/dotnet/" />
+   <Folder Name="/packages/dotnet/src/">
+     <Project Path="packages/dotnet/src/Norge360.AspNetCore.CurrentUser/Norge360.AspNetCore.CurrentUser.csproj" Id="2439b269-f5e4-4850-8612-2e32f9679ea4" />
+     <Project Path="packages/dotnet/src/Norge360.AspNetCore.TrustedGateway/Norge360.AspNetCore.TrustedGateway.csproj" />
+     <Project Path="packages/dotnet/src/Norge360.AspNetCore/Norge360.AspNetCore.csproj" />
+     <Project Path="packages/dotnet/src/Norge360.Authorization.AspNetCore/Norge360.Authorization.AspNetCore.csproj" Id="4c51f2d4-c5ab-4fef-88c1-02eb276997ca" />
+     <Project Path="packages/dotnet/src/Norge360.Authorization.Claims/Norge360.Authorization.Claims.csproj" Id="e00a4815-8481-4a3d-b64d-24a123f0dc1a" />
+     <Project Path="packages/dotnet/src/Norge360.Authorization/Norge360.Authorization.csproj" Id="1bebea76-9c09-4b01-b003-937d02a380a3" />
+     <Project Path="packages/dotnet/src/Norge360.Clock/Norge360.Clock.csproj" Id="980e7929-25a0-4e39-bea3-91544c1586e2" />
+     <Project Path="packages/dotnet/src/Norge360.Configuration/Norge360.Configuration.csproj" />
+     <Project Path="packages/dotnet/src/Norge360.CurrentUser/Norge360.CurrentUser.csproj" Id="18934978-4d42-4102-9522-16a1c1acf28f" />
+     <Project Path="packages/dotnet/src/Norge360.Entities.Abstractions/Norge360.Entities.Abstractions.csproj" Id="733185c1-09fb-4e57-af15-cbc336a061ad" />
+     <Project Path="packages/dotnet/src/Norge360.Entities/Norge360.Entities.csproj" Id="094529a5-4d34-4028-bbb4-5bdb4f9afe04" />
+     <Project Path="packages/dotnet/src/Norge360.Exceptions/Norge360.Exceptions.csproj" Id="b1d9c95e-55ea-4b28-8e17-8d9a3c659c7e" />
+     <Project Path="packages/dotnet/src/Norge360.Guards/Norge360.Guards.csproj" Id="74c3a98b-e015-4e01-a699-b0cbef9597d4" />
+     <Project Path="packages/dotnet/src/Norge360.Idempotency.DistributedCache/Norge360.Idempotency.DistributedCache.csproj" Id="8efef15b-05ba-48d8-9671-61aadb90231b" />
+     <Project Path="packages/dotnet/src/Norge360.Idempotency.Redis/Norge360.Idempotency.Redis.csproj" Id="7e71bfea-29ad-4a99-95d7-ada4a6be299d" />
+     <Project Path="packages/dotnet/src/Norge360.Idempotency/Norge360.Idempotency.csproj" Id="22cea811-cea8-4b7a-a535-14c5de230b0f" />
+     <Project Path="packages/dotnet/src/Norge360.Localization/Norge360.Localization.csproj" />
+     <Project Path="packages/dotnet/src/Norge360.Media.Storage/Norge360.Media.Storage.csproj" />
+     <Project Path="packages/dotnet/src/Norge360.Media/Norge360.Media.csproj" />
+     <Project Path="packages/dotnet/src/Norge360.MediatR/Norge360.MediatR.csproj" Id="94f2c3f0-fb2b-4113-96fa-4972bac4b685" />
+     <Project Path="packages/dotnet/src/Norge360.Messaging.Abstractions/Norge360.Messaging.Abstractions.csproj" />
+     <Project Path="packages/dotnet/src/Norge360.Messaging.RabbitMq/Norge360.Messaging.RabbitMq.csproj" />
+     <Project Path="packages/dotnet/src/Norge360.Pagination/Norge360.Pagination.csproj" Id="c930c9ff-4d2b-49f3-91c6-88aec02064b1" />
+     <Project Path="packages/dotnet/src/Norge360.Persistence.EntityFrameworkCore.Auditing/Norge360.Persistence.EntityFrameworkCore.Auditing.csproj" Id="f3884228-a78b-424f-9900-666c781ef0b1" />
+     <Project Path="packages/dotnet/src/Norge360.Persistence.EntityFrameworkCore.SoftDelete/Norge360.Persistence.EntityFrameworkCore.SoftDelete.csproj" Id="9ecefe61-9bbc-4927-a5cc-a58fed72c98f" />
+     <Project Path="packages/dotnet/src/Norge360.Persistence.EntityFrameworkCore.Tenancy/Norge360.Persistence.EntityFrameworkCore.Tenancy.csproj" Id="7f0033b6-a790-4e71-8e9a-90854392703a" />
+     <Project Path="packages/dotnet/src/Norge360.Persistence.EntityFrameworkCore/Norge360.Persistence.EntityFrameworkCore.csproj" Id="76fecb91-6f91-4a20-84b1-1b479775f5f4" />
+     <Project Path="packages/dotnet/src/Norge360.Repository.EntityFrameworkCore/Norge360.Repository.EntityFrameworkCore.csproj" Id="ffc6e40f-3def-4346-80a5-db8eca27b141" />
+     <Project Path="packages/dotnet/src/Norge360.Repository/Norge360.Repository.csproj" Id="8bfd31ab-5fba-4958-b219-da91d164d7f0" />
+     <Project Path="packages/dotnet/src/Norge360.Security.EndpointGuard/Norge360.Security.EndpointGuard.csproj" Id="245f0673-6d57-4a96-b365-c430468c925b" />
+     <Project Path="packages/dotnet/src/Norge360.Tenancy/Norge360.Tenancy.csproj" Id="40d7900c-7968-470e-8d08-7d784cb16a2c" />
+   </Folder>
+  <Folder Name="/packages/dotnet/tests/" />
+  <Folder Name="/packages/dotnet/tests/Norge360.AspNetCore/">
+    <Project Path="packages/dotnet/tests/Norge360.AspNetCore/Norge360.AspNetCore.Benchmarks/Norge360.AspNetCore.Benchmarks.csproj" />
+    <Project Path="packages/dotnet/tests/Norge360.AspNetCore/Norge360.AspNetCore.Architecture.Tests/Norge360.AspNetCore.Architecture.Tests.csproj" Id="5529ef0b-1804-4921-b427-dee12c384749" />
+  </Folder>
+  <Folder Name="/packages/dotnet/tests/Norge360.AspNetCore.CurrentUser/">
+    <Project Path="packages/dotnet/tests/Norge360.AspNetCore.CurrentUser/Norge360.AspNetCore.CurrentUser.Architecture.Tests/Norge360.AspNetCore.CurrentUser.Architecture.Tests.csproj" />
+  </Folder>
+  <Folder Name="/packages/dotnet/tests/Norge360.AspNetCore.TrustedGateway/">
+    <Project Path="packages/dotnet/tests/Norge360.AspNetCore.TrustedGateway/Norge360.AspNetCore.TrustedGateway.Architecture.Tests/Norge360.AspNetCore.TrustedGateway.Architecture.Tests.csproj" />
+  </Folder>
+  <Folder Name="/packages/dotnet/tests/Norge360.Authorization/">
+    <Project Path="packages/dotnet/tests/Norge360.Authorization/Norge360.Authorization.Architecture.Tests/Norge360.Authorization.Architecture.Tests.csproj" />
+  </Folder>
+  <Folder Name="/packages/dotnet/tests/Norge360.Authorization.AspNetCore/">
+    <Project Path="packages/dotnet/tests/Norge360.Authorization.AspNetCore/Norge360.Authorization.AspNetCore.Architecture.Tests/Norge360.Authorization.AspNetCore.Architecture.Tests.csproj" />
+  </Folder>
+  <Folder Name="/packages/dotnet/tests/Norge360.Authorization.Claims/">
+    <Project Path="packages/dotnet/tests/Norge360.Authorization.Claims/Norge360.Authorization.Claims.Architecture.Tests/Norge360.Authorization.Claims.Architecture.Tests.csproj" />
+  </Folder>
+  <Folder Name="/packages/dotnet/tests/Norge360.Clock/">
+    <Project Path="packages/dotnet/tests/Norge360.Clock/Norge360.Clock.Architecture.Tests/Norge360.Clock.Architecture.Tests.csproj" />
+  </Folder>
+  <Folder Name="/packages/dotnet/tests/Norge360.Configuration/">
+    <Project Path="packages/dotnet/tests/Norge360.Configuration/Norge360.Configuration.UnitTests/Norge360.Configuration.UnitTests.csproj" />
+  </Folder>
+  <Folder Name="/packages/dotnet/tests/Norge360.CurrentUser/">
+    <Project Path="packages/dotnet/tests/Norge360.CurrentUser/Norge360.CurrentUser.Architecture.Tests/Norge360.CurrentUser.Architecture.Tests.csproj" />
+  </Folder>
+  <Folder Name="/packages/dotnet/tests/Norge360.Entities/">
+    <Project Path="packages/dotnet/tests/Norge360.Entities/Norge360.Entities.Architecture.Tests/Norge360.Entities.Architecture.Tests.csproj" />
+    <Project Path="packages/dotnet/tests/Norge360.Entities/Norge360.Entities.Benchmarks/Norge360.Entities.Benchmarks.csproj" />
+  </Folder>
+  <Folder Name="/packages/dotnet/tests/Norge360.Entities.Abstractions/">
+    <Project Path="packages/dotnet/tests/Norge360.Entities.Abstractions/Norge360.Entities.Abstractions.Architecture.Tests/Norge360.Entities.Abstractions.Architecture.Tests.csproj" />
+    <Project Path="packages/dotnet/tests/Norge360.Entities.Abstractions/Norge360.EntitiesAbstractions.Benchmarks/Norge360.EntitiesAbstractions.Benchmarks.csproj" />
+  </Folder>
+  <Folder Name="/packages/dotnet/tests/Norge360.Exceptions/">
+    <Project Path="packages/dotnet/tests/Norge360.Exceptions/Norge360.Exceptions.Architecture.Tests/Norge360.Exceptions.Architecture.Tests.csproj" />
+    <Project Path="packages/dotnet/tests/Norge360.Exceptions/Norge360.Exceptions.Benchmarks/Norge360.Exceptions.Benchmarks.csproj" />
+  </Folder>
+  <Folder Name="/packages/dotnet/tests/Norge360.Guards/">
+    <Project Path="packages/dotnet/tests/Norge360.Guards/Norge360.Guards.Architecture.Tests/Norge360.Guards.Architecture.Tests.csproj" />
+    <Project Path="packages/dotnet/tests/Norge360.Guards/Norge360.Guards.Benchmarks/Norge360.Guards.Benchmarks.csproj" />
+  </Folder>
+  <Folder Name="/packages/dotnet/tests/Norge360.Idempotency/">
+    <Project Path="packages/dotnet/tests/Norge360.Idempotency/Norge360.Idempotency.Architecture.Tests/Norge360.Idempotency.Architecture.Tests.csproj" />
+    <Project Path="packages/dotnet/tests/Norge360.Idempotency/Norge360.Idempotency.Benchmarks/Norge360.Idempotency.Benchmarks.csproj" />
+  </Folder>
+  <Folder Name="/packages/dotnet/tests/Norge360.Idempotency.DistributedCache/">
+    <Project Path="packages/dotnet/tests/Norge360.Idempotency.DistributedCache/Norge360.Idempotency.DistributedCache.Architecture.Tests/Norge360.Idempotency.DistributedCache.Architecture.Tests.csproj" />
+    <Project Path="packages/dotnet/tests/Norge360.Idempotency.DistributedCache/Norge360.Idempotency.DistributedCache.Benchmarks/Norge360.Idempotency.DistributedCache.Benchmarks.csproj" />
+  </Folder>
+  <Folder Name="/packages/dotnet/tests/Norge360.Idempotency.Redis/">
+    <Project Path="packages/dotnet/tests/Norge360.Idempotency.Redis/Norge360.Idempotency.Redis.Architecture.Tests/Norge360.Idempotency.Redis.Architecture.Tests.csproj" />
+    <Project Path="packages/dotnet/tests/Norge360.Idempotency.Redis/Norge360.Idempotency.Redis.Benchmarks/Norge360.Idempotency.Redis.Benchmarks.csproj" />
+  </Folder>
+  <Folder Name="/packages/dotnet/tests/Norge360.Localization/">
+    <Project Path="packages/dotnet/tests/Norge360.Localization/Norge360.Localization.Architecture.Tests/Norge360.Localization.Architecture.Tests.csproj" />
+    <Project Path="packages/dotnet/tests/Norge360.Localization/Norge360.Localization.Benchmarks/Norge360.Localization.Benchmarks.csproj" />
+  </Folder>
+  <Folder Name="/packages/dotnet/tests/Norge360.Media/">
+    <Project Path="packages/dotnet/tests/Norge360.Media/Norge360.Media.Architecture.Tests/Norge360.Media.Architecture.Tests.csproj" />
+    <Project Path="packages/dotnet/tests/Norge360.Media/Norge360.Media.Benchmarks/Norge360.Media.Benchmarks.csproj" />
+  </Folder>
+  <Folder Name="/packages/dotnet/tests/Norge360.Media.Storage/">
+    <Project Path="packages/dotnet/tests/Norge360.Media.Storage/Norge360.Media.Storage.Architecture.Tests/Norge360.Media.Storage.Architecture.Tests.csproj" />
+    <Project Path="packages/dotnet/tests/Norge360.Media.Storage/Norge360.Media.Storage.Benchmarks/Norge360.Media.Storage.Benchmarks.csproj" />
+  </Folder>
+  <Folder Name="/packages/dotnet/tests/Norge360.MediatR/">
+    <Project Path="packages/dotnet/tests/Norge360.MediatR/Norge360.MediatR.Architecture.Tests/Norge360.MediatR.Architecture.Tests.csproj" />
+    <Project Path="packages/dotnet/tests/Norge360.MediatR/Norge360.MediatR.Benchmarks/Norge360.MediatR.Benchmarks.csproj" />
+  </Folder>
+  <Folder Name="/packages/dotnet/tests/Norge360.Messaging.Abstractions/">
+    <Project Path="packages/dotnet/tests/Norge360.Messaging.Abstractions/Norge360.Messaging.Abstractions.Architecture.Tests/Norge360.Messaging.Abstractions.Architecture.Tests.csproj" />
+    <Project Path="packages/dotnet/tests/Norge360.Messaging.Abstractions/Norge360.Messaging.Abstractions.Benchmarks/Norge360.Messaging.Abstractions.Benchmarks.csproj" />
+  </Folder>
+  <Folder Name="/packages/dotnet/tests/Norge360.Messaging.RabbitMq/">
+    <Project Path="packages/dotnet/tests/Norge360.Messaging.RabbitMq/Norge360.Messaging.RabbitMq.Architecture.Tests/Norge360.Messaging.RabbitMq.Architecture.Tests.csproj" />
+    <Project Path="packages/dotnet/tests/Norge360.Messaging.RabbitMq/Norge360.Messaging.RabbitMq.Benchmarks/Norge360.Messaging.RabbitMq.Benchmarks.csproj" />
+  </Folder>
+  <Folder Name="/packages/dotnet/tests/Norge360.Pagination/">
+    <Project Path="packages/dotnet/tests/Norge360.Pagination/Norge360.Pagination.Architecture.Tests/Norge360.Pagination.Architecture.Tests.csproj" />
+    <Project Path="packages/dotnet/tests/Norge360.Pagination/Norge360.Pagination.Benchmarks/Norge360.Pagination.Benchmarks.csproj" />
+  </Folder>
+  <Folder Name="/packages/dotnet/tests/Norge360.Persistence.EntityFrameworkCore.Auditing/">
+    <Project Path="packages/dotnet/tests/Norge360.Persistence.EntityFrameworkCore.Auditing/Norge360.Persistence.EntityFrameworkCore.Auditing.Architecture.Tests/Norge360.Persistence.EntityFrameworkCore.Auditing.Architecture.Tests.csproj" />
+    <Project Path="packages/dotnet/tests/Norge360.Persistence.EntityFrameworkCore.Auditing/Norge360.Persistence.EntityFrameworkCore.Auditing.Benchmarks/Norge360.Persistence.EntityFrameworkCore.Auditing.Benchmarks.csproj" />
+  </Folder>
+  <Folder Name="/packages/dotnet/tests/Norge360.Persistence.EntityFrameworkCore.SoftDelete/">
+    <Project Path="packages/dotnet/tests/Norge360.Persistence.EntityFrameworkCore.SoftDelete/Norge360.Persistence.EntityFrameworkCore.SoftDelete.Architecture.Tests/Norge360.Persistence.EntityFrameworkCore.SoftDelete.Architecture.Tests.csproj" />
+    <Project Path="packages/dotnet/tests/Norge360.Persistence.EntityFrameworkCore.SoftDelete/Norge360.Persistence.EntityFrameworkCore.SoftDelete.Benchmarks/Norge360.Persistence.EntityFrameworkCore.SoftDelete.Benchmarks.csproj" />
+  </Folder>
+  <Folder Name="/packages/dotnet/tests/Norge360.Persistence.EntityFrameworkCore.Tenancy/">
+    <Project Path="packages/dotnet/tests/Norge360.Persistence.EntityFrameworkCore.Tenancy/Norge360.Persistence.EntityFrameworkCore.Tenancy.Architecture.Tests/Norge360.Persistence.EntityFrameworkCore.Tenancy.Architecture.Tests.csproj" />
+    <Project Path="packages/dotnet/tests/Norge360.Persistence.EntityFrameworkCore.Tenancy/Norge360.Persistence.EntityFrameworkCore.Tenancy.Benchmarks/Norge360.Persistence.EntityFrameworkCore.Tenancy.Benchmarks.csproj" />
+  </Folder>
+  <Folder Name="/packages/dotnet/tests/Norge360.Persistence.EntityFrameworkCore/">
+    <Project Path="packages/dotnet/tests/Norge360.Persistence.EntityFrameworkCore/Norge360.Persistence.EntityFrameworkCore.Architecture.Tests/Norge360.Persistence.EntityFrameworkCore.Architecture.Tests.csproj" />
+    <Project Path="packages/dotnet/tests/Norge360.Persistence.EntityFrameworkCore/Norge360.Persistence.EntityFrameworkCore.Benchmarks/Norge360.Persistence.EntityFrameworkCore.Benchmarks.csproj" />
+  </Folder>
+  <Folder Name="/packages/dotnet/tests/Norge360.Repository.EntityFrameworkCore/">
+    <Project Path="packages/dotnet/tests/Norge360.Repository.EntityFrameworkCore/Norge360.Repository.EntityFrameworkCore.Architecture.Tests/Norge360.Repository.EntityFrameworkCore.Architecture.Tests.csproj" />
+    <Project Path="packages/dotnet/tests/Norge360.Repository.EntityFrameworkCore/Norge360.Repository.EntityFrameworkCore.Benchmarks/Norge360.Repository.EntityFrameworkCore.Benchmarks.csproj" />
+  </Folder>
+  <Folder Name="/packages/dotnet/tests/Norge360.Repository/">
+    <Project Path="packages/dotnet/tests/Norge360.Repository/Norge360.Repository.Architecture.Tests/Norge360.Repository.Architecture.Tests.csproj" />
+    <Project Path="packages/dotnet/tests/Norge360.Repository/Norge360.Repository.Benchmarks/Norge360.Repository.Benchmarks.csproj" />
+  </Folder>
+  <Folder Name="/packages/dotnet/tests/Norge360.Security.EndpointGuard/">
+    <Project Path="packages/dotnet/tests/Norge360.Security.EndpointGuard/Norge360.Security.EndpointGuard.Architecture.Tests/Norge360.Security.EndpointGuard.Architecture.Tests.csproj" />
+    <Project Path="packages/dotnet/tests/Norge360.Security.EndpointGuard/Norge360.Security.EndpointGuard.Benchmarks/Norge360.Security.EndpointGuard.Benchmarks.csproj" />
+  </Folder>
+  <Folder Name="/packages/dotnet/tests/Norge360.Tenancy/">
+    <Project Path="packages/dotnet/tests/Norge360.Tenancy/Norge360.Tenancy.Architecture.Tests/Norge360.Tenancy.Architecture.Tests.csproj" />
+    <Project Path="packages/dotnet/tests/Norge360.Tenancy/Norge360.Tenancy.Benchmarks/Norge360.Tenancy.Benchmarks.csproj" />
+  </Folder>
+  <Folder Name="/platform/" />
+  <Folder Name="/platform/gateway/" />
+  <Folder Name="/platform/gateway/src/" />
+  <Folder Name="/platform/gateway/tests/" />
+  <Folder Name="/services/" />
+  <Folder Name="/services/auth/" />
+  <Folder Name="/services/auth/src/" />
+  <Folder Name="/services/auth/tests/" />
+  <Folder Name="/services/notification/" />
+  <Folder Name="/services/notification/src/">
+    <Project Path="services/notification/src/Norge360.Notification.Application/Norge360.Notification.Application.csproj" />
+    <Project Path="services/notification/src/Norge360.Notification.Contracts/Norge360.Notification.Contracts.csproj" />
+    <Project Path="services/notification/src/Norge360.Notification.Domain/Norge360.Notification.Domain.csproj" />
+    <Project Path="services/notification/src/Norge360.Notification.Infrastructure/Norge360.Notification.Infrastructure.csproj" />
+    <Project Path="services/notification/src/Norge360.Notification.Worker/Norge360.Notification.Worker.csproj" />
+  </Folder>
+  <Folder Name="/services/notification/tests/">
+    <Project Path="services/notification/tests/Norge360.Notification.UnitTests/Norge360.Notification.UnitTests.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Norge360.Entities.Abstractions\Norge360.Entities.Abstractions.csproj" />
+    <ProjectReference Include="..\Norge360.Repository\Norge360.Repository.csproj" />
+    <ProjectReference Include="..\Norge360.Tenancy\Norge360.Tenancy.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
+    <PackageReference Include="Yarp.ReverseProxy" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="obj\**\*.cs;bin\**\*.cs" />
+    <Content Remove="obj\**\*;bin\**\*" />
+    <None Remove="obj\**\*;bin\**\*" />
+    <EmbeddedResource Remove="obj\**\*;bin\**\*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\packages\dotnet\src\Norge360.AspNetCore.TrustedGateway\Norge360.AspNetCore.TrustedGateway.csproj" />
+    <ProjectReference Include="..\..\..\..\packages\dotnet\src\Norge360.AspNetCore\Norge360.AspNetCore.csproj" />
+  </ItemGroup>
+  
+</Project>

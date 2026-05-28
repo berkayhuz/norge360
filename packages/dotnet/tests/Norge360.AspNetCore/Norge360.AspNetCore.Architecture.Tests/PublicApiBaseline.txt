@@ -1,0 +1,50 @@
+TYPE class Norge360.AspNetCore.Health.HealthResponseWriter
+  METHOD Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions CreateDetailedOptions(System.Func<Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckRegistration, System.Boolean> predicate)
+  METHOD Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions CreateMinimalOptions(System.Func<Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckRegistration, System.Boolean> predicate)
+  METHOD System.Threading.Tasks.Task WriteDetailedAsync(Microsoft.AspNetCore.Http.HttpContext context, Microsoft.Extensions.Diagnostics.HealthChecks.HealthReport report)
+  METHOD System.Threading.Tasks.Task WriteMinimalAsync(Microsoft.AspNetCore.Http.HttpContext context, Microsoft.Extensions.Diagnostics.HealthChecks.HealthReport report)
+TYPE class Norge360.AspNetCore.Localization.DependencyInjection.Norge360LocalizationExtensions
+  METHOD Microsoft.AspNetCore.Builder.IApplicationBuilder UseNorge360Localization(Microsoft.AspNetCore.Builder.IApplicationBuilder app)
+  METHOD Microsoft.Extensions.DependencyInjection.IServiceCollection AddNorge360Localization(Microsoft.Extensions.DependencyInjection.IServiceCollection services)
+TYPE class Norge360.AspNetCore.Localization.Providers.Norge360AcceptLanguageRequestCultureProvider
+  CTOR Norge360AcceptLanguageRequestCultureProvider()
+  METHOD System.Threading.Tasks.Task<Microsoft.AspNetCore.Localization.ProviderCultureResult> DetermineProviderCultureResult(Microsoft.AspNetCore.Http.HttpContext httpContext)
+TYPE class Norge360.AspNetCore.Localization.Providers.Norge360CookieRequestCultureProvider
+  CTOR Norge360CookieRequestCultureProvider()
+  METHOD System.Threading.Tasks.Task<Microsoft.AspNetCore.Localization.ProviderCultureResult> DetermineProviderCultureResult(Microsoft.AspNetCore.Http.HttpContext httpContext)
+TYPE class Norge360.AspNetCore.Localization.Providers.Norge360HeaderRequestCultureProvider
+  CTOR Norge360HeaderRequestCultureProvider()
+  METHOD System.Threading.Tasks.Task<Microsoft.AspNetCore.Localization.ProviderCultureResult> DetermineProviderCultureResult(Microsoft.AspNetCore.Http.HttpContext httpContext)
+TYPE class Norge360.AspNetCore.ProblemDetails.ProblemDetailsSupport
+  METHOD Microsoft.Extensions.DependencyInjection.IServiceCollection AddNorge360ProblemDetails(Microsoft.Extensions.DependencyInjection.IServiceCollection services)
+  METHOD System.Threading.Tasks.Task WriteProblemAsync(Microsoft.AspNetCore.Http.HttpContext context, System.Int32 statusCode, System.String title, System.String detail, System.String type, System.String errorCode, System.Threading.CancellationToken cancellationToken)
+TYPE class Norge360.AspNetCore.RequestContext.RequestContextSupport
+  FIELD const System.String CorrelationIdHeaderName
+  METHOD System.IDisposable BeginScope(Microsoft.AspNetCore.Http.HttpContext context, Microsoft.Extensions.Logging.ILogger logger)
+  METHOD System.String GetOrCreateCorrelationId(Microsoft.AspNetCore.Http.HttpContext context)
+  METHOD System.String GetTraceId(Microsoft.AspNetCore.Http.HttpContext context)
+  METHOD void RecordCompletion(Microsoft.AspNetCore.Http.HttpContext context, Microsoft.Extensions.Logging.ILogger logger, System.Diagnostics.Metrics.Histogram<System.Double> requestDuration, System.String fallbackRoute, System.Double elapsedMilliseconds, System.String serviceLabel)
+TYPE class Norge360.AspNetCore.RequestContext.RouteDiagnosticsMetadata
+  CTOR RouteDiagnosticsMetadata(System.String Route)
+  PROP System.String Route { get; init; }
+  METHOD void Deconstruct(out System.String Route)
+TYPE class Norge360.AspNetCore.Security.SecurityHeadersValues
+  CTOR SecurityHeadersValues(System.String ContentSecurityPolicy, System.String ReferrerPolicy, System.String PermissionsPolicy, System.Boolean EnableHsts, System.Int32 HstsMaxAgeSeconds, System.Boolean PreloadHsts, System.Boolean IncludeSubDomains, System.Boolean DisableResponseCaching)
+  PROP System.Boolean DisableResponseCaching { get; init; }
+  PROP System.Boolean EnableHsts { get; init; }
+  PROP System.Boolean IncludeSubDomains { get; init; }
+  PROP System.Boolean PreloadHsts { get; init; }
+  PROP System.Int32 HstsMaxAgeSeconds { get; init; }
+  PROP System.String ContentSecurityPolicy { get; init; }
+  PROP System.String PermissionsPolicy { get; init; }
+  PROP System.String ReferrerPolicy { get; init; }
+  METHOD void Deconstruct(out System.String ContentSecurityPolicy, out System.String ReferrerPolicy, out System.String PermissionsPolicy, out System.Boolean EnableHsts, out System.Int32 HstsMaxAgeSeconds, out System.Boolean PreloadHsts, out System.Boolean IncludeSubDomains, out System.Boolean DisableResponseCaching)
+TYPE class Norge360.AspNetCore.Security.SecuritySupport
+  METHOD System.Boolean IsAllowedRemoteAddress(System.Net.IPAddress address, System.Collections.Generic.IEnumerable<System.String> exactAddresses, System.Collections.Generic.IEnumerable<System.String> networks)
+  METHOD System.Boolean IsValidOrigin(System.String value, System.Boolean allowHttpForLocalhostOnly)
+  METHOD System.Boolean LooksLikeHostName(System.String value)
+  METHOD System.Boolean TryParseNetwork(System.String value, out System.Net.IPNetwork network)
+  METHOD void ApplySecurityHeaders(Microsoft.AspNetCore.Http.HttpContext context, Norge360.AspNetCore.Security.SecurityHeadersValues values)
+  METHOD void ConfigureForwardedHeaders(Microsoft.AspNetCore.Builder.ForwardedHeadersOptions target, System.Int32 forwardLimit, System.Collections.Generic.IEnumerable<System.String> knownProxies, System.Collections.Generic.IEnumerable<System.String> knownNetworks)
+TYPE interface Norge360.AspNetCore.RequestContext.IRouteDiagnosticsMetadata
+  PROP System.String Route { get; }

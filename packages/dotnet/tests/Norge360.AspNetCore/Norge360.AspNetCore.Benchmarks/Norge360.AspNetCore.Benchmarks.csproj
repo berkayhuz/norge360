@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\Norge360.AspNetCore\Norge360.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\..\src\Norge360.AspNetCore.CurrentUser\Norge360.AspNetCore.CurrentUser.csproj" />
+    <ProjectReference Include="..\..\..\src\Norge360.AspNetCore.TrustedGateway\Norge360.AspNetCore.TrustedGateway.csproj" />
+    <ProjectReference Include="..\..\..\src\Norge360.Authorization\Norge360.Authorization.csproj" />
+    <ProjectReference Include="..\..\..\src\Norge360.Authorization.AspNetCore\Norge360.Authorization.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\..\src\Norge360.Authorization.Claims\Norge360.Authorization.Claims.csproj" />
+    <ProjectReference Include="..\..\..\src\Norge360.Clock\Norge360.Clock.csproj" />
+  </ItemGroup>
+
+</Project>

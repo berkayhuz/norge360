@@ -1,0 +1,7 @@
+TYPE interface Norge360.Clock.IClock
+  PROP System.DateTime UtcDateTime { get; }
+  PROP System.DateTimeOffset UtcNow { get; }
+TYPE class Norge360.Clock.SystemClock
+  CTOR SystemClock()
+  PROP System.DateTime UtcDateTime { get; }
+  PROP System.DateTimeOffset UtcNow { get; }

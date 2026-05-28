@@ -1,0 +1,5 @@
+METHOD System.Boolean HasPermission(System.Security.Claims.ClaimsPrincipal principal, System.String permission)
+METHOD System.Boolean HasTenant(System.Security.Claims.ClaimsPrincipal principal)
+METHOD System.Collections.Generic.IReadOnlyCollection<System.String> ReadPermissions(System.Security.Claims.ClaimsPrincipal principal)
+METHOD System.Collections.Generic.IReadOnlyCollection<System.String> ReadRoles(System.Security.Claims.ClaimsPrincipal principal)
+TYPE class Norge360.Authorization.Claims.PermissionClaimReader

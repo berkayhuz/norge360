@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Norge360.Authorization.Claims\Norge360.Authorization.Claims.csproj" />
+    <ProjectReference Include="..\Norge360.CurrentUser\Norge360.CurrentUser.csproj" />
+    <ProjectReference Include="..\Norge360.Tenancy\Norge360.Tenancy.csproj" />
+  </ItemGroup>
+
+</Project>

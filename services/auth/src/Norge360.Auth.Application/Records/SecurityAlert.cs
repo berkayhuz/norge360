@@ -1,0 +1,17 @@
+// <copyright file="SecurityAlert.cs" company="Norge360">
+// Copyright (c) 2026 Norge360. All rights reserved.
+// Norge360 is proprietary software. See the LICENSE file in the repository root.
+// </copyright>
+
+namespace Norge360.Auth.Application.Records;
+
+public sealed record SecurityAlert(
+    string Category,
+    string Severity,
+    string Message,
+    Guid TenantId,
+    Guid? UserId,
+    Guid? SessionId,
+    string? CorrelationId,
+    string? TraceId,
+    string? Metadata = null);

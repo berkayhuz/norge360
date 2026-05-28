@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Norge360.Auth.API\Norge360.Auth.API.csproj" />
+    <ProjectReference Include="..\..\src\Norge360.Auth.Application\Norge360.Auth.Application.csproj" />
+    <ProjectReference Include="..\..\src\Norge360.Auth.Contracts\Norge360.Auth.Contracts.csproj" />
+    <ProjectReference Include="..\..\src\Norge360.Auth.Domain\Norge360.Auth.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Norge360.Auth.Infrastructure\Norge360.Auth.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="Moq" />
+  </ItemGroup>
+</Project>

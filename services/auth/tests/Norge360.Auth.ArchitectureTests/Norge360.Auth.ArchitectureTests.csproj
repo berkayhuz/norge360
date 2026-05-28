@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\Norge360.Auth.TestKit\Norge360.Auth.TestKit.csproj" />
+    <ProjectReference Include="..\..\src\Norge360.Auth.API\Norge360.Auth.API.csproj" />
+    <ProjectReference Include="..\..\src\Norge360.Auth.Application\Norge360.Auth.Application.csproj" />
+    <ProjectReference Include="..\..\src\Norge360.Auth.Contracts\Norge360.Auth.Contracts.csproj" />
+    <ProjectReference Include="..\..\src\Norge360.Auth.Domain\Norge360.Auth.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Norge360.Auth.Infrastructure\Norge360.Auth.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NetArchTest.Rules" />
+  </ItemGroup>
+</Project>

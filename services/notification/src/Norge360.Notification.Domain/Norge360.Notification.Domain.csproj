@@ -1,0 +1,7 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Norge360.Notification.Contracts\Norge360.Notification.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>

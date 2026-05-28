@@ -1,0 +1,127 @@
+# Norge360
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*.tmp
+*~
+
+# IDE
+.vs/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+*.suo
+*.user
+*.userosscache
+*.rsuser
+*.sln.docstates
+
+# Logs
+*.log
+logs/
+.runlogs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# .NET build outputs
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+!scripts/release/
+!scripts/release/**
+!docs/release/
+!docs/release/**
+
+# .NET runtime/test artifacts
+TestResults/
+[Tt]est[Rr]esult*/
+*.trx
+*.coverage
+*.coveragexml
+coverage/
+coverage*.json
+coverage*.xml
+coverage*.info
+BenchmarkDotNet.Artifacts/
+
+# Package caches
+*.nupkg
+*.snupkg
+*.nuget.props
+*.nuget.targets
+.nuget/
+
+# npm lock file - this repo uses pnpm
+package-lock.json
+
+# yarn lock file - this repo uses pnpm
+yarn.lock
+
+# Local env / secrets
+.env
+.env.*
+!.env.example
+!**/.env.example
+*.secrets.json
+
+# Local keys (keep placeholders)
+**/keys/*.pem
+**/keys/*.key
+**/data-protection-keys/*
+!**/keys/.gitkeep
+!**/data-protection-keys/.gitkeep
+
+# Node / Next.js
+**/node_modules/
+**/.next/
+**/out/
+**/dist/
+**/.turbo/
+**/.cache/
+**/.pnpm-store/
+**/.yarn/cache/
+**/.yarn/unplugged/
+**/.yarn/build-state.yml
+**/.yarn/install-state.gz
+**/*.tsbuildinfo
+
+# Python tool cache
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Project-specific generated folders
+.artifacts/
+artifacts/
+.sonarqube/
+.scannerwork/
+.sonar/
+.dotnet-home/
+.nuget/
+.tmp/
+.code-review-graph/
+graphify-out/cache/
+graphify-out/manifest.json
+graph.json
+**/coverage.opencover.xml
+**/coverage.cobertura.xml
+**/lcov.info
+
+# Husky runtime helpers (generated on install)
+.husky/_
+
+# Next.js generated types
+next-env.d.ts
+.obj/

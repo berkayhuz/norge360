@@ -1,0 +1,6 @@
+@Norge360.ApiGateway_HostAddress = http://localhost:5030
+
+GET {{Norge360.ApiGateway_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,7 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  
+  <ItemGroup>
+    <ProjectReference Include="..\Norge360.Entities.Abstractions\Norge360.Entities.Abstractions.csproj" />
+  </ItemGroup>
+  
+</Project>
