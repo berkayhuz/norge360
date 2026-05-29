@@ -6,7 +6,6 @@
 namespace Norge360.Auth.Application.Records;
 
 public sealed record AuthAuditRecord(
-    Guid TenantId,
     string EventType,
     string Outcome,
     Guid? UserId,

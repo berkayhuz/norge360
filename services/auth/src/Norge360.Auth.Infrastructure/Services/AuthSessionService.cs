@@ -18,13 +18,13 @@ public sealed class AuthSessionService(
     IOptions<SessionSecurityOptions> options,
     IClock clock) : IAuthSessionService
 {
-    public async Task<IReadOnlyCollection<Guid>> EnforceSessionLimitsAsync(Guid tenantId, Guid userId, Guid? currentSessionId, CancellationToken cancellationToken)
+    public async Task<IReadOnlyCollection<Guid>> EnforceSessionLimitsAsync(Guid userId, Guid? currentSessionId, CancellationToken cancellationToken)
     {
         var value = options.Value;
         var revokedSessionIds = new List<Guid>();
 
         var activeSessions = await dbContext.UserSessions
-            .Where(x => x.TenantId == tenantId && x.UserId == userId && x.RevokedAt == null)
+            .Where(x => x.UserId == userId && x.RevokedAt == null)
             .OrderByDescending(x => x.LastSeenAt ?? x.CreatedAt)
             .ToListAsync(cancellationToken);
 

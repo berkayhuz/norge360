@@ -15,5 +15,5 @@ public abstract record AuthSessionResult
 
     public sealed record Issued(AuthenticationTokenResponse Tokens) : AuthSessionResult;
 
-    public sealed record PendingConfirmation(Guid TenantId, Guid UserId, string Email) : AuthSessionResult;
+    public sealed record PendingConfirmation(Guid UserId, string Email) : AuthSessionResult;
 }

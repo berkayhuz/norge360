@@ -21,10 +21,10 @@ public sealed class UserTokenStateValidator(
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
-    public async Task<bool> IsValidAsync(Guid tenantId, Guid userId, int tokenVersion, CancellationToken cancellationToken)
+    public async Task<bool> IsValidAsync(Guid userId, int tokenVersion, CancellationToken cancellationToken)
     {
         var value = options.Value;
-        var cacheKey = BuildCacheKey(value.KeyPrefix, tenantId, userId);
+        var cacheKey = BuildCacheKey(value.KeyPrefix, userId);
 
         if (value.EnableCache)
         {
@@ -49,13 +49,12 @@ public sealed class UserTokenStateValidator(
             {
                 logger.LogWarning(
                     exception,
-                    "Token validation cache get failed for tenant {TenantId} user {UserId}. Falling back to repository.",
-                    tenantId,
+                    "Token validation cache get failed for user {UserId}. Falling back to repository.",
                     userId);
             }
         }
 
-        var tokenState = await userRepository.GetActiveTokenStateAsync(tenantId, userId, cancellationToken);
+        var tokenState = await userRepository.GetActiveTokenStateAsync(userId, cancellationToken);
 
         var currentState = tokenState is null
             ? new CachedUserTokenState(false, false, -1)
@@ -83,8 +82,7 @@ public sealed class UserTokenStateValidator(
             {
                 logger.LogWarning(
                     exception,
-                    "Token validation cache set failed for tenant {TenantId} user {UserId}.",
-                    tenantId,
+                    "Token validation cache set failed for user {UserId}.",
                     userId);
             }
         }
@@ -94,7 +92,7 @@ public sealed class UserTokenStateValidator(
                currentState.TokenVersion == tokenVersion;
     }
 
-    public void Evict(Guid tenantId, Guid userId)
+    public void Evict(Guid userId)
     {
         var value = options.Value;
         if (!value.EnableCache)
@@ -104,20 +102,19 @@ public sealed class UserTokenStateValidator(
 
         try
         {
-            distributedCache.Remove(BuildCacheKey(value.KeyPrefix, tenantId, userId));
+            distributedCache.Remove(BuildCacheKey(value.KeyPrefix, userId));
         }
         catch (Exception exception)
         {
             logger.LogError(
                 exception,
-                "Token validation cache evict failed for tenant {TenantId} user {UserId}.",
-                tenantId,
+                "Token validation cache evict failed for user {UserId}.",
                 userId);
         }
     }
 
-    private static string BuildCacheKey(string prefix, Guid tenantId, Guid userId) =>
-        $"{prefix}:{tenantId:N}:{userId:N}";
+    private static string BuildCacheKey(string prefix, Guid userId) =>
+        $"{prefix}:{userId:N}";
 
     private sealed record CachedUserTokenState(bool Exists, bool IsActive, int TokenVersion);
 }

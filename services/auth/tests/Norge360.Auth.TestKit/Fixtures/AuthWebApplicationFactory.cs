@@ -44,11 +44,10 @@ public sealed class AuthWebApplicationFactory : WebApplicationFactory<Program>
         await Task.CompletedTask;
     }
 
-    public HttpClient CreateAuthenticatedClient(Guid? tenantId = null, Guid? userId = null, Guid? sessionId = null)
+    public HttpClient CreateAuthenticatedClient(Guid? userId = null, Guid? sessionId = null)
     {
         var client = CreateClient();
         client.DefaultRequestHeaders.Add(TestAuthenticationHandler.AuthHeaderName, "true");
-        client.DefaultRequestHeaders.Add(TestAuthenticationHandler.TenantHeaderName, (tenantId ?? Guid.NewGuid()).ToString());
         client.DefaultRequestHeaders.Add(TestAuthenticationHandler.UserHeaderName, (userId ?? Guid.NewGuid()).ToString());
         client.DefaultRequestHeaders.Add(TestAuthenticationHandler.SessionHeaderName, (sessionId ?? Guid.NewGuid()).ToString());
         return client;
@@ -111,7 +110,6 @@ public sealed class AuthWebApplicationFactory : WebApplicationFactory<Program>
     {
         public const string SchemeName = "TestAuth";
         public const string AuthHeaderName = "X-Test-Auth";
-        public const string TenantHeaderName = "X-Test-Tenant-Id";
         public const string UserHeaderName = "X-Test-User-Id";
         public const string SessionHeaderName = "X-Test-Session-Id";
 
@@ -123,9 +121,6 @@ public sealed class AuthWebApplicationFactory : WebApplicationFactory<Program>
                 return Task.FromResult(AuthenticateResult.NoResult());
             }
 
-            var tenantId = Request.Headers.TryGetValue(TenantHeaderName, out var tenantHeader) && Guid.TryParse(tenantHeader, out var parsedTenant)
-                ? parsedTenant
-                : Guid.NewGuid();
             var userId = Request.Headers.TryGetValue(UserHeaderName, out var userHeader) && Guid.TryParse(userHeader, out var parsedUser)
                 ? parsedUser
                 : Guid.NewGuid();
@@ -135,12 +130,11 @@ public sealed class AuthWebApplicationFactory : WebApplicationFactory<Program>
 
             var claims = new[]
             {
-                new Claim("tenant_id", tenantId.ToString()),
                 new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
                 new Claim(ClaimTypes.Email, "tester@example.test"),
                 new Claim(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub, userId.ToString()),
                 new Claim(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sid, sessionId.ToString()),
-                new Claim(ClaimTypes.Role, "tenant-user"),
+                new Claim(ClaimTypes.Role, "user"),
                 new Claim("permission", "customers.read"),
                 new Claim("permission", "customers.write"),
                 new Claim("permission", "customer-intelligence.duplicates.read")

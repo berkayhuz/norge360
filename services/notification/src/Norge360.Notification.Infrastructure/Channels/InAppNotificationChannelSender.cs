@@ -30,7 +30,6 @@ public sealed class InAppNotificationChannelSender(NotificationDbContext dbConte
 
         var record = new InAppNotificationRecord(
             Guid.NewGuid(),
-            request.TenantId,
             request.Recipient.UserId.Value,
             request.Subject,
             request.TextBody,

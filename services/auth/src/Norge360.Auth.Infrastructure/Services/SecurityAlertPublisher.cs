@@ -31,10 +31,9 @@ public sealed partial class SecurityAlertPublisher(
         };
 
         logger.LogWarning(
-            "SECURITY_ALERT {Category} {Severity} Tenant={TenantId} User={UserId} Session={SessionId} CorrelationId={CorrelationId} TraceId={TraceId} Payload={Payload}",
+            "SECURITY_ALERT {Category} {Severity} User={UserId} Session={SessionId} CorrelationId={CorrelationId} TraceId={TraceId} Payload={Payload}",
             sanitizedAlert.Category,
             sanitizedAlert.Severity,
-            sanitizedAlert.TenantId,
             sanitizedAlert.UserId,
             sanitizedAlert.SessionId,
             sanitizedAlert.CorrelationId,

@@ -19,7 +19,6 @@ public class DesignArchitectureTests
     {
         var implemented = typeof(Norge360.Entities.EntityBase).GetInterfaces().Select(x => x.FullName).ToArray();
 
-        Assert.Contains("Norge360.Entities.Abstractions.ITenantEntity", implemented);
         Assert.Contains("Norge360.Entities.Abstractions.ISoftDeletable", implemented);
         Assert.Contains("Norge360.Entities.Abstractions.IAuditable", implemented);
         Assert.Contains("Norge360.Entities.Abstractions.IHasRowVersion", implemented);

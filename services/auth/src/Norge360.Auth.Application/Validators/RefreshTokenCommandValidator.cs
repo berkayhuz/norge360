@@ -12,7 +12,6 @@ public sealed class RefreshTokenCommandValidator : AbstractValidator<RefreshToke
 {
     public RefreshTokenCommandValidator()
     {
-        RuleFor(x => x.TenantId).NotEmpty();
         RuleFor(x => x.SessionId).NotEmpty();
         RuleFor(x => x.RefreshToken).NotEmpty();
     }

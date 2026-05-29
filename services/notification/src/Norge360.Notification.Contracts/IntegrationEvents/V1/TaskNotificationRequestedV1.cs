@@ -10,7 +10,6 @@ namespace Norge360.Notification.Contracts.IntegrationEvents.V1;
 
 public sealed record TaskNotificationRequestedV1(
     Guid EventId,
-    Guid TenantId,
     Guid UserId,
     NotificationRecipient Recipient,
     Guid TaskId,

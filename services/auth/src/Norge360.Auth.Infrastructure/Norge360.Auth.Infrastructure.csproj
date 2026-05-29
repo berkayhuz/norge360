@@ -1,20 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-  <ItemGroup>
-    <Compile Remove="ArchivedSqlServerMigrations\**" />
-    <EmbeddedResource Remove="ArchivedSqlServerMigrations\**" />
-    <None Remove="ArchivedSqlServerMigrations\**" />
-    <Compile Remove="Migrations\**" />
-    <EmbeddedResource Remove="Migrations\**" />
-    <None Remove="Migrations\**" />
-    <Compile Remove="Persistence\Migrations\**" />
-    <EmbeddedResource Remove="Persistence\Migrations\**" />
-    <None Remove="Persistence\Migrations\**" />
-  </ItemGroup>
-
   <PropertyGroup>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <NoWarn>$(NoWarn);IDE0161</NoWarn>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="DependencyInjection\InfrastructureDependencyInjection.cs" />
+    <Compile Include="Persistence\AuthDbContext.cs" />
+    <Compile Include="Persistence\OutboxMessage.cs" />
+    <Compile Include="Persistence\DesignTime\AuthDbContextFactory.cs" />
+    <Compile Include="Persistence\PostgreSqlMigrations\*.cs" />
+    <Compile Include="Services\JwtAccessTokenFactory.cs" />
+    <Compile Include="Services\RefreshTokenService.cs" />
+    <Compile Include="Services\TokenSigningKeyProvider.cs" />
+    <Compile Include="Services\UserRepository.cs" />
+    <Compile Include="Services\UserSessionRepository.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />

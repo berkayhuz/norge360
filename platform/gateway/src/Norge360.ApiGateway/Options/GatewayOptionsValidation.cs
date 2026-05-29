@@ -3,7 +3,6 @@
 // Norge360 is proprietary software. See the LICENSE file in the repository root.
 // </copyright>
 
-using System.Text.RegularExpressions;
 using Microsoft.Extensions.Options;
 using Norge360.AspNetCore.Security;
 using Norge360.AspNetCore.TrustedGateway.Options;
@@ -108,83 +107,6 @@ public sealed class GatewayRateLimitingOptionsValidation : IValidateOptions<Gate
         if (rule.WindowSeconds <= 0) failures.Add($"{prefix}:WindowSeconds must be greater than 0.");
         if (rule.QueueLimit < 0) failures.Add($"{prefix}:QueueLimit must be 0 or greater.");
     }
-}
-
-public sealed partial class GatewayTenantForwardingOptionsValidation(IHostEnvironment environment)
-    : IValidateOptions<GatewayTenantForwardingOptions>
-{
-    private static readonly Guid DefaultDevelopmentTenantId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-
-    public ValidateOptionsResult Validate(string? name, GatewayTenantForwardingOptions options)
-    {
-        var failures = new List<string>();
-
-        if (string.IsNullOrWhiteSpace(options.HeaderName))
-        {
-            failures.Add("Security:TenantForwarding:HeaderName is required.");
-        }
-
-        if (string.IsNullOrWhiteSpace(options.SlugHeaderName))
-        {
-            failures.Add("Security:TenantForwarding:SlugHeaderName is required.");
-        }
-
-        if (string.IsNullOrWhiteSpace(options.RouteMetadataTenantIdKey))
-        {
-            failures.Add("Security:TenantForwarding:RouteMetadataTenantIdKey is required.");
-        }
-
-        if (string.IsNullOrWhiteSpace(options.RouteMetadataTenantSlugKey))
-        {
-            failures.Add("Security:TenantForwarding:RouteMetadataTenantSlugKey is required.");
-        }
-
-        if (!string.IsNullOrWhiteSpace(options.StaticTenantSlug) &&
-            !TenantSlugRegex().IsMatch(options.StaticTenantSlug))
-        {
-            failures.Add("Security:TenantForwarding:StaticTenantSlug must contain only lowercase letters, numbers and hyphens.");
-        }
-
-        foreach (var suffix in options.TrustedHostSuffixes)
-        {
-            if (!SecuritySupport.LooksLikeHostName(suffix))
-            {
-                failures.Add($"Security:TenantForwarding:TrustedHostSuffixes contains invalid host suffix '{suffix}'.");
-            }
-
-            if (environment.IsProduction() &&
-                suffix.Contains("localhost", StringComparison.OrdinalIgnoreCase))
-            {
-                failures.Add("Security:TenantForwarding:TrustedHostSuffixes cannot contain localhost in production.");
-            }
-        }
-
-        if (options.RequireTenant &&
-            options.StaticTenantId == Guid.Empty &&
-            string.IsNullOrWhiteSpace(options.StaticTenantSlug) &&
-            options.TrustedHostSuffixes.Length == 0)
-        {
-            failures.Add("Security:TenantForwarding requires StaticTenantId, StaticTenantSlug or TrustedHostSuffixes.");
-        }
-
-        if (environment.IsProduction() && options.StaticTenantId != Guid.Empty)
-        {
-            if (!options.AllowStaticTenantIdInProduction)
-            {
-                failures.Add("Security:TenantForwarding:StaticTenantId cannot be used in production unless AllowStaticTenantIdInProduction is explicitly enabled.");
-            }
-
-            if (options.StaticTenantId == DefaultDevelopmentTenantId)
-            {
-                failures.Add("Security:TenantForwarding:StaticTenantId contains the default development tenant id and cannot be used in production.");
-            }
-        }
-
-        return failures.Count > 0 ? ValidateOptionsResult.Fail(failures) : ValidateOptionsResult.Success;
-    }
-
-    [GeneratedRegex("^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$", RegexOptions.CultureInvariant)]
-    private static partial Regex TenantSlugRegex();
 }
 
 public sealed class GatewayTrustedCallerOptionsValidation(IHostEnvironment environment) : IValidateOptions<TrustedGatewayOptions>

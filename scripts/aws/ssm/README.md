@@ -12,6 +12,6 @@ These scripts are examples only. They use placeholders and must be adapted befor
 - `create-parameters.example.sh`
 
 ## Suggested process
-1. Copy example script outside repository or to a secure local workspace.
+1. Copy example script outside repository or to a secure local folder.
 2. Replace placeholder variables with environment-specific values.
 3. Execute with credentials from IAM role/profile with least privilege.

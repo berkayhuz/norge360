@@ -21,10 +21,9 @@ public static class AuthorizationConfiguration
 
         services.AddAuthorization(builder =>
         {
-            builder.AddPolicy(AuthAuthorizationPolicies.TenantUser, policy =>
+            builder.AddPolicy(AuthAuthorizationPolicies.PlatformUser, policy =>
             {
                 policy.RequireAuthenticatedUser();
-                policy.RequireClaim("tenant_id");
             });
 
             builder.AddPolicy(AuthAuthorizationPolicies.InternalService, policy =>
@@ -39,11 +38,6 @@ public static class AuthorizationConfiguration
                     if (definition.RequireAuthenticatedUser)
                     {
                         policy.RequireAuthenticatedUser();
-                    }
-
-                    if (definition.RequireTenantClaim)
-                    {
-                        policy.RequireClaim("tenant_id");
                     }
 
                     foreach (var permission in definition.RequiredPermissions)

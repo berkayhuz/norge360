@@ -11,15 +11,8 @@ public sealed class PermissionAuthorizationHandler : AuthorizationHandler<Permis
 {
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
     {
-        var hasTenant = context.User.HasClaim(claim =>
-            claim.Type == "tenant_id" &&
-            Guid.TryParse(claim.Value, out var tenantId) &&
-            tenantId != Guid.Empty);
-
-        if (hasTenant &&
-            (context.User.HasClaim("permission", "*") ||
+        if (context.User.HasClaim("permission", "*") ||
             context.User.HasClaim("permission", requirement.Permission))
-           )
         {
             context.Succeed(requirement);
         }

@@ -148,7 +148,6 @@ public sealed class NotificationIntegrationEventConsumer(
         var message = JsonSerializer.Deserialize<NotificationRequestedV1>(payload, SerializerOptions)
             ?? throw new InvalidOperationException("NotificationRequestedV1 payload could not be deserialized.");
         return new SendNotificationRequest(
-            message.TenantId,
             message.Recipient,
             message.Channels,
             message.Category,
@@ -167,7 +166,6 @@ public sealed class NotificationIntegrationEventConsumer(
         var message = JsonSerializer.Deserialize<SecurityNotificationRequestedV1>(payload, SerializerOptions)
             ?? throw new InvalidOperationException("SecurityNotificationRequestedV1 payload could not be deserialized.");
         return new SendNotificationRequest(
-            message.TenantId,
             message.Recipient,
             message.Channels,
             NotificationCategory.Security,
@@ -186,7 +184,6 @@ public sealed class NotificationIntegrationEventConsumer(
         var message = JsonSerializer.Deserialize<CrmReminderNotificationRequestedV1>(payload, SerializerOptions)
             ?? throw new InvalidOperationException("CrmReminderNotificationRequestedV1 payload could not be deserialized.");
         return new SendNotificationRequest(
-            message.TenantId,
             message.Recipient,
             message.Channels,
             NotificationCategory.CrmReminder,
@@ -205,7 +202,6 @@ public sealed class NotificationIntegrationEventConsumer(
         var message = JsonSerializer.Deserialize<TaskNotificationRequestedV1>(payload, SerializerOptions)
             ?? throw new InvalidOperationException("TaskNotificationRequestedV1 payload could not be deserialized.");
         return new SendNotificationRequest(
-            message.TenantId,
             message.Recipient,
             message.Channels,
             NotificationCategory.Task,
@@ -223,21 +219,21 @@ public sealed class NotificationIntegrationEventConsumer(
     {
         var message = JsonSerializer.Deserialize<AuthEmailConfirmationRequestedV1>(payload, SerializerOptions)
             ?? throw new InvalidOperationException("AuthEmailConfirmationRequestedV1 payload could not be deserialized.");
-        return SecurityEmail(message.TenantId, message.UserId, message.UserName, message.Email, "Confirm your Norge360 email", "Confirm your email: {{ActionUrl}}", "auth.email-confirmation", message.ConfirmationUrl, correlationId, eventId, message.Culture);
+        return SecurityEmail(message.UserId, message.UserName, message.Email, "Confirm your Norge360 email", "Confirm your email: {{ActionUrl}}", "auth.email-confirmation", message.ConfirmationUrl, correlationId, eventId, message.Culture);
     }
 
     private static SendNotificationRequest FromAuthPasswordReset(string payload, string? correlationId, string eventId)
     {
         var message = JsonSerializer.Deserialize<AuthPasswordResetRequestedV1>(payload, SerializerOptions)
             ?? throw new InvalidOperationException("AuthPasswordResetRequestedV1 payload could not be deserialized.");
-        return SecurityEmail(message.TenantId, message.UserId, message.UserName, message.Email, "Reset your Norge360 password", "Reset your password: {{ActionUrl}}", "auth.password-reset", message.ResetUrl, correlationId, eventId);
+        return SecurityEmail(message.UserId, message.UserName, message.Email, "Reset your Norge360 password", "Reset your password: {{ActionUrl}}", "auth.password-reset", message.ResetUrl, correlationId, eventId);
     }
 
     private static SendNotificationRequest FromAuthEmailChange(string payload, string? correlationId, string eventId)
     {
         var message = JsonSerializer.Deserialize<AuthEmailChangeRequestedV1>(payload, SerializerOptions)
             ?? throw new InvalidOperationException("AuthEmailChangeRequestedV1 payload could not be deserialized.");
-        return SecurityEmail(message.TenantId, message.UserId, message.UserName, message.NewEmail, "Confirm your new Norge360 email", "Confirm your new email: {{ActionUrl}}", "auth.email-change-confirmation", message.ConfirmationUrl, correlationId, eventId);
+        return SecurityEmail(message.UserId, message.UserName, message.NewEmail, "Confirm your new Norge360 email", "Confirm your new email: {{ActionUrl}}", "auth.email-change-confirmation", message.ConfirmationUrl, correlationId, eventId);
     }
 
     private static SendNotificationRequest FromUserRegistered(string payload, string? correlationId, string eventId)
@@ -246,7 +242,6 @@ public sealed class NotificationIntegrationEventConsumer(
             ?? throw new InvalidOperationException("UserRegisteredV1 payload could not be deserialized.");
         var displayName = string.IsNullOrWhiteSpace(message.FirstName) ? message.UserName : message.FirstName;
         return new SendNotificationRequest(
-            message.TenantId,
             new NotificationRecipient(message.UserId, message.Email, null, null, displayName),
             [NotificationChannel.Email, NotificationChannel.InApp],
             NotificationCategory.Account,
@@ -264,11 +259,9 @@ public sealed class NotificationIntegrationEventConsumer(
     {
         using var document = JsonDocument.Parse(payload);
         var root = document.RootElement;
-        var tenantId = GetProperty(root, "tenantId").GetGuid();
         var userId = GetProperty(root, "userId").GetGuid();
         var notificationType = GetProperty(root, "notificationType").GetString() ?? "security_event";
         return new SendNotificationRequest(
-            tenantId,
             new NotificationRecipient(userId, null, null, null, null),
             [NotificationChannel.InApp],
             NotificationCategory.Security,
@@ -282,9 +275,8 @@ public sealed class NotificationIntegrationEventConsumer(
             eventId);
     }
 
-    private static SendNotificationRequest SecurityEmail(Guid tenantId, Guid userId, string userName, string email, string subject, string textBody, string templateKey, string url, string? correlationId, string eventId, string? culture = null) =>
+    private static SendNotificationRequest SecurityEmail(Guid userId, string userName, string email, string subject, string textBody, string templateKey, string url, string? correlationId, string eventId, string? culture = null) =>
         new(
-            tenantId,
             new NotificationRecipient(userId, email, null, null, userName),
             [NotificationChannel.Email],
             NotificationCategory.Security,

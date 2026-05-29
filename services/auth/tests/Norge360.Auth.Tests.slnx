@@ -9,7 +9,6 @@
   <Project Path="../src/Norge360.Auth.Contracts/Norge360.Auth.Contracts.csproj" />
   <Project Path="../src/Norge360.Auth.Domain/Norge360.Auth.Domain.csproj" />
   <Project Path="../src/Norge360.Auth.Infrastructure/Norge360.Auth.Infrastructure.csproj" />
-  <Project Path="../benchmarks/Norge360.Auth.Benchmarks/Norge360.Auth.Benchmarks.csproj" />
   <Project Path="Norge360.Auth.Api.FunctionalTests/Norge360.Auth.Api.FunctionalTests.csproj" />
   <Project Path="Norge360.Auth.Application.UnitTests/Norge360.Auth.Application.UnitTests.csproj" />
   <Project Path="Norge360.Auth.ArchitectureTests/Norge360.Auth.ArchitectureTests.csproj" />

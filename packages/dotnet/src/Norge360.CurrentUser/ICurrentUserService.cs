@@ -8,7 +8,6 @@ namespace Norge360.CurrentUser;
 public interface ICurrentUserService
 {
     Guid UserId { get; }
-    Guid TenantId { get; }
     bool IsAuthenticated { get; }
     string? UserName { get; }
     string? Email { get; }

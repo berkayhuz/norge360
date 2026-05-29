@@ -10,6 +10,5 @@ public sealed record MediaSecurityScanRequest(
     string CanonicalContentType,
     Stream Content,
     long Length,
-    string TenantId,
     string Purpose,
     string Module);

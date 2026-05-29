@@ -9,7 +9,6 @@ namespace Norge360.Auth.TestKit.Builders;
 
 public sealed class RegisterRequestBuilder
 {
-    private string _tenantName = "Acme Workspace";
     private string _userName = "jane.doe";
     private string _email = "jane.doe@example.com";
     private string _password = "StrongPassword123!";
@@ -30,17 +29,11 @@ public sealed class RegisterRequestBuilder
         return this;
     }
 
-    public RegisterRequestBuilder WithTenantName(string tenantName)
-    {
-        _tenantName = tenantName;
-        return this;
-    }
-
     public RegisterRequestBuilder WithCulture(string? culture)
     {
         _culture = culture;
         return this;
     }
 
-    public RegisterRequest Build() => new(_tenantName, _userName, _email, _password, _firstName, _lastName, _culture);
+    public RegisterRequest Build() => new(_userName, _email, _password, _firstName, _lastName, _culture);
 }

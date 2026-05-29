@@ -10,7 +10,6 @@ public sealed record AuthenticationTokenResponse(
     DateTime AccessTokenExpiresAt,
     string RefreshToken,
     DateTime RefreshTokenExpiresAt,
-    Guid TenantId,
     Guid UserId,
     string UserName,
     string Email,

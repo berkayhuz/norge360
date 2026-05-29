@@ -6,7 +6,6 @@
 namespace Norge360.Auth.Contracts.Responses;
 
 public sealed record AuthSessionStatusResponse(
-    Guid TenantId,
     Guid UserId,
     Guid SessionId,
     string Email,

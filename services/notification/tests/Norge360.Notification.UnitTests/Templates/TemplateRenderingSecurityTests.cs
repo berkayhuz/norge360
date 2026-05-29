@@ -18,7 +18,6 @@ public sealed class TemplateRenderingSecurityTests
     {
         var renderer = new SimpleNotificationTemplateRenderer();
         var request = new SendNotificationRequest(
-            Guid.NewGuid(),
             new NotificationRecipient(Guid.NewGuid(), "alice@example.com", null, null, "Alice"),
             [NotificationChannel.Email],
             NotificationCategory.Security,

@@ -19,7 +19,6 @@ public sealed class AccountTargetCooldownStore(
 
     public async Task<bool> TryAcquireAsync(
         string flow,
-        Guid tenantId,
         string normalizedIdentity,
         int cooldownSeconds,
         CancellationToken cancellationToken)
@@ -29,7 +28,7 @@ public sealed class AccountTargetCooldownStore(
             return true;
         }
 
-        var cacheKey = BuildCacheKey(flow, tenantId, normalizedIdentity);
+        var cacheKey = BuildCacheKey(flow, normalizedIdentity);
 
         try
         {
@@ -43,9 +42,8 @@ public sealed class AccountTargetCooldownStore(
         {
             logger.LogError(
                 exception,
-                "Account target cooldown cache get failed for flow {Flow} tenant {TenantId}. Blocking mail enqueue to avoid spam amplification.",
-                flow,
-                tenantId);
+                "Account target cooldown cache get failed for flow {Flow}. Blocking mail enqueue to avoid spam amplification.",
+                flow);
             return false;
         }
 
@@ -64,19 +62,18 @@ public sealed class AccountTargetCooldownStore(
         {
             logger.LogError(
                 exception,
-                "Account target cooldown cache set failed for flow {Flow} tenant {TenantId}. Blocking mail enqueue to avoid spam amplification.",
-                flow,
-                tenantId);
+                "Account target cooldown cache set failed for flow {Flow}. Blocking mail enqueue to avoid spam amplification.",
+                flow);
             return false;
         }
 
         return true;
     }
 
-    private static string BuildCacheKey(string flow, Guid tenantId, string normalizedIdentity)
+    private static string BuildCacheKey(string flow, string normalizedIdentity)
     {
         var hash = SHA256.HashData(Encoding.UTF8.GetBytes(normalizedIdentity));
         var identityHash = Convert.ToHexString(hash[..12]).ToLowerInvariant();
-        return $"{KeyPrefix}:{flow}:{tenantId:N}:{identityHash}";
+        return $"{KeyPrefix}:{flow}:{identityHash}";
     }
 }

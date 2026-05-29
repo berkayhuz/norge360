@@ -7,5 +7,5 @@ namespace Norge360.Auth.Application.Abstractions;
 
 public interface IAuthAuditTrailReader
 {
-    Task<DateTimeOffset?> GetLastSecurityEventAtAsync(Guid tenantId, Guid userId, CancellationToken cancellationToken);
+    Task<DateTimeOffset?> GetLastSecurityEventAtAsync(Guid userId, CancellationToken cancellationToken);
 }

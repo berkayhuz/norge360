@@ -39,7 +39,6 @@ public sealed class AuthController(
     {
         var response = await sender.Send(
             new RegisterCommand(
-                request.TenantName,
                 request.UserName,
                 request.Email,
                 request.Password,
@@ -48,123 +47,6 @@ public sealed class AuthController(
                 Norge360Cultures.NormalizeOrDefault(request.Culture ?? HttpContext.Features.Get<Microsoft.AspNetCore.Localization.IRequestCultureFeature>()?.RequestCulture.Culture.Name),
                 HttpContext.Connection.RemoteIpAddress?.ToString(),
                 Request.Headers.UserAgent.ToString()),
-            cancellationToken);
-
-        if (response is AuthSessionResult.PendingConfirmation)
-        {
-            return Accepted(AccountActionAccepted);
-        }
-
-        var issued = (AuthSessionResult.Issued)response;
-        cookieService.Apply(Response, issued.Tokens);
-        return Ok(cookieService.CreateResponsePayload(issued.Tokens));
-    }
-
-    [HttpPost("workspaces")]
-    [Authorize(Policy = AuthAuthorizationPolicies.TenantUser)]
-    [ProducesResponseType<AuthenticationTokenResponse>(StatusCodes.Status200OK)]
-    [ProducesResponseType<AuthIssuedSessionResponse>(StatusCodes.Status200OK)]
-    public async Task<IActionResult> CreateWorkspace([FromBody] CreateWorkspaceRequest request, CancellationToken cancellationToken)
-    {
-        var principal = requestContextAccessor.GetPrincipalContext(User);
-        var response = await sender.Send(
-            new CreateWorkspaceCommand(
-                principal.TenantId,
-                principal.UserId,
-                request.Name,
-                Norge360Cultures.NormalizeOrDefault(request.Culture ?? HttpContext.Features.Get<Microsoft.AspNetCore.Localization.IRequestCultureFeature>()?.RequestCulture.Culture.Name),
-                HttpContext.Connection.RemoteIpAddress?.ToString(),
-                Request.Headers.UserAgent.ToString(),
-                AspNetCore.RequestContext.RequestContextSupport.GetOrCreateCorrelationId(HttpContext),
-                HttpContext.TraceIdentifier),
-            cancellationToken);
-
-        cookieService.Apply(Response, response);
-        return Ok(cookieService.CreateResponsePayload(response));
-    }
-
-    [HttpDelete("workspaces/{tenantId:guid}")]
-    [Authorize(Policy = AuthAuthorizationPolicies.TenantUser)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> DeleteWorkspace([FromRoute] Guid tenantId, CancellationToken cancellationToken)
-    {
-        var principal = requestContextAccessor.GetPrincipalContext(User);
-        await sender.Send(
-            new DeleteWorkspaceCommand(
-                principal.TenantId,
-                tenantId,
-                principal.UserId,
-                HttpContext.Connection.RemoteIpAddress?.ToString(),
-                Request.Headers.UserAgent.ToString(),
-                AspNetCore.RequestContext.RequestContextSupport.GetOrCreateCorrelationId(HttpContext),
-                HttpContext.TraceIdentifier),
-            cancellationToken);
-
-        return NoContent();
-    }
-
-    [HttpGet("workspaces")]
-    [Authorize(Policy = AuthAuthorizationPolicies.TenantUser)]
-    [ProducesResponseType<IReadOnlyCollection<WorkspaceSummaryResponse>>(StatusCodes.Status200OK)]
-    public async Task<ActionResult<IReadOnlyCollection<WorkspaceSummaryResponse>>> ListWorkspaces(CancellationToken cancellationToken)
-    {
-        var principal = requestContextAccessor.GetPrincipalContext(User);
-        var memberships = await sender.Send(
-            new ListUserWorkspaceMembershipsCommand(principal.TenantId, principal.UserId),
-            cancellationToken);
-
-        return Ok(memberships.Select(item => new WorkspaceSummaryResponse(
-            item.TenantId,
-            item.OrganizationName,
-            item.OrganizationSlug,
-            item.Roles.FirstOrDefault(),
-            item.IsDefault,
-            item.LastPermissionRefreshAt)));
-    }
-
-    [HttpPost("workspaces/switch")]
-    [Authorize(Policy = AuthAuthorizationPolicies.TenantUser)]
-    [ProducesResponseType<AuthenticationTokenResponse>(StatusCodes.Status200OK)]
-    [ProducesResponseType<AuthIssuedSessionResponse>(StatusCodes.Status200OK)]
-    public async Task<IActionResult> SwitchWorkspace([FromBody] SwitchWorkspaceRequest request, CancellationToken cancellationToken)
-    {
-        var principal = requestContextAccessor.GetPrincipalContext(User);
-        var response = await sender.Send(
-            new SwitchWorkspaceCommand(
-                principal.TenantId,
-                request.TenantId,
-                principal.UserId,
-                HttpContext.Connection.RemoteIpAddress?.ToString(),
-                Request.Headers.UserAgent.ToString(),
-                AspNetCore.RequestContext.RequestContextSupport.GetOrCreateCorrelationId(HttpContext),
-                HttpContext.TraceIdentifier),
-            cancellationToken);
-
-        cookieService.Apply(Response, response);
-        return Ok(cookieService.CreateResponsePayload(response));
-    }
-
-    [HttpPost("invitations/accept")]
-    [AllowAnonymous]
-    [EnableRateLimiting(AuthRateLimitingOptions.RegisterPolicyName)]
-    [ProducesResponseType<AuthIssuedSessionResponse>(StatusCodes.Status200OK)]
-    [ProducesResponseType<AccountActionAcceptedResponse>(StatusCodes.Status202Accepted)]
-    public async Task<IActionResult> AcceptInvitation([FromBody] AcceptTenantInvitationRequest request, CancellationToken cancellationToken)
-    {
-        var tenantId = requestContextAccessor.ResolveTenantId(request.TenantId);
-        var response = await sender.Send(
-            new AcceptTenantInvitationCommand(
-                tenantId,
-                request.Token,
-                request.UserName,
-                request.Email,
-                request.Password,
-                request.FirstName,
-                request.LastName,
-                HttpContext.Connection.RemoteIpAddress?.ToString(),
-                Request.Headers.UserAgent.ToString(),
-                AspNetCore.RequestContext.RequestContextSupport.GetOrCreateCorrelationId(HttpContext),
-                HttpContext.TraceIdentifier),
             cancellationToken);
 
         if (response is AuthSessionResult.PendingConfirmation)
@@ -184,13 +66,8 @@ public sealed class AuthController(
     [ProducesResponseType<AuthIssuedSessionResponse>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
     {
-        var requestedTenantId = request.TenantId ?? Guid.Empty;
-        var tenantId = requestedTenantId == Guid.Empty
-            ? Guid.Empty
-            : requestContextAccessor.ResolveTenantId(requestedTenantId);
         var response = await sender.Send(
             new LoginCommand(
-                tenantId,
                 request.EmailOrUserName,
                 request.Password,
                 request.RememberMe,
@@ -204,89 +81,6 @@ public sealed class AuthController(
         return Ok(cookieService.CreateResponsePayload(response));
     }
 
-    [HttpPost("forgot-password")]
-    [AllowAnonymous]
-    [EnableRateLimiting(AuthRateLimitingOptions.PasswordRecoveryPolicyName)]
-    [ProducesResponseType<AccountActionAcceptedResponse>(StatusCodes.Status202Accepted)]
-    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request, CancellationToken cancellationToken)
-    {
-        var tenantId = requestContextAccessor.ResolveTenantId(request.TenantId);
-        await sender.Send(
-            new ForgotPasswordCommand(
-                tenantId,
-                request.Email,
-                HttpContext.Connection.RemoteIpAddress?.ToString(),
-                Request.Headers.UserAgent.ToString(),
-                AspNetCore.RequestContext.RequestContextSupport.GetOrCreateCorrelationId(HttpContext),
-                HttpContext.TraceIdentifier),
-            cancellationToken);
-
-        return Accepted(AccountActionAccepted);
-    }
-
-    [HttpPost("reset-password")]
-    [AllowAnonymous]
-    [EnableRateLimiting(AuthRateLimitingOptions.PasswordRecoveryPolicyName)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request, CancellationToken cancellationToken)
-    {
-        var tenantId = requestContextAccessor.ResolveTenantId(request.TenantId);
-        await sender.Send(
-            new ResetPasswordCommand(
-                tenantId,
-                request.UserId,
-                request.Token,
-                request.NewPassword,
-                HttpContext.Connection.RemoteIpAddress?.ToString(),
-                Request.Headers.UserAgent.ToString(),
-                AspNetCore.RequestContext.RequestContextSupport.GetOrCreateCorrelationId(HttpContext),
-                HttpContext.TraceIdentifier),
-            cancellationToken);
-
-        cookieService.Clear(Response);
-        return NoContent();
-    }
-
-    [HttpPost("confirm-email")]
-    [AllowAnonymous]
-    [EnableRateLimiting(AuthRateLimitingOptions.EmailConfirmationPolicyName)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailRequest request, CancellationToken cancellationToken)
-    {
-        var tenantId = requestContextAccessor.ResolveTenantId(request.TenantId);
-        await sender.Send(
-            new ConfirmEmailCommand(
-                tenantId,
-                request.UserId,
-                request.Token,
-                HttpContext.Connection.RemoteIpAddress?.ToString(),
-                Request.Headers.UserAgent.ToString(),
-                AspNetCore.RequestContext.RequestContextSupport.GetOrCreateCorrelationId(HttpContext),
-                HttpContext.TraceIdentifier),
-            cancellationToken);
-
-        return NoContent();
-    }
-
-    [HttpPost("resend-confirm-email")]
-    [AllowAnonymous]
-    [EnableRateLimiting(AuthRateLimitingOptions.EmailConfirmationPolicyName)]
-    [ProducesResponseType<AccountActionAcceptedResponse>(StatusCodes.Status202Accepted)]
-    public async Task<IActionResult> ResendConfirmEmail([FromBody] ResendEmailConfirmationRequest request, CancellationToken cancellationToken)
-    {
-        var tenantId = requestContextAccessor.ResolveTenantId(request.TenantId);
-        await sender.Send(
-            new ResendEmailConfirmationCommand(
-                tenantId,
-                request.Email,
-                HttpContext.Connection.RemoteIpAddress?.ToString(),
-                Request.Headers.UserAgent.ToString(),
-                AspNetCore.RequestContext.RequestContextSupport.GetOrCreateCorrelationId(HttpContext),
-                HttpContext.TraceIdentifier),
-            cancellationToken);
-
-        return Accepted(AccountActionAccepted);
-    }
 
     [HttpPost("refresh")]
     [AllowAnonymous]
@@ -295,12 +89,10 @@ public sealed class AuthController(
     [ProducesResponseType<AuthIssuedSessionResponse>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequest request, CancellationToken cancellationToken)
     {
-        var tenantId = requestContextAccessor.ResolveTenantId(request.TenantId);
         var refreshContext = requestContextAccessor.ResolveRefreshContext(Request, request.SessionId, request.RefreshToken);
 
         var response = await sender.Send(
             new RefreshTokenCommand(
-                tenantId,
                 refreshContext.SessionId,
                 refreshContext.RefreshToken,
                 HttpContext.Connection.RemoteIpAddress?.ToString(),
@@ -317,7 +109,6 @@ public sealed class AuthController(
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> Logout([FromBody] LogoutRequest? request, CancellationToken cancellationToken)
     {
-        var requestedTenantId = request?.TenantId ?? Guid.Empty;
         var refreshContext = requestContextAccessor.ResolveRefreshContext(
             Request,
             request?.SessionId ?? Guid.Empty,
@@ -329,16 +120,12 @@ public sealed class AuthController(
             principalContext = requestContextAccessor.GetPrincipalContext(User);
         }
 
-        if (requestedTenantId == Guid.Empty &&
-            (refreshContext.SessionId == Guid.Empty || string.IsNullOrWhiteSpace(refreshContext.RefreshToken)))
+        if (refreshContext.SessionId == Guid.Empty || string.IsNullOrWhiteSpace(refreshContext.RefreshToken))
         {
             cookieService.Clear(Response);
             return NoContent();
         }
 
-        var tenantId = requestedTenantId == Guid.Empty && principalContext is not null
-            ? principalContext.TenantId
-            : requestContextAccessor.ResolveTenantId(requestedTenantId);
         var sessionId = refreshContext.SessionId == Guid.Empty && principalContext is not null
             ? principalContext.CurrentSessionId
             : refreshContext.SessionId;
@@ -347,7 +134,7 @@ public sealed class AuthController(
         {
             try
             {
-                await sender.Send(new LogoutCommand(tenantId, sessionId, refreshContext.RefreshToken), cancellationToken);
+                await sender.Send(new LogoutCommand(sessionId, refreshContext.RefreshToken), cancellationToken);
             }
             catch (AuthApplicationException ex) when (
                 ex.ErrorCode is "session_not_found" or "invalid_refresh_token")
@@ -360,7 +147,7 @@ public sealed class AuthController(
     }
 
     [HttpGet("session-status")]
-    [Authorize(Policy = AuthAuthorizationPolicies.TenantUser)]
+    [Authorize]
     [ProducesResponseType<AuthSessionStatusResponse>(StatusCodes.Status200OK)]
     public IActionResult GetSessionStatus()
     {
@@ -379,7 +166,6 @@ public sealed class AuthController(
             .ToArray();
 
         return Ok(new AuthSessionStatusResponse(
-            principal.TenantId,
             principal.UserId,
             principal.CurrentSessionId,
             principal.Email ?? string.Empty,
@@ -388,29 +174,6 @@ public sealed class AuthController(
             AccountStatus: "active",
             EmailConfirmed: true,
             MfaVerifiedAt: null));
-    }
-
-    [HttpPost("confirm-email-change")]
-    [AllowAnonymous]
-    [EnableRateLimiting(AuthRateLimitingOptions.EmailConfirmationPolicyName)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> ConfirmEmailChange([FromBody] ConfirmEmailChangeRequest request, CancellationToken cancellationToken)
-    {
-        var tenantId = requestContextAccessor.ResolveTenantId(request.TenantId);
-        await sender.Send(
-            new ConfirmEmailChangeCommand(
-                tenantId,
-                request.UserId,
-                request.NewEmail,
-                request.Token,
-                HttpContext.Connection.RemoteIpAddress?.ToString(),
-                Request.Headers.UserAgent.ToString(),
-                AspNetCore.RequestContext.RequestContextSupport.GetOrCreateCorrelationId(HttpContext),
-                HttpContext.TraceIdentifier),
-            cancellationToken);
-
-        cookieService.Clear(Response);
-        return NoContent();
     }
 
 }

@@ -170,7 +170,6 @@ public sealed class NotificationProcessor(
             ?? new Dictionary<string, string>();
 
         return new SendNotificationRequest(
-            message.TenantId,
             new NotificationRecipient(
                 message.UserId,
                 message.RecipientEmailAddress,

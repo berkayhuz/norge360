@@ -11,7 +11,6 @@ public static class PermissionClaimReader
 {
     private static readonly string[] PermissionClaimTypes = ["permission", "permissions", "scope", "scp"];
     private static readonly string[] RoleClaimTypes = [ClaimTypes.Role, "role", "roles"];
-    private static readonly string[] TenantClaimTypes = ["tenant_id", "tenantId", "tenant"];
 
     public static IReadOnlyCollection<string> ReadPermissions(ClaimsPrincipal? principal) =>
         ReadValues(principal, PermissionClaimTypes);
@@ -21,7 +20,7 @@ public static class PermissionClaimReader
 
     public static bool HasPermission(ClaimsPrincipal? principal, string permission)
     {
-        if (principal is null || !HasTenant(principal))
+        if (principal is null)
         {
             return false;
         }
@@ -40,9 +39,6 @@ public static class PermissionClaimReader
         return false;
     }
 
-    public static bool HasTenant(ClaimsPrincipal? principal) =>
-        TryReadTenantId(principal) is not null;
-
     private static IReadOnlyCollection<string> ReadValues(ClaimsPrincipal? principal, IEnumerable<string> claimTypes)
     {
         if (principal is null)
@@ -60,30 +56,6 @@ public static class PermissionClaimReader
         }
 
         return values.Count == 0 ? [] : values.ToArray();
-    }
-
-    private static Guid? TryReadTenantId(ClaimsPrincipal? principal)
-    {
-        if (principal is null)
-        {
-            return null;
-        }
-
-        foreach (var claimType in TenantClaimTypes)
-        {
-            var value = principal.FindFirst(claimType)?.Value;
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                continue;
-            }
-
-            if (Guid.TryParse(value, out var tenantId) && tenantId != Guid.Empty)
-            {
-                return tenantId;
-            }
-        }
-
-        return null;
     }
 
     private static void AddSplitClaimValues(string? value, HashSet<string> values)

@@ -11,7 +11,6 @@ namespace Norge360.Auth.TestKit.Factories;
 public static class TestClaimsPrincipalFactory
 {
     public static ClaimsPrincipal CreateAuthenticatedPrincipal(
-        Guid tenantId,
         Guid userId,
         Guid sessionId,
         string email = "jane.doe@example.com",
@@ -21,7 +20,6 @@ public static class TestClaimsPrincipalFactory
     {
         var claims = new List<Claim>
         {
-            new("tenant_id", tenantId.ToString()),
             new(ClaimTypes.NameIdentifier, userId.ToString()),
             new(JwtRegisteredClaimNames.Sub, userId.ToString()),
             new(JwtRegisteredClaimNames.Sid, sessionId.ToString()),
@@ -29,10 +27,9 @@ public static class TestClaimsPrincipalFactory
             new(JwtRegisteredClaimNames.Email, email)
         };
 
-        claims.AddRange((roles ?? ["tenant-user"]).Select(role => new Claim(ClaimTypes.Role, role)));
+        claims.AddRange((roles ?? ["user"]).Select(role => new Claim(ClaimTypes.Role, role)));
         claims.AddRange((permissions ?? ["session:self"]).Select(permission => new Claim("permission", permission)));
 
         return new ClaimsPrincipal(new ClaimsIdentity(claims, authenticationType));
     }
 }
-

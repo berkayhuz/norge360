@@ -24,10 +24,10 @@ public sealed class UserSessionStateValidator(
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
-    public async Task<bool> IsValidAsync(Guid tenantId, Guid userId, Guid sessionId, CancellationToken cancellationToken)
+    public async Task<bool> IsValidAsync(Guid userId, Guid sessionId, CancellationToken cancellationToken)
     {
         var value = options.Value;
-        var cacheKey = BuildCacheKey(value.KeyPrefix, tenantId, sessionId);
+        var cacheKey = BuildCacheKey(value.KeyPrefix, sessionId);
 
         if (value.EnableCache)
         {
@@ -50,13 +50,12 @@ public sealed class UserSessionStateValidator(
             {
                 logger.LogWarning(
                     exception,
-                    "Session validation cache get failed for tenant {TenantId} session {SessionId}. Falling back to repository.",
-                    tenantId,
+                    "Session validation cache get failed for session {SessionId}. Falling back to repository.",
                     sessionId);
             }
         }
 
-        var session = await userSessionRepository.GetAsync(tenantId, sessionId, cancellationToken);
+        var session = await userSessionRepository.GetAsync(sessionId, cancellationToken);
         var isValid = session is not null &&
                       session.UserId == userId &&
                       !session.IsRevoked &&
@@ -83,8 +82,7 @@ public sealed class UserSessionStateValidator(
             {
                 logger.LogWarning(
                     exception,
-                    "Session validation cache set failed for tenant {TenantId} session {SessionId}.",
-                    tenantId,
+                    "Session validation cache set failed for session {SessionId}.",
                     sessionId);
             }
         }
@@ -92,7 +90,7 @@ public sealed class UserSessionStateValidator(
         return isValid;
     }
 
-    public void Evict(Guid tenantId, Guid sessionId)
+    public void Evict(Guid sessionId)
     {
         var value = options.Value;
         if (!value.EnableCache)
@@ -102,20 +100,19 @@ public sealed class UserSessionStateValidator(
 
         try
         {
-            distributedCache.Remove(BuildCacheKey(value.KeyPrefix, tenantId, sessionId));
+            distributedCache.Remove(BuildCacheKey(value.KeyPrefix, sessionId));
         }
         catch (Exception exception)
         {
             logger.LogError(
                 exception,
-                "Session validation cache evict failed for tenant {TenantId} session {SessionId}.",
-                tenantId,
+                "Session validation cache evict failed for session {SessionId}.",
                 sessionId);
         }
     }
 
-    private static string BuildCacheKey(string prefix, Guid tenantId, Guid sessionId) =>
-        $"{prefix}:session:{tenantId:N}:{sessionId:N}";
+    private static string BuildCacheKey(string prefix, Guid sessionId) =>
+        $"{prefix}:session:{sessionId:N}";
 
     private sealed record CachedSessionState(Guid UserId, bool IsValid);
 }

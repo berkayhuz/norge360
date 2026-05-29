@@ -2,7 +2,16 @@
 
   <PropertyGroup>
     <UserSecretsId>Norge360-auth-api-dev</UserSecretsId>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="Controllers\AuthController.cs" />
+    <Compile Include="Accessors\AuthRequestContextAccessor.cs" />
+    <Compile Include="Cookies\AuthCookieService.cs" />
+    <Compile Include="Security\AuthRateLimitingOptions.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\packages\dotnet\src\Norge360.Configuration\Norge360.Configuration.csproj" />

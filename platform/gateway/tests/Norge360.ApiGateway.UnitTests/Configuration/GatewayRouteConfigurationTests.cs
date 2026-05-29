@@ -48,20 +48,6 @@ public sealed class GatewayRouteConfigurationTests
         routes.TryGetProperty("auth-api-route", out _).Should().BeTrue();
     }
 
-    [Fact]
-    public void Production_Config_Should_Not_Require_Tenant_Forwarding_For_Anonymous_Auth_Route()
-    {
-        using var document = JsonDocument.Parse(File.ReadAllText(FindRepoFile("platform/gateway/src/Norge360.ApiGateway/appsettings.Production.json")));
-
-        var metadata = document.RootElement
-            .GetProperty("ReverseProxy")
-            .GetProperty("Routes")
-            .GetProperty("auth-api-route")
-            .GetProperty("Metadata");
-
-        metadata.GetProperty("TenantForwarding").GetString().Should().Be("false");
-    }
-
     private static string FindRepoFile(string relativePath)
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);

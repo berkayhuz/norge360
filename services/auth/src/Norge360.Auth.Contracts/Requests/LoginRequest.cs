@@ -6,7 +6,6 @@
 namespace Norge360.Auth.Contracts.Requests;
 
 public sealed record LoginRequest(
-    Guid? TenantId,
     string EmailOrUserName,
     string Password,
     bool RememberMe = false,

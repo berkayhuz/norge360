@@ -33,7 +33,6 @@ public class PerformanceGuardrailTests
     private sealed class StubCurrentUserService : Norge360.CurrentUser.ICurrentUserService
     {
         public Guid UserId { get; init; }
-        public Guid TenantId { get; init; }
         public bool IsAuthenticated => UserId != Guid.Empty;
         public string? UserName => null;
         public string? Email => null;

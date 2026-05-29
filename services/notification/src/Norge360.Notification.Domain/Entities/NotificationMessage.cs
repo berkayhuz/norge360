@@ -22,7 +22,6 @@ public sealed class NotificationMessage
 
     public NotificationMessage(
         Guid id,
-        Guid? tenantId,
         Guid? userId,
         NotificationCategory category,
         NotificationPriority priority,
@@ -41,7 +40,6 @@ public sealed class NotificationMessage
         DateTime createdAtUtc)
     {
         Id = id;
-        TenantId = tenantId;
         UserId = userId;
         Category = category;
         Priority = priority;
@@ -62,7 +60,6 @@ public sealed class NotificationMessage
     }
 
     public Guid Id { get; private set; }
-    public Guid? TenantId { get; private set; }
     public Guid? UserId { get; private set; }
     public NotificationCategory Category { get; private set; }
     public NotificationPriority Priority { get; private set; }

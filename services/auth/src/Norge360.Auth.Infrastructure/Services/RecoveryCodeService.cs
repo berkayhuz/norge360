@@ -24,10 +24,10 @@ public sealed class RecoveryCodeService : IRecoveryCodeService
         return codes;
     }
 
-    public string HashCode(Guid tenantId, Guid userId, string code)
+    public string HashCode(Guid userId, string code)
     {
         var normalized = code.Trim().Replace("-", string.Empty, StringComparison.Ordinal).ToUpperInvariant();
-        var input = $"{tenantId:N}:{userId:N}:{normalized}";
+        var input = $"{userId:N}:{normalized}";
         return Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(input)));
     }
 }

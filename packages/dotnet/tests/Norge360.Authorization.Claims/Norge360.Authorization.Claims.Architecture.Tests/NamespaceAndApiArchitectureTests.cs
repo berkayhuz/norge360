@@ -42,7 +42,6 @@ public class NamespaceAndApiArchitectureTests
     {
         var identity = new ClaimsIdentity(
         [
-            new Claim("tenant_id", "d2501385-53f6-483f-a17f-8c1bc37da6ea"),
             new Claim("permission", "users.read users.write")
         ]);
         var principal = new ClaimsPrincipal(identity);

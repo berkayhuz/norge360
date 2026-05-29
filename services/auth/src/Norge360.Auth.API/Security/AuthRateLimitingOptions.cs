@@ -14,7 +14,6 @@ public sealed class AuthRateLimitingOptions
     public const string RegisterPolicyName = "auth-register";
     public const string RefreshPolicyName = "auth-refresh";
     public const string LogoutPolicyName = "auth-logout";
-    public const string InvitePolicyName = "auth-invite";
     public const string RoleManagementPolicyName = "auth-role-management";
     public const string PasswordRecoveryPolicyName = "auth-password-recovery";
     public const string EmailConfirmationPolicyName = "auth-email-confirmation";
@@ -28,8 +27,6 @@ public sealed class AuthRateLimitingOptions
     public FixedWindowRuleOptions Refresh { get; set; } = new(PermitLimit: 10, WindowSeconds: 60, QueueLimit: 0);
 
     public FixedWindowRuleOptions Logout { get; set; } = new(PermitLimit: 20, WindowSeconds: 60, QueueLimit: 0);
-
-    public FixedWindowRuleOptions Invite { get; set; } = new(PermitLimit: 10, WindowSeconds: 300, QueueLimit: 0);
 
     public FixedWindowRuleOptions RoleManagement { get; set; } = new(PermitLimit: 20, WindowSeconds: 300, QueueLimit: 0);
 

@@ -11,10 +11,10 @@ namespace Norge360.Auth.Infrastructure.Services;
 
 public sealed class AuthAuditTrailReader(AuthDbContext dbContext) : IAuthAuditTrailReader
 {
-    public async Task<DateTimeOffset?> GetLastSecurityEventAtAsync(Guid tenantId, Guid userId, CancellationToken cancellationToken)
+    public async Task<DateTimeOffset?> GetLastSecurityEventAtAsync(Guid userId, CancellationToken cancellationToken)
     {
         var createdAt = await dbContext.AuthAuditEvents
-            .Where(x => x.TenantId == tenantId && x.UserId == userId && !x.IsDeleted && x.EventType.StartsWith("auth."))
+            .Where(x => x.UserId == userId && !x.IsDeleted && x.EventType.StartsWith("auth."))
             .OrderByDescending(x => x.CreatedAt)
             .Select(x => (DateTime?)x.CreatedAt)
             .FirstOrDefaultAsync(cancellationToken);

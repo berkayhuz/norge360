@@ -28,10 +28,9 @@ public sealed class IdempotencyBehavior<TRequest, TResponse>(
             return await next(cancellationToken);
         }
 
-        currentUserService.EnsureAuthenticated();
-        var tenantId = currentUserService.EnsureTenant();
+        var userId = currentUserService.EnsureAuthenticated();
         var requestHash = ComputeHash(request);
-        var cacheKey = $"crm:idempotency:{tenantId:N}:{typeof(TRequest).FullName}:{idempotentCommand.IdempotencyKey}";
+        var cacheKey = $"platform:idempotency:{userId:N}:{typeof(TRequest).FullName}:{idempotentCommand.IdempotencyKey}";
         var existing = await stateStore.GetAsync(cacheKey, cancellationToken);
         if (existing is not null)
         {

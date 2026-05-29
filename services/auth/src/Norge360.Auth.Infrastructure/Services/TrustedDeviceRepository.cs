@@ -12,16 +12,16 @@ namespace Norge360.Auth.Infrastructure.Services;
 
 public sealed class TrustedDeviceRepository(AuthDbContext dbContext) : ITrustedDeviceRepository
 {
-    public async Task<IReadOnlyCollection<TrustedDevice>> ListForUserAsync(Guid tenantId, Guid userId, CancellationToken cancellationToken) =>
+    public async Task<IReadOnlyCollection<TrustedDevice>> ListForUserAsync(Guid userId, CancellationToken cancellationToken) =>
         await dbContext.TrustedDevices
-            .Where(x => x.TenantId == tenantId && x.UserId == userId && !x.IsDeleted)
+            .Where(x => x.UserId == userId && !x.IsDeleted)
             .OrderByDescending(x => x.LastSeenAtUtc ?? x.TrustedAtUtc)
             .ToListAsync(cancellationToken);
 
-    public async Task<bool> RevokeAsync(Guid tenantId, Guid userId, Guid deviceId, DateTime utcNow, string reason, CancellationToken cancellationToken)
+    public async Task<bool> RevokeAsync(Guid userId, Guid deviceId, DateTime utcNow, string reason, CancellationToken cancellationToken)
     {
         var device = await dbContext.TrustedDevices.SingleOrDefaultAsync(
-            x => x.TenantId == tenantId && x.UserId == userId && x.Id == deviceId && !x.IsDeleted,
+            x => x.UserId == userId && x.Id == deviceId && !x.IsDeleted,
             cancellationToken);
 
         if (device is null)

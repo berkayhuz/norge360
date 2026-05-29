@@ -42,7 +42,6 @@ builder.Services.AddSingleton<IValidateOptions<GatewayCorsOptions>, GatewayCorsO
 builder.Services.AddSingleton<IValidateOptions<GatewayForwardedHeadersOptions>, GatewayForwardedHeadersOptionsValidation>();
 builder.Services.AddSingleton<IValidateOptions<GatewaySecurityHeadersOptions>, GatewaySecurityHeadersOptionsValidation>();
 builder.Services.AddSingleton<IValidateOptions<GatewayRateLimitingOptions>, GatewayRateLimitingOptionsValidation>();
-builder.Services.AddSingleton<IValidateOptions<GatewayTenantForwardingOptions>, GatewayTenantForwardingOptionsValidation>();
 builder.Services.AddSingleton<IValidateOptions<TrustedGatewayOptions>, GatewayTrustedCallerOptionsValidation>();
 
 builder.Services
@@ -63,12 +62,6 @@ builder.Services
 builder.Services
     .AddOptions<GatewayRateLimitingOptions>()
     .BindConfiguration(GatewayRateLimitingOptions.SectionName)
-    .ValidateOnStart();
-
-builder.Services
-    .AddOptions<GatewayTenantForwardingOptions>()
-    .BindConfiguration(GatewayTenantForwardingOptions.SectionName)
-    .ValidateDataAnnotations()
     .ValidateOnStart();
 
 builder.Services
@@ -137,8 +130,7 @@ builder.Services.AddRateLimiter(options =>
             new KeyValuePair<string, object?>("endpoint", path),
             new KeyValuePair<string, object?>("policy", ProxyRateLimitPolicyName),
             new KeyValuePair<string, object?>("reason", "rejected"),
-            new KeyValuePair<string, object?>("environment", environment),
-            new KeyValuePair<string, object?>("tenant_hash", "anonymous"));
+            new KeyValuePair<string, object?>("environment", environment));
 
         context.HttpContext.RequestServices
             .GetRequiredService<ILoggerFactory>()
@@ -184,7 +176,7 @@ builder.Services
         transformBuilderContext.AddRequestTransform(transformContext =>
         {
             var transform = transformContext.HttpContext.RequestServices.GetRequiredService<GatewayTrustedRequestTransform>();
-            transform.ApplyCommonHeaders(transformContext, transformBuilderContext.Route?.Metadata);
+            transform.ApplyCommonHeaders(transformContext);
             return ValueTask.CompletedTask;
         });
 

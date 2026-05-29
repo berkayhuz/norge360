@@ -32,9 +32,8 @@ public class User : AuditableEntity
     public DateTime? AuthenticatorKeyCreatedAt { get; set; }
     public DateTime? AuthenticatorKeyConfirmedAt { get; set; }
     public DateTime? RecoveryCodesGeneratedAt { get; set; }
-    public string Roles { get; set; } = "tenant-user";
+    public string Roles { get; set; } = "user";
     public string Permissions { get; set; } = "session:self,profile:self";
-    public ICollection<UserTenantMembership> TenantMemberships { get; set; } = [];
     public ICollection<UserSession> Sessions { get; set; } = [];
     public ICollection<AuthAuditEvent> AuditEvents { get; set; } = [];
     public ICollection<AuthVerificationToken> VerificationTokens { get; set; } = [];

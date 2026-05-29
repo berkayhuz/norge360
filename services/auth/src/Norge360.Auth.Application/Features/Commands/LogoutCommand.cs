@@ -8,6 +8,5 @@ using MediatR;
 namespace Norge360.Auth.Application.Features.Commands;
 
 public sealed record LogoutCommand(
-    Guid TenantId,
     Guid SessionId,
     string RefreshToken) : IRequest<Unit>;

@@ -7,10 +7,9 @@ using Norge360.Entities.Abstractions;
 
 namespace Norge360.Entities;
 
-public abstract class EntityBase : ITenantEntity, ISoftDeletable, IAuditable, IHasRowVersion
+public abstract class EntityBase : ISoftDeletable, IAuditable, IHasRowVersion
 {
     public Guid Id { get; protected set; } = Guid.NewGuid();
-    public Guid TenantId { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
     public string? CreatedBy { get; set; }

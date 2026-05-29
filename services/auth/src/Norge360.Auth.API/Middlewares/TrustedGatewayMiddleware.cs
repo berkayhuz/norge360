@@ -58,7 +58,6 @@ public sealed class TrustedGatewayMiddleware(
                     "auth.trusted-gateway.rejected",
                     "critical",
                     "Trusted gateway validation rejected request.",
-                    Guid.Empty,
                     null,
                     null,
                     correlationId,

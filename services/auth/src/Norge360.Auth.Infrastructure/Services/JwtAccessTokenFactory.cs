@@ -19,7 +19,7 @@ public sealed class JwtAccessTokenFactory(
     IClock clock,
     ITokenSigningKeyProvider tokenSigningKeyProvider) : IAccessTokenFactory
 {
-    public AccessTokenDescriptor Create(User user, Guid tenantId, Guid sessionId)
+    public AccessTokenDescriptor Create(User user, Guid sessionId)
         => Create(
             user.Id,
             user.UserName,
@@ -27,7 +27,6 @@ public sealed class JwtAccessTokenFactory(
             user.TokenVersion,
             user.GetRoles(),
             user.GetPermissions(),
-            tenantId,
             sessionId,
             authenticatedAt: null,
             authenticationMethods: null);
@@ -39,7 +38,6 @@ public sealed class JwtAccessTokenFactory(
         int tokenVersion,
         IReadOnlyCollection<string> roles,
         IReadOnlyCollection<string> permissions,
-        Guid tenantId,
         Guid sessionId,
         DateTimeOffset? authenticatedAt = null,
         IReadOnlyCollection<string>? authenticationMethods = null)
@@ -57,7 +55,6 @@ public sealed class JwtAccessTokenFactory(
             new(JwtRegisteredClaimNames.Sub, userId.ToString()),
             new(JwtRegisteredClaimNames.UniqueName, userName),
             new(JwtRegisteredClaimNames.Email, email),
-            new("tenant_id", tenantId.ToString()),
             new(JwtRegisteredClaimNames.Sid, sessionId.ToString()),
             new("token_version", tokenVersion.ToString()),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString("N")),

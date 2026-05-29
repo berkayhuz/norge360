@@ -7,18 +7,15 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Norge360.Authorization.Claims;
 using Norge360.CurrentUser;
-using Norge360.Tenancy;
 
 namespace Norge360.AspNetCore.CurrentUser;
 
-public sealed class HttpCurrentUserService(IHttpContextAccessor httpContextAccessor) : ICurrentUserService, ITenantContext, ITenantProvider
+public sealed class HttpCurrentUserService(IHttpContextAccessor httpContextAccessor) : ICurrentUserService
 {
     private ClaimsPrincipal? Principal => httpContextAccessor.HttpContext?.User;
     private ClaimsPrincipal? _cachedPrincipal;
     private Guid _cachedUserId;
-    private Guid _cachedTenantId;
     private bool _isUserIdCached;
-    private bool _isTenantIdCached;
 
     public Guid UserId
     {
@@ -35,26 +32,6 @@ public sealed class HttpCurrentUserService(IHttpContextAccessor httpContextAcces
             return _cachedUserId;
         }
     }
-
-    public Guid TenantId
-    {
-        get
-        {
-            EnsureClaimCacheForCurrentPrincipal();
-            if (_isTenantIdCached)
-            {
-                return _cachedTenantId;
-            }
-
-            _cachedTenantId = ReadGuid(Principal, "tenant_id", "tenantId", "tenant");
-            _isTenantIdCached = true;
-            return _cachedTenantId;
-        }
-    }
-
-    Guid? ITenantContext.TenantId => TenantId == Guid.Empty ? null : TenantId;
-
-    Guid? ITenantProvider.TenantId => TenantId == Guid.Empty ? null : TenantId;
 
     public bool IsAuthenticated => Principal?.Identity?.IsAuthenticated == true && UserId != Guid.Empty;
 
@@ -85,9 +62,7 @@ public sealed class HttpCurrentUserService(IHttpContextAccessor httpContextAcces
 
         _cachedPrincipal = principal;
         _cachedUserId = Guid.Empty;
-        _cachedTenantId = Guid.Empty;
         _isUserIdCached = false;
-        _isTenantIdCached = false;
     }
 
     private static Guid ReadGuid(ClaimsPrincipal? principal, params string[] claimTypes)

@@ -129,17 +129,13 @@
         "dependencies": {
           "Microsoft.AspNetCore.Http.Abstractions": "[2.3.9, )",
           "Norge360.Authorization.Claims": "[1.0.0, )",
-          "Norge360.CurrentUser": "[1.0.0, )",
-          "Norge360.Tenancy": "[1.0.0, )"
+          "Norge360.CurrentUser": "[1.0.0, )"
         }
       },
       "norge360.authorization.claims": {
         "type": "Project"
       },
       "norge360.currentuser": {
-        "type": "Project"
-      },
-      "norge360.tenancy": {
         "type": "Project"
       },
       "Microsoft.AspNetCore.Http.Abstractions": {

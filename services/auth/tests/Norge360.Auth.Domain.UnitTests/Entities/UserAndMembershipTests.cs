@@ -16,23 +16,23 @@ public sealed class UserAndMembershipTests
     {
         var user = new User
         {
-            Roles = "tenant-user, Tenant-User ,tenant-admin,tenant-admin"
+            Roles = "user, User ,platform-admin,platform-admin"
         };
 
         var roles = user.GetRoles();
 
-        roles.Should().BeEquivalentTo(["tenant-user", "tenant-admin"]);
+        roles.Should().BeEquivalentTo(["user", "platform-admin"]);
     }
 
     [Fact]
-    public void UserTenantMembership_GetPermissions_Should_Trim_And_Deduplicate()
+    public void User_GetPermissions_Should_Trim_And_Deduplicate()
     {
-        var membership = new UserTenantMembership
+        var user = new User
         {
             Permissions = "session:self, profile:self,SESSION:SELF"
         };
 
-        var permissions = membership.GetPermissions();
+        var permissions = user.GetPermissions();
 
         permissions.Should().BeEquivalentTo(["session:self", "profile:self"]);
     }

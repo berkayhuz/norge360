@@ -9,7 +9,6 @@ public sealed record SecurityAlert(
     string Category,
     string Severity,
     string Message,
-    Guid TenantId,
     Guid? UserId,
     Guid? SessionId,
     string? CorrelationId,

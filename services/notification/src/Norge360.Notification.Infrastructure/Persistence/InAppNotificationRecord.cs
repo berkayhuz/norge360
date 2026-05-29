@@ -15,7 +15,6 @@ public sealed class InAppNotificationRecord
 
     public InAppNotificationRecord(
         Guid id,
-        Guid? tenantId,
         Guid userId,
         string subject,
         string body,
@@ -23,7 +22,6 @@ public sealed class InAppNotificationRecord
         DateTime createdAtUtc)
     {
         Id = id;
-        TenantId = tenantId;
         UserId = userId;
         Subject = subject;
         Body = body;
@@ -32,7 +30,6 @@ public sealed class InAppNotificationRecord
     }
 
     public Guid Id { get; private set; }
-    public Guid? TenantId { get; private set; }
     public Guid UserId { get; private set; }
     public string Subject { get; private set; }
     public string Body { get; private set; }

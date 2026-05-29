@@ -10,7 +10,6 @@ namespace Norge360.Notification.Application.Abstractions;
 public interface IUserNotificationPreferenceReader
 {
     Task<bool> IsChannelEnabledAsync(
-        Guid? tenantId,
         Guid userId,
         NotificationCategory category,
         NotificationChannel channel,

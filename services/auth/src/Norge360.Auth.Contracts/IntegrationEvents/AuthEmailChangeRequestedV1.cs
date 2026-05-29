@@ -7,7 +7,6 @@ namespace Norge360.Auth.Contracts.IntegrationEvents;
 
 public sealed record AuthEmailChangeRequestedV1(
     Guid UserId,
-    Guid TenantId,
     string UserName,
     string CurrentEmail,
     string NewEmail,

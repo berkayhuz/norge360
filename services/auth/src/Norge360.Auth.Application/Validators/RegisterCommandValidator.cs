@@ -17,11 +17,9 @@ public sealed partial class RegisterCommandValidator : AbstractValidator<Registe
     {
         var policy = passwordPolicyOptions.Value;
 
-        RuleFor(x => x.TenantName).NotEmpty().MinimumLength(2).MaximumLength(200);
         RuleFor(x => x.UserName).NotEmpty().MinimumLength(3).MaximumLength(64);
         RuleFor(x => x.Email).NotEmpty().EmailAddress().MaximumLength(256);
-        RuleFor(x => x.Password)
-            .ApplyPasswordPolicy(policy);
+        RuleFor(x => x.Password).NotEmpty().MinimumLength(Math.Max(8, policy.MinimumLength));
         RuleFor(x => x.Culture)
             .MaximumLength(20)
             .Must(value => string.IsNullOrWhiteSpace(value) || Norge360Cultures.IsSupportedCulture(value))

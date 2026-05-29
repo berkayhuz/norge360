@@ -9,7 +9,6 @@ using Norge360.Notification.Contracts.Notifications.Models;
 namespace Norge360.Notification.Contracts.Notifications.Requests;
 
 public sealed record SendNotificationRequest(
-    Guid? TenantId,
     NotificationRecipient Recipient,
     IReadOnlyCollection<NotificationChannel> Channels,
     NotificationCategory Category,

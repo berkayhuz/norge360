@@ -11,7 +11,6 @@ namespace Norge360.Notification.Application.Services;
 public sealed class AllowAllNotificationPreferenceReader : IUserNotificationPreferenceReader
 {
     public Task<bool> IsChannelEnabledAsync(
-        Guid? tenantId,
         Guid userId,
         NotificationCategory category,
         NotificationChannel channel,

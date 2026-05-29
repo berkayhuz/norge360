@@ -1,13 +1,11 @@
 TYPE class Norge360.CurrentUser.CurrentUserServiceExtensions
   METHOD System.Boolean IsAuthenticated(Norge360.CurrentUser.ICurrentUserService currentUserService)
   METHOD System.Guid EnsureAuthenticated(Norge360.CurrentUser.ICurrentUserService currentUserService)
-  METHOD System.Guid EnsureTenant(Norge360.CurrentUser.ICurrentUserService currentUserService)
 TYPE interface Norge360.CurrentUser.ICurrentUserService
   PROP System.String Email { get; }
   PROP System.Boolean IsAuthenticated { get; }
   PROP System.Collections.Generic.IReadOnlyCollection<System.String> Permissions { get; }
   PROP System.Collections.Generic.IReadOnlyCollection<System.String> Roles { get; }
-  PROP System.Guid TenantId { get; }
   PROP System.Guid UserId { get; }
   PROP System.String UserName { get; }
   METHOD System.Boolean HasPermission(System.String permission)

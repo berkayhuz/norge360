@@ -24,7 +24,6 @@ public class AuthorizationAspNetCoreBenchmarks
         _requirement = new PermissionRequirement("users.read");
         _user = new ClaimsPrincipal(new ClaimsIdentity(
         [
-            new Claim("tenant_id", "d2501385-53f6-483f-a17f-8c1bc37da6ea"),
             new Claim("permission", "users.read users.write")
         ], "bench"));
     }

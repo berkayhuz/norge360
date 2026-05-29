@@ -70,9 +70,6 @@
       "norge360.repository": {
         "type": "Project"
       },
-      "norge360.tenancy": {
-        "type": "Project"
-      },
       "Microsoft.Extensions.Caching.Abstractions": {
         "type": "CentralTransitive",
         "requested": "[10.0.7, )",

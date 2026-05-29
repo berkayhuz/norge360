@@ -11,14 +11,13 @@ public sealed class UserBuilder
 {
     private readonly User _user = new()
     {
-        TenantId = Guid.NewGuid(),
         UserName = "jane.doe",
         NormalizedUserName = "JANE.DOE",
         Email = "jane.doe@example.com",
         NormalizedEmail = "JANE.DOE@EXAMPLE.COM",
         PasswordHash = "HASH",
         CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc),
-        Roles = "tenant-user",
+        Roles = "user",
         Permissions = "session:self,profile:self",
         IsLocked = false,
         IsDeleted = false
@@ -29,12 +28,6 @@ public sealed class UserBuilder
         typeof(Norge360.Entities.EntityBase)
             .GetProperty(nameof(Norge360.Entities.EntityBase.Id))!
             .SetValue(_user, id);
-        return this;
-    }
-
-    public UserBuilder WithTenant(Guid tenantId)
-    {
-        _user.TenantId = tenantId;
         return this;
     }
 
@@ -69,9 +62,9 @@ public sealed class UserBuilder
         return this;
     }
 
-    public UserBuilder WithMembershipDefaults()
+    public UserBuilder WithPlatformRoleDefaults()
     {
-        _user.Roles = "tenant-user";
+        _user.Roles = "user";
         _user.Permissions = "session:self,profile:self";
         return this;
     }

@@ -16,16 +16,14 @@ public sealed class AuthAuditTrail(AuthDbContext dbContext, ILogger<AuthAuditTra
     public async Task WriteAsync(AuthAuditRecord record, CancellationToken cancellationToken)
     {
         logger.LogInformation(
-            "AUDIT_EVENT EventType={EventType} Outcome={Outcome} TenantId={TenantId} UserId={UserId} CorrelationId={CorrelationId}",
+            "AUDIT_EVENT EventType={EventType} Outcome={Outcome} UserId={UserId} CorrelationId={CorrelationId}",
             record.EventType,
             record.Outcome,
-            record.TenantId,
             record.UserId,
             record.CorrelationId);
 
         await dbContext.AuthAuditEvents.AddAsync(new AuthAuditEvent
         {
-            TenantId = record.TenantId,
             UserId = record.UserId,
             SessionId = record.SessionId,
             EventType = record.EventType,

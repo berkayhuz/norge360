@@ -113,53 +113,6 @@ public sealed class ApiSecurityHeadersOptionsValidation : IValidateOptions<ApiSe
     }
 }
 
-public sealed class TenantResolutionOptionsValidation(IHostEnvironment environment) : IValidateOptions<TenantResolutionOptions>
-{
-    public ValidateOptionsResult Validate(string? name, TenantResolutionOptions options)
-    {
-        var failures = new List<string>();
-
-        if (string.IsNullOrWhiteSpace(options.HeaderName))
-        {
-            failures.Add("Security:TenantResolution:HeaderName is required.");
-        }
-
-        if (string.IsNullOrWhiteSpace(options.SlugHeaderName))
-        {
-            failures.Add("Security:TenantResolution:SlugHeaderName is required.");
-        }
-
-        foreach (var prefix in options.TenantOptionalPathPrefixes)
-        {
-            if (string.IsNullOrWhiteSpace(prefix) || !prefix.StartsWith('/'))
-            {
-                failures.Add("Security:TenantResolution:TenantOptionalPathPrefixes entries must be absolute application paths.");
-                break;
-            }
-        }
-
-        if (environment.IsProduction())
-        {
-            if (options.AllowBodyFallback)
-            {
-                failures.Add("Security:TenantResolution:AllowBodyFallback must be false in production.");
-            }
-
-            if (!options.RequireResolvedTenant)
-            {
-                failures.Add("Security:TenantResolution:RequireResolvedTenant must be true in production.");
-            }
-
-            if (options.TrustedHostSuffixes.Any(x => x.Contains("localhost", StringComparison.OrdinalIgnoreCase)))
-            {
-                failures.Add("Security:TenantResolution:TrustedHostSuffixes cannot contain localhost in production.");
-            }
-        }
-
-        return failures.Count > 0 ? ValidateOptionsResult.Fail(failures) : ValidateOptionsResult.Success;
-    }
-}
-
 public sealed class AuthRateLimitingOptionsValidation : IValidateOptions<AuthRateLimitingOptions>
 {
     public ValidateOptionsResult Validate(string? name, AuthRateLimitingOptions options)
@@ -170,7 +123,6 @@ public sealed class AuthRateLimitingOptionsValidation : IValidateOptions<AuthRat
         ValidateRule(options.Register, "Security:RateLimiting:Register", failures);
         ValidateRule(options.Refresh, "Security:RateLimiting:Refresh", failures);
         ValidateRule(options.Logout, "Security:RateLimiting:Logout", failures);
-        ValidateRule(options.Invite, "Security:RateLimiting:Invite", failures);
         ValidateRule(options.RoleManagement, "Security:RateLimiting:RoleManagement", failures);
         ValidateRule(options.PasswordRecovery, "Security:RateLimiting:PasswordRecovery", failures);
         ValidateRule(options.EmailConfirmation, "Security:RateLimiting:EmailConfirmation", failures);

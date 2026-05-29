@@ -175,11 +175,6 @@ internal sealed class AccountLifecycleOptionsValidation(IHostEnvironment environ
             failures.Add("AccountLifecycle:EmailConfirmationResendCooldownSeconds must be between 10 seconds and 1 hour.");
         }
 
-        if (options.InvitationTokenMinutes is < 5 or > 43200)
-        {
-            failures.Add("AccountLifecycle:InvitationTokenMinutes must be between 5 minutes and 30 days.");
-        }
-
         if (options.TokenBytes < 32)
         {
             failures.Add("AccountLifecycle:TokenBytes must be at least 32.");
@@ -216,149 +211,6 @@ internal sealed class AccountLifecycleOptionsValidation(IHostEnvironment environ
         uri.Scheme != Uri.UriSchemeHttps ||
         uri.IsLoopback ||
         ContainsUnsafeMarker(uri.Host);
-
-    private static bool ContainsUnsafeMarker(string value)
-    {
-        var markers = new[] { "localhost", "127.0.0.1", "::1", "change_me", "replace", "local", "dev", "test" };
-        return markers.Any(marker => value.Contains(marker, StringComparison.OrdinalIgnoreCase));
-    }
-}
-
-internal sealed class InvitationDeliveryOptionsValidation(IHostEnvironment environment) : IValidateOptions<InvitationDeliveryOptions>
-{
-    public ValidateOptionsResult Validate(string? name, InvitationDeliveryOptions options)
-    {
-        var failures = new List<string>();
-
-        if (!Uri.TryCreate(options.AcceptBaseUrl, UriKind.Absolute, out var baseUri) ||
-            (baseUri.Scheme != Uri.UriSchemeHttps && !(environment.IsDevelopment() && baseUri.IsLoopback && baseUri.Scheme == Uri.UriSchemeHttp)))
-        {
-            failures.Add("InvitationDelivery:AcceptBaseUrl must be an absolute HTTPS URL, except HTTP loopback in Development.");
-        }
-        else if (environment.IsProduction() && baseUri.IsLoopback)
-        {
-            failures.Add("InvitationDelivery:AcceptBaseUrl cannot point to localhost in production.");
-        }
-        else if (environment.IsProduction() && IsUnsafeProductionUri(baseUri))
-        {
-            failures.Add("InvitationDelivery:AcceptBaseUrl must be a production HTTPS URL.");
-        }
-
-        if (string.IsNullOrWhiteSpace(options.AcceptPath))
-        {
-            failures.Add("InvitationDelivery:AcceptPath is required.");
-        }
-
-        if (string.IsNullOrWhiteSpace(options.SenderName))
-        {
-            failures.Add("InvitationDelivery:SenderName is required.");
-        }
-
-        if (string.IsNullOrWhiteSpace(options.SenderAddress) || !options.SenderAddress.Contains('@', StringComparison.Ordinal))
-        {
-            failures.Add("InvitationDelivery:SenderAddress must be a valid sender email address.");
-        }
-
-        if (environment.IsProduction())
-        {
-            if (options.DisableDelivery)
-            {
-                failures.Add("InvitationDelivery:DisableDelivery must be false in production.");
-            }
-
-            if (ContainsUnsafeMarker(options.SenderAddress) || ContainsUnsafeMarker(options.SenderName))
-            {
-                failures.Add("InvitationDelivery sender settings must not contain local/dev/test markers in production.");
-            }
-        }
-
-        if (!options.DisableDelivery)
-        {
-            var usesSmtp = string.Equals(options.Provider, "smtp", StringComparison.OrdinalIgnoreCase);
-            var usesNotificationPipeline = string.Equals(options.Provider, "notification", StringComparison.OrdinalIgnoreCase) ||
-                                           string.Equals(options.Provider, "outbox", StringComparison.OrdinalIgnoreCase);
-            if (!usesSmtp && !usesNotificationPipeline)
-            {
-                failures.Add("InvitationDelivery:Provider must be either 'notification' (recommended) or 'smtp' when delivery is enabled.");
-            }
-
-            if (usesSmtp)
-            {
-                if (string.IsNullOrWhiteSpace(options.SmtpHost))
-                {
-                    failures.Add("InvitationDelivery:SmtpHost is required when SMTP delivery is enabled.");
-                }
-
-                if (options.SmtpPort is < 1 or > 65535)
-                {
-                    failures.Add("InvitationDelivery:SmtpPort must be a valid TCP port.");
-                }
-
-                if (!string.IsNullOrWhiteSpace(options.SmtpUserName) && string.IsNullOrWhiteSpace(options.SmtpPassword))
-                {
-                    failures.Add("InvitationDelivery:SmtpPassword is required when SmtpUserName is configured.");
-                }
-            }
-
-            if (environment.IsProduction())
-            {
-                if (usesSmtp)
-                {
-                    failures.Add("InvitationDelivery:Provider must be 'notification' in production so invite delivery stays decoupled from Auth.");
-
-                    if (IsUnsafeProductionHost(options.SmtpHost))
-                    {
-                        failures.Add("InvitationDelivery:SmtpHost must be a production SMTP host.");
-                    }
-
-                    if (!options.SmtpUseStartTls)
-                    {
-                        failures.Add("InvitationDelivery:SmtpUseStartTls must be true in production.");
-                    }
-
-                    if (string.IsNullOrWhiteSpace(options.SmtpUserName) || string.IsNullOrWhiteSpace(options.SmtpPassword))
-                    {
-                        failures.Add("InvitationDelivery SMTP credentials are required in production.");
-                    }
-
-                    if (!string.IsNullOrWhiteSpace(options.SmtpPassword) &&
-                        (options.SmtpPassword.Length < 16 || ContainsUnsafeMarker(options.SmtpPassword)))
-                    {
-                        failures.Add("InvitationDelivery:SmtpPassword must be a strong production secret.");
-                    }
-
-                    if (ContainsUnsafeMarker(options.SmtpUserName ?? string.Empty))
-                    {
-                        failures.Add("InvitationDelivery:SmtpUserName must not contain local/dev/test markers in production.");
-                    }
-                }
-            }
-        }
-
-        if (options.ResendThrottleSeconds is < 10 or > 86400)
-        {
-            failures.Add("InvitationDelivery:ResendThrottleSeconds must be between 10 seconds and 24 hours.");
-        }
-
-        if (options.MaxResends is < 0 or > 20)
-        {
-            failures.Add("InvitationDelivery:MaxResends must be between 0 and 20.");
-        }
-
-        return failures.Count > 0
-            ? ValidateOptionsResult.Fail(failures)
-            : ValidateOptionsResult.Success;
-    }
-
-    private static bool IsUnsafeProductionUri(Uri uri) =>
-        uri.Scheme != Uri.UriSchemeHttps ||
-        uri.IsLoopback ||
-        ContainsUnsafeMarker(uri.Host);
-
-    private static bool IsUnsafeProductionHost(string? host) =>
-        string.IsNullOrWhiteSpace(host) ||
-        Uri.CheckHostName(host) == UriHostNameType.Unknown ||
-        ContainsUnsafeMarker(host);
 
     private static bool ContainsUnsafeMarker(string value)
     {
@@ -486,11 +338,6 @@ internal sealed class DataRetentionOptionsValidation : IValidateOptions<DataRete
         if (options.ExpiredVerificationTokenRetentionDays < 1)
         {
             failures.Add("DataRetention:ExpiredVerificationTokenRetentionDays must be at least 1.");
-        }
-
-        if (options.ExpiredInvitationRetentionDays < 1)
-        {
-            failures.Add("DataRetention:ExpiredInvitationRetentionDays must be at least 1.");
         }
 
         if (options.PublishedOutboxRetentionDays < 1)

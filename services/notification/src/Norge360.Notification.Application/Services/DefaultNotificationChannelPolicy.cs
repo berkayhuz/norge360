@@ -32,7 +32,6 @@ public sealed class DefaultNotificationChannelPolicy(
         foreach (var channel in request.Channels.Distinct())
         {
             if (await preferenceReader.IsChannelEnabledAsync(
-                    request.TenantId,
                     request.Recipient.UserId.Value,
                     request.Category,
                     channel,

@@ -41,7 +41,7 @@ Build high-confidence, security-focused test and benchmark coverage for `service
   - status codes
   - problem details contracts
   - cookie/session behavior
-  - tenant and trusted gateway requirements
+  - trusted gateway and platform authorization requirements
 - Add negative tests for spoofed headers and malformed token flows.
 
 6. Phase 5 - Infrastructure + Data Access Performance

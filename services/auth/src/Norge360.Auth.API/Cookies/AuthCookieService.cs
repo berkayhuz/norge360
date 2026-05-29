@@ -30,7 +30,6 @@ public sealed class AuthCookieService(IOptions<TokenTransportOptions> options)
             tokenResponse.SessionId,
             tokenResponse.AccessTokenExpiresAt,
             tokenResponse.RefreshTokenExpiresAt,
-            tokenResponse.TenantId,
             tokenResponse.UserId,
             tokenResponse.UserName,
             tokenResponse.Email);
@@ -121,7 +120,6 @@ public sealed record AuthIssuedSessionResponse(
     Guid SessionId,
     DateTime AccessTokenExpiresAt,
     DateTime RefreshTokenExpiresAt,
-    Guid TenantId,
     Guid UserId,
     string UserName,
     string Email);

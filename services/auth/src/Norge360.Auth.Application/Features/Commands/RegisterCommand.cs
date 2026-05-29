@@ -9,7 +9,6 @@ using Norge360.Auth.Application.Records;
 namespace Norge360.Auth.Application.Features.Commands;
 
 public sealed record RegisterCommand(
-    string TenantName,
     string UserName,
     string Email,
     string Password,

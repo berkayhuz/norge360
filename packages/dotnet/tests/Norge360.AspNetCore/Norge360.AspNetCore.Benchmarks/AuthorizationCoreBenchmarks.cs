@@ -17,11 +17,9 @@ public class AuthorizationCoreBenchmarks
     [GlobalSetup]
     public void Setup()
     {
-        var tenantId = Guid.Parse("d2501385-53f6-483f-a17f-8c1bc37da6ea");
         var userId = Guid.Parse("4b75f7f4-c7e6-4d48-b8a4-c838c6fd4ec2");
 
         _scope = new AuthorizationScope(
-            tenantId,
             userId,
             "orders",
             RowAccessLevel.Assigned,
@@ -29,10 +27,10 @@ public class AuthorizationCoreBenchmarks
 
         _items =
         [
-            new RowItem(tenantId, userId, null),
-            new RowItem(tenantId, null, userId),
-            new RowItem(tenantId, Guid.NewGuid(), Guid.NewGuid()),
-            new RowItem(Guid.NewGuid(), userId, userId)
+            new RowItem(userId, null),
+            new RowItem(null, userId),
+            new RowItem(Guid.NewGuid(), Guid.NewGuid()),
+            new RowItem(null, null)
         ];
     }
 
@@ -43,11 +41,10 @@ public class AuthorizationCoreBenchmarks
             .AsQueryable()
             .ApplyRowScope(
                 _scope,
-                x => x.TenantId,
                 x => x.OwnerUserId,
                 x => x.AssignedUserId)
             .Count();
     }
 
-    private sealed record RowItem(Guid TenantId, Guid? OwnerUserId, Guid? AssignedUserId);
+    private sealed record RowItem(Guid? OwnerUserId, Guid? AssignedUserId);
 }

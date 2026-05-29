@@ -15,7 +15,6 @@ public sealed class AccountLifecycleOptions
     public int PasswordResetCooldownSeconds { get; set; } = 60;
     public int EmailChangeTokenMinutes { get; set; } = 30;
     public int EmailConfirmationResendCooldownSeconds { get; set; } = 120;
-    public int InvitationTokenMinutes { get; set; } = 10080;
     public int TokenBytes { get; set; } = 32;
     public string PublicAppBaseUrl { get; set; } = "https://localhost:7025";
     public string ConfirmEmailPath { get; set; } = "/auth/confirm-email";

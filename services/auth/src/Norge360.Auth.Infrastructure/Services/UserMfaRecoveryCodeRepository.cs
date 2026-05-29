@@ -12,20 +12,19 @@ namespace Norge360.Auth.Infrastructure.Services;
 
 public sealed class UserMfaRecoveryCodeRepository(AuthDbContext dbContext) : IUserMfaRecoveryCodeRepository
 {
-    public Task<int> CountActiveAsync(Guid tenantId, Guid userId, CancellationToken cancellationToken) =>
+    public Task<int> CountActiveAsync(Guid userId, CancellationToken cancellationToken) =>
         dbContext.UserMfaRecoveryCodes.CountAsync(
-            x => x.TenantId == tenantId && x.UserId == userId && !x.IsDeleted && x.ConsumedAtUtc == null,
+            x => x.UserId == userId && !x.IsDeleted && x.ConsumedAtUtc == null,
             cancellationToken);
 
     public async Task ReplaceActiveAsync(
-        Guid tenantId,
         Guid userId,
         IReadOnlyCollection<UserMfaRecoveryCode> recoveryCodes,
         DateTime utcNow,
         CancellationToken cancellationToken)
     {
         var existing = await dbContext.UserMfaRecoveryCodes
-            .Where(x => x.TenantId == tenantId && x.UserId == userId && !x.IsDeleted && x.ConsumedAtUtc == null)
+            .Where(x => x.UserId == userId && !x.IsDeleted && x.ConsumedAtUtc == null)
             .ToListAsync(cancellationToken);
 
         foreach (var code in existing)
@@ -38,11 +37,10 @@ public sealed class UserMfaRecoveryCodeRepository(AuthDbContext dbContext) : IUs
         await dbContext.UserMfaRecoveryCodes.AddRangeAsync(recoveryCodes, cancellationToken);
     }
 
-    public async Task<bool> ConsumeAsync(Guid tenantId, Guid userId, string codeHash, DateTime utcNow, CancellationToken cancellationToken)
+    public async Task<bool> ConsumeAsync(Guid userId, string codeHash, DateTime utcNow, CancellationToken cancellationToken)
     {
         var entity = await dbContext.UserMfaRecoveryCodes
-            .Where(x => x.TenantId == tenantId &&
-                        x.UserId == userId &&
+            .Where(x => x.UserId == userId &&
                         !x.IsDeleted &&
                         x.ConsumedAtUtc == null &&
                         x.CodeHash == codeHash)
@@ -56,10 +54,10 @@ public sealed class UserMfaRecoveryCodeRepository(AuthDbContext dbContext) : IUs
         return true;
     }
 
-    public async Task RevokeActiveAsync(Guid tenantId, Guid userId, DateTime utcNow, CancellationToken cancellationToken)
+    public async Task RevokeActiveAsync(Guid userId, DateTime utcNow, CancellationToken cancellationToken)
     {
         var existing = await dbContext.UserMfaRecoveryCodes
-            .Where(x => x.TenantId == tenantId && x.UserId == userId && !x.IsDeleted && x.ConsumedAtUtc == null)
+            .Where(x => x.UserId == userId && !x.IsDeleted && x.ConsumedAtUtc == null)
             .ToListAsync(cancellationToken);
 
         foreach (var code in existing)

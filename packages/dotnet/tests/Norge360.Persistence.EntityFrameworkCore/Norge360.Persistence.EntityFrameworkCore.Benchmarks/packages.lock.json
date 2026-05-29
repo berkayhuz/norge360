@@ -181,14 +181,10 @@
         "dependencies": {
           "Microsoft.EntityFrameworkCore": "[10.0.7, )",
           "Norge360.Entities.Abstractions": "[1.0.0, )",
-          "Norge360.Repository": "[1.0.0, )",
-          "Norge360.Tenancy": "[1.0.0, )"
+          "Norge360.Repository": "[1.0.0, )"
         }
       },
       "norge360.repository": {
-        "type": "Project"
-      },
-      "norge360.tenancy": {
         "type": "Project"
       },
       "Microsoft.EntityFrameworkCore": {

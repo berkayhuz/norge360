@@ -9,32 +9,12 @@ namespace Norge360.Authorization;
 
 public static class RowAuthorizationQueryableExtensions
 {
-    public static IQueryable<T> EnforceTenant<T>(
-        this IQueryable<T> query,
-        Guid tenantId,
-        Expression<Func<T, Guid>> tenantIdSelector)
-    {
-        var parameter = tenantIdSelector.Parameters[0];
-        var predicate = Expression.Lambda<Func<T, bool>>(
-            Expression.Equal(tenantIdSelector.Body, Expression.Constant(tenantId)),
-            parameter);
-
-        return query.Where(predicate);
-    }
-
     public static IQueryable<T> ApplyRowScope<T>(
         this IQueryable<T> query,
         AuthorizationScope scope,
-        Expression<Func<T, Guid>> tenantIdSelector,
         Expression<Func<T, Guid?>> ownerUserIdSelector,
         Expression<Func<T, Guid?>> assignedUserIdSelector)
     {
-        var tenantScoped = query.EnforceTenant(scope.TenantId, tenantIdSelector);
-        if (scope.RowAccessLevel >= RowAccessLevel.Tenant)
-        {
-            return tenantScoped;
-        }
-
         var parameter = ownerUserIdSelector.Parameters[0];
         var userId = Expression.Constant(scope.UserId, typeof(Guid?));
         var ownerMatch = Expression.Equal(ownerUserIdSelector.Body, userId);
@@ -46,7 +26,7 @@ public static class RowAuthorizationQueryableExtensions
             ? Expression.OrElse(ownerMatch, assignedMatch)
             : ownerMatch;
 
-        return tenantScoped.Where(Expression.Lambda<Func<T, bool>>(scopedBody, parameter));
+        return query.Where(Expression.Lambda<Func<T, bool>>(scopedBody, parameter));
     }
 
     private static Expression ReplaceParameter(Expression expression, ParameterExpression source, ParameterExpression target) =>

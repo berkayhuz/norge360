@@ -9,7 +9,6 @@ using Norge360.Auth.Contracts.Responses;
 namespace Norge360.Auth.Application.Features.Commands;
 
 public sealed record RefreshTokenCommand(
-    Guid TenantId,
     Guid SessionId,
     string RefreshToken,
     string? IpAddress,

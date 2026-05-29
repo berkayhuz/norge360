@@ -9,7 +9,6 @@ using Norge360.Auth.Contracts.Responses;
 namespace Norge360.Auth.Application.Features.Commands;
 
 public sealed record LoginCommand(
-    Guid TenantId,
     string EmailOrUserName,
     string Password,
     bool RememberMe,

@@ -11,21 +11,10 @@ public sealed class AuthorizationOptions
 {
     public const string SectionName = "Authorization";
 
-    public string[] DefaultRoles { get; set; } = ["tenant-user"];
-
     public string[] DefaultPermissions { get; set; } =
     [
         "session:self",
         "profile:self"
-    ];
-
-    public bool BootstrapFirstUserAsTenantOwner { get; set; } = true;
-
-    public string[] BootstrapFirstUserRoles { get; set; } =
-    [
-        "tenant-owner",
-        "tenant-admin",
-        "tenant-user"
     ];
 
     public string[] BootstrapFirstUserPermissions { get; set; } =
@@ -45,8 +34,6 @@ public sealed class PolicyDefinition
     public string[] RequiredRoles { get; set; } = [];
 
     public bool RequireAuthenticatedUser { get; set; } = true;
-
-    public bool RequireTenantClaim { get; set; } = true;
 }
 
 public sealed class AuthorizationOptionsValidation : IValidateOptions<AuthorizationOptions>
@@ -58,8 +45,6 @@ public sealed class AuthorizationOptionsValidation : IValidateOptions<Authorizat
     {
         var failures = new List<string>();
 
-        ValidatePrincipalSet(options.DefaultRoles, "Authorization:DefaultRoles", RolesColumnMaxLength, allowWildcard: false, failures);
-        ValidatePrincipalSet(options.BootstrapFirstUserRoles, "Authorization:BootstrapFirstUserRoles", RolesColumnMaxLength, allowWildcard: false, failures);
         ValidatePrincipalSet(options.DefaultPermissions, "Authorization:DefaultPermissions", PermissionsColumnMaxLength, allowWildcard: true, failures);
         ValidatePrincipalSet(options.BootstrapFirstUserPermissions, "Authorization:BootstrapFirstUserPermissions", PermissionsColumnMaxLength, allowWildcard: true, failures);
 

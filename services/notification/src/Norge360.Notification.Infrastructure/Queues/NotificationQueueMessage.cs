@@ -10,7 +10,6 @@ namespace Norge360.Notification.Infrastructure.Queues;
 
 public sealed record NotificationQueueMessage(
     Guid Id,
-    Guid? TenantId,
     Guid? UserId,
     NotificationCategory Category,
     NotificationPriority Priority,
@@ -31,7 +30,6 @@ public sealed record NotificationQueueMessage(
     public static NotificationQueueMessage From(NotificationMessage message) =>
         new(
             message.Id,
-            message.TenantId,
             message.UserId,
             message.Category,
             message.Priority,
@@ -52,7 +50,6 @@ public sealed record NotificationQueueMessage(
     public NotificationMessage ToDomainMessage() =>
         new(
             Id,
-            TenantId,
             UserId,
             Category,
             Priority,

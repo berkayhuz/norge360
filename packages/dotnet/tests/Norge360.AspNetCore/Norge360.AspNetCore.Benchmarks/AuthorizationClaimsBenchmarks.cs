@@ -19,7 +19,6 @@ public class AuthorizationClaimsBenchmarks
     {
         _principal = new ClaimsPrincipal(new ClaimsIdentity(
         [
-            new Claim("tenant_id", "d2501385-53f6-483f-a17f-8c1bc37da6ea"),
             new Claim("permission", "users.read users.write orders.read"),
             new Claim("scope", "invoices.read,customers.read"),
             new Claim(ClaimTypes.Role, "admin,reporter")

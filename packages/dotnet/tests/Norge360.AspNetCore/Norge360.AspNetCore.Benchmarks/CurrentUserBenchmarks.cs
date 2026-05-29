@@ -22,7 +22,6 @@ public class CurrentUserBenchmarks
         context.User = new ClaimsPrincipal(new ClaimsIdentity(
         [
             new Claim(ClaimTypes.NameIdentifier, "4b75f7f4-c7e6-4d48-b8a4-c838c6fd4ec2"),
-            new Claim("tenant_id", "d2501385-53f6-483f-a17f-8c1bc37da6ea"),
             new Claim(ClaimTypes.Name, "benchmark-user"),
             new Claim(ClaimTypes.Email, "bench@norge360.local")
         ], "benchmark"));
@@ -32,9 +31,6 @@ public class CurrentUserBenchmarks
 
     [Benchmark]
     public Guid ReadUserId() => _service.UserId;
-
-    [Benchmark]
-    public Guid ReadTenantId() => _service.TenantId;
 
     [Benchmark]
     public bool ReadIsAuthenticated() => _service.IsAuthenticated;

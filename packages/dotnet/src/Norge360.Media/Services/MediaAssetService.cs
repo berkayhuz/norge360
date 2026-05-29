@@ -31,13 +31,13 @@ public sealed class MediaAssetService(
             throw new MediaValidationException(validation.FailureReason ?? "Image validation failed.");
         }
 
-        var tenantSegment = SanitizePathSegment(request.TenantId);
+        var ownerSegment = SanitizePathSegment(request.OwnerUserId ?? "platform");
         var purposeSegment = SanitizePathSegment(request.Purpose);
         var assetId = Guid.NewGuid();
         var keyPrefix = string.IsNullOrWhiteSpace(options.Value.CloudflareR2.ObjectKeyPrefix)
             ? string.Empty
             : $"{SanitizePathSegment(options.Value.CloudflareR2.ObjectKeyPrefix)}/";
-        var objectKey = $"{keyPrefix}media/{tenantSegment}/{purposeSegment}/{DateTime.UtcNow:yyyy}/{DateTime.UtcNow:MM}/{assetId}/original{validation.Extension}";
+        var objectKey = $"{keyPrefix}media/{ownerSegment}/{purposeSegment}/{DateTime.UtcNow:yyyy}/{DateTime.UtcNow:MM}/{assetId}/original{validation.Extension}";
 
         using var imageCopy = new MemoryStream();
         await request.Content.CopyToAsync(imageCopy, cancellationToken);
@@ -49,7 +49,6 @@ public sealed class MediaAssetService(
                 validation.CanonicalContentType,
                 imageCopy,
                 imageCopy.Length,
-                request.TenantId,
                 request.Purpose,
                 request.Module),
             cancellationToken);

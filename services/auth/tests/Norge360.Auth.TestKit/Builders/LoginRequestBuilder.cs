@@ -9,18 +9,11 @@ namespace Norge360.Auth.TestKit.Builders;
 
 public sealed class LoginRequestBuilder
 {
-    private Guid _tenantId = Guid.NewGuid();
     private string _emailOrUserName = "jane.doe@example.com";
     private string _password = "StrongPassword123!";
     private bool _rememberMe;
     private string? _mfaCode;
     private string? _recoveryCode;
-
-    public LoginRequestBuilder WithTenantId(Guid tenantId)
-    {
-        _tenantId = tenantId;
-        return this;
-    }
 
     public LoginRequestBuilder WithMfaCode(string mfaCode)
     {
@@ -49,5 +42,5 @@ public sealed class LoginRequestBuilder
         return this;
     }
 
-    public LoginRequest Build() => new(_tenantId, _emailOrUserName, _password, _rememberMe, _mfaCode, _recoveryCode);
+    public LoginRequest Build() => new(_emailOrUserName, _password, _rememberMe, _mfaCode, _recoveryCode);
 }

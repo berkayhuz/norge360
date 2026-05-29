@@ -6,6 +6,5 @@
 namespace Norge360.Auth.Contracts.Requests;
 
 public sealed record LogoutRequest(
-    Guid TenantId = default,
     Guid SessionId = default,
     string? RefreshToken = null);

@@ -26,7 +26,7 @@ public class Norge360EntitiesAbstractionsBenchmarks
     [Benchmark]
     public int ReadRowVersionLength() => _model.RowVersion.Length;
 
-    private sealed class AuditableModel : IAuditable, IHasRowVersion, ISoftDeletable, ITenantEntity
+    private sealed class AuditableModel : IAuditable, IHasRowVersion, ISoftDeletable
     {
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
@@ -36,6 +36,5 @@ public class Norge360EntitiesAbstractionsBenchmarks
         public bool IsDeleted { get; set; }
         public DateTime? DeletedAt { get; set; }
         public string? DeletedBy { get; set; }
-        public Guid TenantId { get; set; }
     }
 }

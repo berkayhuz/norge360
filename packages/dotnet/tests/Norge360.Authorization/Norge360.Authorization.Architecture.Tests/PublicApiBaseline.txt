@@ -1,4 +1,4 @@
-CTOR AuthorizationScope(System.Guid TenantId, System.Guid UserId, System.String Resource, Norge360.Authorization.RowAccessLevel RowAccessLevel, System.Collections.Generic.IReadOnlyCollection<System.String> Permissions)
+CTOR AuthorizationScope(System.Guid UserId, System.String Resource, Norge360.Authorization.RowAccessLevel RowAccessLevel, System.Collections.Generic.IReadOnlyCollection<System.String> Permissions)
 CTOR FieldAuthorizationDecision(System.String Resource, System.String Field, Norge360.Authorization.FieldVisibility Visibility)
 FIELD const Norge360.Authorization.FieldVisibility Hidden
 FIELD const Norge360.Authorization.FieldVisibility Masked
@@ -6,18 +6,15 @@ FIELD const Norge360.Authorization.FieldVisibility Visible
 FIELD const Norge360.Authorization.RowAccessLevel Assigned
 FIELD const Norge360.Authorization.RowAccessLevel None
 FIELD const Norge360.Authorization.RowAccessLevel Own
-FIELD const Norge360.Authorization.RowAccessLevel Tenant
 FIELD field System.Int32 value__
 METHOD Norge360.Authorization.AuthorizationScope Resolve(System.String resource)
 METHOD Norge360.Authorization.FieldAuthorizationDecision Decide(System.String resource, System.String field, System.Collections.Generic.IReadOnlyCollection<System.String> permissions)
-METHOD System.Linq.IQueryable<T> ApplyRowScope(System.Linq.IQueryable<T> query, Norge360.Authorization.AuthorizationScope scope, System.Linq.Expressions.Expression<System.Func<T, System.Guid>> tenantIdSelector, System.Linq.Expressions.Expression<System.Func<T, System.Nullable<System.Guid>>> ownerUserIdSelector, System.Linq.Expressions.Expression<System.Func<T, System.Nullable<System.Guid>>> assignedUserIdSelector)
-METHOD System.Linq.IQueryable<T> EnforceTenant(System.Linq.IQueryable<T> query, System.Guid tenantId, System.Linq.Expressions.Expression<System.Func<T, System.Guid>> tenantIdSelector)
-METHOD void Deconstruct(out System.Guid TenantId, out System.Guid UserId, out System.String Resource, out Norge360.Authorization.RowAccessLevel RowAccessLevel, out System.Collections.Generic.IReadOnlyCollection<System.String> Permissions)
+METHOD System.Linq.IQueryable<T> ApplyRowScope(System.Linq.IQueryable<T> query, Norge360.Authorization.AuthorizationScope scope, System.Linq.Expressions.Expression<System.Func<T, System.Nullable<System.Guid>>> ownerUserIdSelector, System.Linq.Expressions.Expression<System.Func<T, System.Nullable<System.Guid>>> assignedUserIdSelector)
+METHOD void Deconstruct(out System.Guid UserId, out System.String Resource, out Norge360.Authorization.RowAccessLevel RowAccessLevel, out System.Collections.Generic.IReadOnlyCollection<System.String> Permissions)
 METHOD void Deconstruct(out System.String Resource, out System.String Field, out Norge360.Authorization.FieldVisibility Visibility)
 PROP Norge360.Authorization.FieldVisibility Visibility { get; init; }
 PROP Norge360.Authorization.RowAccessLevel RowAccessLevel { get; init; }
 PROP System.Collections.Generic.IReadOnlyCollection<System.String> Permissions { get; init; }
-PROP System.Guid TenantId { get; init; }
 PROP System.Guid UserId { get; init; }
 PROP System.String Field { get; init; }
 PROP System.String Resource { get; init; }

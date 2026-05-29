@@ -16,7 +16,6 @@ public sealed class AuthVerificationTokenRepository(AuthDbContext dbContext) : I
         await dbContext.AuthVerificationTokens.AddAsync(token, cancellationToken);
 
     public Task<AuthVerificationToken?> GetValidAsync(
-        Guid tenantId,
         Guid userId,
         string purpose,
         string tokenHash,
@@ -24,8 +23,7 @@ public sealed class AuthVerificationTokenRepository(AuthDbContext dbContext) : I
         CancellationToken cancellationToken) =>
         dbContext.AuthVerificationTokens
             .SingleOrDefaultAsync(
-                x => x.TenantId == tenantId &&
-                     x.UserId == userId &&
+                x => x.UserId == userId &&
                      x.Purpose == purpose &&
                      x.TokenHash == tokenHash &&
                      x.ConsumedAtUtc == null &&
@@ -34,7 +32,6 @@ public sealed class AuthVerificationTokenRepository(AuthDbContext dbContext) : I
                 cancellationToken);
 
     public async Task RevokeOutstandingAsync(
-        Guid tenantId,
         Guid userId,
         string purpose,
         DateTime utcNow,
@@ -43,7 +40,6 @@ public sealed class AuthVerificationTokenRepository(AuthDbContext dbContext) : I
     {
         var tokens = await dbContext.AuthVerificationTokens
             .Where(x =>
-                x.TenantId == tenantId &&
                 x.UserId == userId &&
                 x.Purpose == purpose &&
                 x.ConsumedAtUtc == null &&

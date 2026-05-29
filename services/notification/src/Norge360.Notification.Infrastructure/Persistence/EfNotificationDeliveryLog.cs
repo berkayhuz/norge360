@@ -34,7 +34,6 @@ public sealed class EfNotificationDeliveryLog(NotificationDbContext dbContext) :
 
         var notification = new NotificationMessage(
             Guid.NewGuid(),
-            request.TenantId,
             request.Recipient.UserId,
             request.Category,
             request.Priority,

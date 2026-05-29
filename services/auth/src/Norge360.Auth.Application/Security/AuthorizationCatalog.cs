@@ -13,21 +13,20 @@ public static class AuthorizationCatalog
 
     public static class Roles
     {
-        public const string TenantOwner = "tenant-owner";
-        public const string TenantAdmin = "tenant-admin";
-        public const string TenantUser = "tenant-user";
+        public const string PlatformOwner = "platform-owner";
+        public const string PlatformAdmin = "platform-admin";
+        public const string PlatformUser = "user";
     }
 
     public static class Permissions
     {
         public const string SessionSelf = "session:self";
         public const string ProfileSelf = "profile:self";
-        public const string UsersInvite = "tenant.users.invite";
-        public const string UsersInviteAlias = "users.invite";
+        public const string UsersInvite = "users.invite";
         public const string UsersManage = "users.manage";
         public const string RolesRead = "roles.read";
         public const string RolesManage = "roles.manage";
-        public const string TenantManage = "tenant.manage";
+        public const string PlatformManage = "platform.manage";
         public const string AuditRead = "audit.read";
         public const string AccountRead = "account.read";
         public const string CustomersRead = "customers.read";
@@ -70,15 +69,14 @@ public static class AuthorizationCatalog
 
     private static readonly RoleDefinition[] RoleDefinitions =
     [
-        new(Roles.TenantOwner, 100, true, [WildcardPermission]),
-        new(Roles.TenantAdmin, 80, false,
+        new(Roles.PlatformOwner, 100, true, [WildcardPermission]),
+        new(Roles.PlatformAdmin, 80, false,
         [
             Permissions.UsersInvite,
-            Permissions.UsersInviteAlias,
             Permissions.UsersManage,
             Permissions.RolesRead,
             Permissions.RolesManage,
-            Permissions.TenantManage,
+            Permissions.PlatformManage,
             Permissions.AuditRead,
             Permissions.AccountRead,
             Permissions.CustomersRead,
@@ -179,8 +177,6 @@ public static class AuthorizationCatalog
             "tags.groups.manage",
             "tags.smart-labels.manage",
             "tags.classifications.manage",
-            "tenants.read",
-            "tenants.manage",
             "ticket.assignments.read",
             "ticket.categories.read",
             "ticket.queues.read",
@@ -205,7 +201,7 @@ public static class AuthorizationCatalog
             Permissions.SessionSelf,
             Permissions.ProfileSelf
         ]),
-        new(Roles.TenantUser, 10, false,
+        new(Roles.PlatformUser, 10, false,
         [
             Permissions.SessionSelf,
             Permissions.ProfileSelf

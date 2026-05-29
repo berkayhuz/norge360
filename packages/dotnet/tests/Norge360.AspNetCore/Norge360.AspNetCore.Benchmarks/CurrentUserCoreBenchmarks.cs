@@ -11,7 +11,7 @@ namespace Norge360.AspNetCore.Benchmarks;
 [MemoryDiagnoser]
 public class CurrentUserCoreBenchmarks
 {
-    private readonly ICurrentUserService _authenticated = new StubCurrentUserService { UserId = Guid.Parse("d2501385-53f6-483f-a17f-8c1bc37da6ea"), TenantId = Guid.Parse("9dcb7547-aab7-4d65-8bf1-0a7393f7d4e8") };
+    private readonly ICurrentUserService _authenticated = new StubCurrentUserService { UserId = Guid.Parse("d2501385-53f6-483f-a17f-8c1bc37da6ea") };
 
     [Benchmark(Baseline = true)]
     public bool IsAuthenticated() => _authenticated.IsAuthenticated();
@@ -22,7 +22,6 @@ public class CurrentUserCoreBenchmarks
     private sealed class StubCurrentUserService : ICurrentUserService
     {
         public Guid UserId { get; init; }
-        public Guid TenantId { get; init; }
         public bool IsAuthenticated => UserId != Guid.Empty;
         public string? UserName => null;
         public string? Email => null;

@@ -7,7 +7,7 @@ namespace Norge360.Auth.Application.Abstractions;
 
 public interface IUserTokenStateValidator
 {
-    Task<bool> IsValidAsync(Guid tenantId, Guid userId, int tokenVersion, CancellationToken cancellationToken);
+    Task<bool> IsValidAsync(Guid userId, int tokenVersion, CancellationToken cancellationToken);
 
-    void Evict(Guid tenantId, Guid userId);
+    void Evict(Guid userId);
 }

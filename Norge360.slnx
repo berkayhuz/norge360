@@ -27,12 +27,10 @@
      <Project Path="packages/dotnet/src/Norge360.Pagination/Norge360.Pagination.csproj" Id="c930c9ff-4d2b-49f3-91c6-88aec02064b1" />
      <Project Path="packages/dotnet/src/Norge360.Persistence.EntityFrameworkCore.Auditing/Norge360.Persistence.EntityFrameworkCore.Auditing.csproj" Id="f3884228-a78b-424f-9900-666c781ef0b1" />
      <Project Path="packages/dotnet/src/Norge360.Persistence.EntityFrameworkCore.SoftDelete/Norge360.Persistence.EntityFrameworkCore.SoftDelete.csproj" Id="9ecefe61-9bbc-4927-a5cc-a58fed72c98f" />
-     <Project Path="packages/dotnet/src/Norge360.Persistence.EntityFrameworkCore.Tenancy/Norge360.Persistence.EntityFrameworkCore.Tenancy.csproj" Id="7f0033b6-a790-4e71-8e9a-90854392703a" />
      <Project Path="packages/dotnet/src/Norge360.Persistence.EntityFrameworkCore/Norge360.Persistence.EntityFrameworkCore.csproj" Id="76fecb91-6f91-4a20-84b1-1b479775f5f4" />
      <Project Path="packages/dotnet/src/Norge360.Repository.EntityFrameworkCore/Norge360.Repository.EntityFrameworkCore.csproj" Id="ffc6e40f-3def-4346-80a5-db8eca27b141" />
      <Project Path="packages/dotnet/src/Norge360.Repository/Norge360.Repository.csproj" Id="8bfd31ab-5fba-4958-b219-da91d164d7f0" />
      <Project Path="packages/dotnet/src/Norge360.Security.EndpointGuard/Norge360.Security.EndpointGuard.csproj" Id="245f0673-6d57-4a96-b365-c430468c925b" />
-     <Project Path="packages/dotnet/src/Norge360.Tenancy/Norge360.Tenancy.csproj" Id="40d7900c-7968-470e-8d08-7d784cb16a2c" />
    </Folder>
   <Folder Name="/packages/dotnet/tests/" />
   <Folder Name="/packages/dotnet/tests/Norge360.AspNetCore/">
@@ -127,10 +125,6 @@
     <Project Path="packages/dotnet/tests/Norge360.Persistence.EntityFrameworkCore.SoftDelete/Norge360.Persistence.EntityFrameworkCore.SoftDelete.Architecture.Tests/Norge360.Persistence.EntityFrameworkCore.SoftDelete.Architecture.Tests.csproj" />
     <Project Path="packages/dotnet/tests/Norge360.Persistence.EntityFrameworkCore.SoftDelete/Norge360.Persistence.EntityFrameworkCore.SoftDelete.Benchmarks/Norge360.Persistence.EntityFrameworkCore.SoftDelete.Benchmarks.csproj" />
   </Folder>
-  <Folder Name="/packages/dotnet/tests/Norge360.Persistence.EntityFrameworkCore.Tenancy/">
-    <Project Path="packages/dotnet/tests/Norge360.Persistence.EntityFrameworkCore.Tenancy/Norge360.Persistence.EntityFrameworkCore.Tenancy.Architecture.Tests/Norge360.Persistence.EntityFrameworkCore.Tenancy.Architecture.Tests.csproj" />
-    <Project Path="packages/dotnet/tests/Norge360.Persistence.EntityFrameworkCore.Tenancy/Norge360.Persistence.EntityFrameworkCore.Tenancy.Benchmarks/Norge360.Persistence.EntityFrameworkCore.Tenancy.Benchmarks.csproj" />
-  </Folder>
   <Folder Name="/packages/dotnet/tests/Norge360.Persistence.EntityFrameworkCore/">
     <Project Path="packages/dotnet/tests/Norge360.Persistence.EntityFrameworkCore/Norge360.Persistence.EntityFrameworkCore.Architecture.Tests/Norge360.Persistence.EntityFrameworkCore.Architecture.Tests.csproj" />
     <Project Path="packages/dotnet/tests/Norge360.Persistence.EntityFrameworkCore/Norge360.Persistence.EntityFrameworkCore.Benchmarks/Norge360.Persistence.EntityFrameworkCore.Benchmarks.csproj" />
@@ -146,10 +140,6 @@
   <Folder Name="/packages/dotnet/tests/Norge360.Security.EndpointGuard/">
     <Project Path="packages/dotnet/tests/Norge360.Security.EndpointGuard/Norge360.Security.EndpointGuard.Architecture.Tests/Norge360.Security.EndpointGuard.Architecture.Tests.csproj" />
     <Project Path="packages/dotnet/tests/Norge360.Security.EndpointGuard/Norge360.Security.EndpointGuard.Benchmarks/Norge360.Security.EndpointGuard.Benchmarks.csproj" />
-  </Folder>
-  <Folder Name="/packages/dotnet/tests/Norge360.Tenancy/">
-    <Project Path="packages/dotnet/tests/Norge360.Tenancy/Norge360.Tenancy.Architecture.Tests/Norge360.Tenancy.Architecture.Tests.csproj" />
-    <Project Path="packages/dotnet/tests/Norge360.Tenancy/Norge360.Tenancy.Benchmarks/Norge360.Tenancy.Benchmarks.csproj" />
   </Folder>
   <Folder Name="/platform/" />
   <Folder Name="/platform/gateway/" />

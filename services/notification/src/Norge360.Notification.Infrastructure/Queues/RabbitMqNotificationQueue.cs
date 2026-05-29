@@ -53,7 +53,6 @@ public sealed class RabbitMqNotificationQueue(
             Headers = new Dictionary<string, object?>
             {
                 ["idempotency_key"] = message.IdempotencyKey,
-                ["tenant_id"] = message.TenantId?.ToString("D"),
                 ["notification_category"] = message.Category.ToString(),
                 ["notification_priority"] = message.Priority.ToString()
             }

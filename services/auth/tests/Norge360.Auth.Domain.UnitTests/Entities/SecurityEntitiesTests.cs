@@ -34,30 +34,6 @@ public sealed class SecurityEntitiesTests
     }
 
     [Fact]
-    public void TenantInvitation_GetStatus_Should_Return_Expected_Values()
-    {
-        var now = new DateTime(2026, 2, 1, 0, 0, 0, DateTimeKind.Utc);
-        var invitation = new TenantInvitation
-        {
-            ExpiresAtUtc = now.AddHours(1),
-            IsDeleted = false
-        };
-
-        invitation.GetStatus(now).Should().Be("pending");
-
-        invitation.AcceptedAtUtc = now;
-        invitation.GetStatus(now).Should().Be("accepted");
-
-        invitation.AcceptedAtUtc = null;
-        invitation.RevokedAtUtc = now;
-        invitation.GetStatus(now).Should().Be("revoked");
-
-        invitation.RevokedAtUtc = null;
-        invitation.ExpiresAtUtc = now.AddMinutes(-1);
-        invitation.GetStatus(now).Should().Be("expired");
-    }
-
-    [Fact]
     public void UserSession_MarkRefreshTokenReuse_Should_Revoke_Session_And_Record_Reuse()
     {
         var session = new UserSession();

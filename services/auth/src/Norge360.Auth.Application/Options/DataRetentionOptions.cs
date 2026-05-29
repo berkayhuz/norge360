@@ -19,7 +19,5 @@ public sealed class DataRetentionOptions
 
     public int ExpiredVerificationTokenRetentionDays { get; set; } = 7;
 
-    public int ExpiredInvitationRetentionDays { get; set; } = 30;
-
     public int PublishedOutboxRetentionDays { get; set; } = 7;
 }

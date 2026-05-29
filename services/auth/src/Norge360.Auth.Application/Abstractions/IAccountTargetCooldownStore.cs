@@ -9,7 +9,6 @@ public interface IAccountTargetCooldownStore
 {
     Task<bool> TryAcquireAsync(
         string flow,
-        Guid tenantId,
         string normalizedIdentity,
         int cooldownSeconds,
         CancellationToken cancellationToken);

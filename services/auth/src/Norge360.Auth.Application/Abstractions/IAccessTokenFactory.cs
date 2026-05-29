@@ -10,7 +10,7 @@ namespace Norge360.Auth.Application.Abstractions;
 
 public interface IAccessTokenFactory
 {
-    AccessTokenDescriptor Create(User user, Guid tenantId, Guid sessionId);
+    AccessTokenDescriptor Create(User user, Guid sessionId);
     AccessTokenDescriptor Create(
         Guid userId,
         string userName,
@@ -18,7 +18,6 @@ public interface IAccessTokenFactory
         int tokenVersion,
         IReadOnlyCollection<string> roles,
         IReadOnlyCollection<string> permissions,
-        Guid tenantId,
         Guid sessionId,
         DateTimeOffset? authenticatedAt = null,
         IReadOnlyCollection<string>? authenticationMethods = null);

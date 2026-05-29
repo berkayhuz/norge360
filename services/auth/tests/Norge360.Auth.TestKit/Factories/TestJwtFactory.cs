@@ -26,7 +26,6 @@ public sealed class TestJwtFactory : IDisposable
     }
 
     public string CreateToken(
-        Guid tenantId,
         Guid userId,
         Guid sessionId,
         int tokenVersion,
@@ -39,7 +38,6 @@ public sealed class TestJwtFactory : IDisposable
         var claims = new[]
         {
             new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
-            new Claim("tenant_id", tenantId.ToString()),
             new Claim(JwtRegisteredClaimNames.Sid, sessionId.ToString()),
             new Claim("token_version", tokenVersion.ToString())
         };

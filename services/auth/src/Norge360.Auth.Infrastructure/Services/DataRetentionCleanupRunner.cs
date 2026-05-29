@@ -25,7 +25,6 @@ public sealed class DataRetentionCleanupRunner(
         var sessionCutoff = utcNow.AddDays(-value.RevokedSessionRetentionDays);
         var auditCutoff = utcNow.AddDays(-value.AuditRetentionDays);
         var verificationTokenCutoff = utcNow.AddDays(-value.ExpiredVerificationTokenRetentionDays);
-        var invitationCutoff = utcNow.AddDays(-value.ExpiredInvitationRetentionDays);
         var outboxCutoff = utcNow.AddDays(-value.PublishedOutboxRetentionDays);
 
         var revokedSessionCount = await dbContext.UserSessions
@@ -55,35 +54,21 @@ public sealed class DataRetentionCleanupRunner(
                 .SetProperty(x => x.DeletedBy, "retention-cleanup")
                 .SetProperty(x => x.UpdatedAt, utcNow), cancellationToken);
 
-        var expiredInvitationCount = await dbContext.TenantInvitations
-            .IgnoreQueryFilters()
-            .Where(x => !x.IsDeleted &&
-                        (x.ExpiresAtUtc <= invitationCutoff ||
-                         (x.AcceptedAtUtc.HasValue && x.AcceptedAtUtc <= invitationCutoff) ||
-                         (x.RevokedAtUtc.HasValue && x.RevokedAtUtc <= invitationCutoff)))
-            .ExecuteUpdateAsync(setters => setters
-                .SetProperty(x => x.IsDeleted, true)
-                .SetProperty(x => x.DeletedAt, utcNow)
-                .SetProperty(x => x.DeletedBy, "retention-cleanup")
-                .SetProperty(x => x.UpdatedAt, utcNow), cancellationToken);
-
         var publishedOutboxCount = await dbContext.OutboxMessages
             .Where(x => x.PublishedAtUtc.HasValue && x.PublishedAtUtc <= outboxCutoff)
             .ExecuteDeleteAsync(cancellationToken);
 
         logger.LogInformation(
-            "Retention cleanup completed. Soft deleted {RevokedSessionCount} sessions, {AuditEventCount} audit events, {VerificationTokenCount} verification tokens, {InvitationCount} invitations, and deleted {OutboxCount} outbox messages.",
+            "Retention cleanup completed. Soft deleted {RevokedSessionCount} sessions, {AuditEventCount} audit events, {VerificationTokenCount} verification tokens, and deleted {OutboxCount} outbox messages.",
             revokedSessionCount,
             oldAuditEventCount,
             expiredVerificationTokenCount,
-            expiredInvitationCount,
             publishedOutboxCount);
 
         return new DataRetentionCleanupResult(
             revokedSessionCount,
             oldAuditEventCount,
             expiredVerificationTokenCount,
-            expiredInvitationCount,
             publishedOutboxCount);
     }
 }
@@ -92,5 +77,4 @@ public sealed record DataRetentionCleanupResult(
     int RevokedSessionCount,
     int AuditEventCount,
     int ExpiredVerificationTokenCount,
-    int ExpiredInvitationCount,
     int PublishedOutboxCount);
