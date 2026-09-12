@@ -1,0 +1,62 @@
+name: Moderation Worker Quality
+
+on:
+  push:
+    paths:
+      - "workers/moderation/**"
+      - "scripts/check_worker_secrets.py"
+      - ".github/workflows/moderation-worker-quality.yml"
+  pull_request:
+    paths:
+      - "workers/moderation/**"
+      - "scripts/check_worker_secrets.py"
+      - ".github/workflows/moderation-worker-quality.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: moderation-worker-quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Validate moderation Worker
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: workers/moderation
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: workers/moderation/package-lock.json
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Scan repository for Worker secrets
+        working-directory: .
+        run: python3 scripts/check_worker_secrets.py
+
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Typecheck
+        run: npm run check
+
+      - name: Verify generated Wrangler types
+        run: npm run types:check
+
+      - name: Run optional lint and tests
+        run: |
+          npm run lint --if-present
+          npm run test --if-present
+
+      - name: Validate deployment bundle
+        run: npm run deploy:dry-run

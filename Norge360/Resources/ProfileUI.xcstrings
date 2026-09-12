@@ -1,0 +1,1521 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "profile.ui.view_cover": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "View cover photo"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kapak fotoğrafını görüntüle"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vis forsidebilde"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "عرض صورة الغلاف"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مشاهده عکس روی جلد"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voir la photo de couverture"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ver foto de portada"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Titelbild ansehen"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Переглянути обкладинку"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Посмотреть обложку"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zobacz zdjęcie na okładce"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Daawo sawirka daboolka"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ናይ ገጽ ስእሊ ርአ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "የሽፋን ፎቶ ይመልከቱ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "کور فوٹو دیکھیں"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "عکس روی جلد را مشاهده کنید"
+          }
+        }
+      }
+    },
+    "profile.ui.view_avatar": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "View profile photo"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profil fotoğrafını görüntüle"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vis profilbilde"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "عرض صورة الملف الشخصي"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مشاهده عکس پروفایل"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voir la photo de profil"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ver foto de perfil"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profilfoto ansehen"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Переглянути фото профілю"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Посмотреть фото профиля"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zobacz zdjęcie profilowe"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eeg sawirka profile"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ፕሮፋይል ስእሊ ርአ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "የመገለጫ ፎቶ ይመልከቱ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پروفائل تصویر دیکھیں"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مشاهده عکس پروفایل"
+          }
+        }
+      }
+    },
+    "profile.ui.avatar_hint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Touch and hold to enlarge the photo."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fotoğrafı büyütmek için basılı tutun."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trykk og hold for å forstørre bildet."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المس مع الاستمرار لتكبير الصورة."
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لمس کنید و نگه دارید تا عکس بزرگ شود."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Touchez et maintenez pour agrandir la photo."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toque y mantenga presionado para ampliar la foto."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Berühren und halten Sie, um das Foto zu vergrößern."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Натисніть і утримуйте, щоб збільшити фотографію."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нажмите и удерживайте, чтобы увеличить фотографию."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dotknij i przytrzymaj, aby powiększyć zdjęcie."
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Taabo oo hayso si aad sawirka u weynayso."
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ነቲ ስእሊ ንምዕባይ ተንኪፍካ ምሓዝ።"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ፎቶውን ለማስፋት ይንኩ እና ይያዙ።"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تصویر کو بڑا کرنے کے لیے ٹچ کریں اور دبائے رکھیں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "برای بزرگ کردن عکس لمس و نگه دارید."
+          }
+        }
+      }
+    },
+    "profile.ui.private": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Private profile"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gizli profil"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Privat profil"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الملف الشخصي الخاص"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پروفایل خصوصی"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profil privé"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "perfil privado"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Privates Profil"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Приватний профіль"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Частный профиль"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profil prywatny"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profile gaar ah"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ናይ ብሕቲ ፕሮፋይል"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "የግል መገለጫ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نجی پروفائل"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مشخصات شخصی"
+          }
+        }
+      }
+    },
+    "profile.ui.load_error_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profile could not load"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profil yüklenemedi"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profilen kunne ikke lastes"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تعذر تحميل الملف الشخصي"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نمایه بارگیری نشد"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le profil n'a pas pu se charger"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudo cargar el perfil"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profil konnte nicht geladen werden"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не вдалося завантажити профіль"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось загрузить профиль"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie udało się wczytać profilu"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profile waa la shubi waayay"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ፕሮፋይል ክጽዕን ኣይከኣለን"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "መገለጫ መጫን አልቻለም"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پروفائل لوڈ نہیں ہو سکا"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پروفایل بارگذاری نشد"
+          }
+        }
+      }
+    },
+    "profile.ui.load_error_body": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check your connection and try again."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bağlantınızı kontrol edip tekrar deneyin."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sjekk forbindelsen og prøv igjen."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تحقق من اتصالك وحاول مرة أخرى."
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اتصال خود را بررسی کنید و دوباره امتحان کنید."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vérifiez votre connexion et réessayez."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comprueba tu conexión y vuelve a intentarlo."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Überprüfen Sie Ihre Verbindung und versuchen Sie es erneut."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перевірте підключення та повторіть спробу."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Проверьте подключение и повторите попытку."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sprawdź połączenie i spróbuj ponownie."
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hubi xidhiidhkaaga oo isku day mar kale."
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ርክብካ መርምር እሞ እንደገና ፈትን።"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ግንኙነትዎን ይፈትሹ እና እንደገና ይሞክሩ።"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اپنا کنکشن چیک کریں اور دوبارہ کوشش کریں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اتصال خود را چک کنید و دوباره امتحان کنید."
+          }
+        }
+      }
+    },
+    "profile.ui.retry": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try again"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tekrar dene"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prøv igjen"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حاول مرة أخرى"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "دوباره امتحان کنید"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réessayez"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inténtalo de nuevo"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versuchen Sie es erneut"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Спробуйте знову"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Попробуйте еще раз"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spróbuj ponownie"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Isku day mar kale"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "እንደገና ፈትን።"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "እንደገና ይሞክሩ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "دوبارہ کوشش کریں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "دوباره تلاش کنید"
+          }
+        }
+      }
+    },
+    "profile.ui.dismiss_notice": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dismiss notice"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bildirimi kapat"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lukk melding"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "رفض الإشعار"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "رد اطلاعیه"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rejeter l'avis"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Descartar aviso"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kündigung abweisen"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Відхилити повідомлення"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Закрыть уведомление"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Odrzuć powiadomienie"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jooji ogeysiis"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ምልክታ ምብራር"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ማስታወቂያ አሰናብት"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نوٹس کو مسترد کریں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اطلاعیه رد کردن"
+          }
+        }
+      }
+    },
+    "blocks.block": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Block"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Engelle"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blokker"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حظر"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مسدود کردن"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bloquer"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bloquear"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blockieren"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Заблокувати"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Заблокировать"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zablokuj"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xannib"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ኣግድ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "አግድ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "بلاک کریں"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "بلاک کردن"
+          }
+        }
+      }
+    },
+    "blocks.block_confirm_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Block member"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Üyeyi engelle"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blokker medlem"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حظر العضو"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مسدود کردن عضو"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bloquer le membre"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bloquear miembro"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mitglied blockieren"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Заблокувати учасника"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Заблокировать участника"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zablokuj członka"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xannib xubinta"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ነዚ ኣባል ኣግድ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "አባልን አግድ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "رکن کو بلاک کریں"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "بلاک کردن عضو"
+          }
+        }
+      }
+    },
+    "blocks.block_confirm_body": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Are you sure you want to block %@?"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ adlı üyeyi engellemek istediğinizden emin misiniz?"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Er du sikker på at du vil blokkere %@?"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "هل أنت متأكد من أنك تريد حظر %@؟"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "آیا مطمئن هستید که می‌خواهید %@ را مسدود کنید؟"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voulez-vous vraiment bloquer %@ ?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Seguro que quieres bloquear a %@?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Möchtest du %@ wirklich blockieren?"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ви впевнені, що хочете заблокувати %@?"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вы уверены, что хотите заблокировать %@?"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Czy na pewno chcesz zablokować %@?"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ma hubtaa inaad xannibto %@?"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ን%@ ክትኣግዶ ርግጸኛ ዲኻ?"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "እርግጠኛ ነዎት %@ን ማገድ ይፈልጋሉ?"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "کیا آپ واقعی %@ کو بلاک کرنا چاہتے ہیں؟"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "آیا مطمئن هستید که می‌خواهید %@ را بلاک کنید؟"
+          }
+        }
+      }
+    },
+    "blocks.unblock_confirm_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unblock member"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Üyenin engellemesini kaldır"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opphev blokkering av medlem"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إلغاء حظر العضو"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "رفع انسداد عضو"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Débloquer le membre"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desbloquear miembro"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blockierung des Mitglieds aufheben"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Розблокувати учасника"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Разблокировать участника"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Odblokuj członka"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ka qaad xannibaadda xubinta"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ዕጽዋ ነዚ ኣባል ኣልዕል"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "እገዳ ከአባሉ አንሳ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "رکن کو ان بلاک کریں"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "رفع بلاک عضو"
+          }
+        }
+      }
+    },
+    "blocks.unblock_confirm_body": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Are you sure you want to unblock %@?"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ adlı üyenin engellemesini kaldırmak istediğinizden emin misiniz?"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Er du sikker på at du vil oppheve blokkeringen av %@?"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "هل أنت متأكد من أنك تريد إلغاء حظر %@؟"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "آیا مطمئن هستید که می‌خواهید انسداد %@ را رفع کنید؟"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voulez-vous vraiment débloquer %@ ?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Seguro que quieres desbloquear a %@?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Möchtest du die Blockierung von %@ wirklich aufheben?"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ви впевнені, що хочете розблокувати %@?"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вы уверены, что хотите разблокировать %@?"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Czy na pewno chcesz odblokować %@?"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ma hubtaa inaad ka qaaddo xannibaadda %@?"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ን%@ ዕጽዋ ክተልዕል ርግጸኛ ዲኻ?"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "እርግጠኛ ነዎት %@ን እገዳ ማንሳት ይፈልጋሉ?"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "کیا آپ واقعی %@ کو ان بلاک کرنا چاہتے ہیں؟"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "آیا مطمئن هستید که می‌خواهید بلاک %@ را رفع کنید؟"
+          }
+        }
+      }
+    },
+    "profile.show_norway_status": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show Norway status on profile"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Norveç durumunu profilde göster"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vis Norge-status på profilen"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إظهار حالة النرويج في الملف الشخصي"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نمایش وضعیت نروژ در نمایه"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher le statut Norvège sur le profil"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar estado de Noruega en el perfil"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Norwegen-Status im Profil anzeigen"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Показувати статус Норвегії в профілі"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Показывать статус в Норвегии в профиле"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pokaż status Norwegii w profilu"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Muuji xaaladda Norway ee profile-ka"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ናይ ኖርወይ ኩነታት ኣብ ፕሮፋይል ኣርእይ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "የኖርዌይ ሁኔታን በመገለጫ ላይ አሳይ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پروفائل پر ناروے کی حیثیت دکھائیں"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نمایش وضعیت نروژ در پروفایل"
+          }
+        }
+      }
+    },
+    "profile.show_location": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show location on profile"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konumu profilde göster"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vis posisjon på profilen"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إظهار الموقع في الملف الشخصي"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نمایش موقعیت مکانی در نمایه"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher la localisation sur le profil"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar ubicación en el perfil"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Standort im Profil anzeigen"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Показувати місцезнаходження в профілі"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Показывать местоположение в профиле"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pokaż lokalizację w profilu"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Muuji goobta profile-ka"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ኣብ ፕሮፋይል ቦታ ኣርእይ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "አካባቢን በመገለጫ ላይ አሳይ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پروفائل پر مقام دکھائیں"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نمایش موقعیت در پروفایل"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

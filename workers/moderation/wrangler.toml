@@ -1,0 +1,69 @@
+name = "norge360-moderation"
+main = "src/index.ts"
+compatibility_date = "2026-09-09"
+
+[triggers]
+crons = ["15 * * * *"]
+
+[[queues.producers]]
+binding = "MEDIA_SCAN_QUEUE"
+queue = "norge360-community-media-scan"
+
+[[queues.producers]]
+binding = "MEDIA_CLEANUP_QUEUE"
+queue = "norge360-community-media-cleanup"
+
+[[queues.producers]]
+binding = "PUSH_DELIVERY_QUEUE"
+queue = "norge360-community-push-delivery"
+
+[[queues.consumers]]
+queue = "norge360-community-media-scan"
+max_batch_size = 1
+max_batch_timeout = 5
+max_retries = 5
+retry_delay = 60
+max_concurrency = 2
+dead_letter_queue = "norge360-community-media-scan-dlq"
+
+[[queues.consumers]]
+queue = "norge360-community-media-cleanup"
+max_batch_size = 5
+max_batch_timeout = 5
+max_retries = 5
+retry_delay = 60
+max_concurrency = 2
+dead_letter_queue = "norge360-community-media-cleanup-dlq"
+
+[[queues.consumers]]
+queue = "norge360-community-push-delivery"
+max_batch_size = 10
+max_batch_timeout = 1
+max_retries = 5
+retry_delay = 30
+max_concurrency = 2
+dead_letter_queue = "norge360-community-push-delivery-dlq"
+
+[vars]
+# The default deployment is the development environment. Do not reuse this
+# Supabase project or its queues for staging/production deployments.
+SUPABASE_URL = "https://nibrbvkykzxsihxhlnzj.supabase.co"
+
+[observability]
+enabled = true
+head_sampling_rate = 1
+redact_query_string = true
+
+# Set secrets with `wrangler secret put`; never place values in this file.
+# SUPABASE_ANON_KEY
+# SUPABASE_SERVICE_ROLE_KEY
+# PUSH_WEBHOOK_SECRET
+# APNS_KEY_ID
+# APNS_TEAM_ID
+# APNS_BUNDLE_ID
+# APNS_PRIVATE_KEY
+# CF_IMAGES_ACCOUNT_ID
+# CF_IMAGES_API_TOKEN
+# GOOGLE_VISION_API_KEY
+# Device rows carry their own APNs environment. This lets Xcode Debug
+# (sandbox) and TestFlight/App Store (production) receive pushes at once.

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleIdentifier</key>
+    <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+    <key>CFBundleDisplayName</key>
+    <string>Norge360</string>
+    <key>CFBundleExecutable</key>
+    <string>$(EXECUTABLE_NAME)</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleShortVersionString</key>
+    <string>$(MARKETING_VERSION)</string>
+    <key>CFBundleVersion</key>
+    <string>$(CURRENT_PROJECT_VERSION)</string>
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleURLName</key>
+            <string>com.norge360.app.auth</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>com.norge360.app.auth</string>
+            </array>
+        </dict>
+    </array>
+    <key>SupabasePublishableKey</key>
+    <string>sb_publishable_FZVPvPy1NrXJ3AwTUEAJ7g_HpIB7LZR</string>
+	<key>SupabaseURL</key>
+	<string>https://nibrbvkykzxsihxhlnzj.supabase.co</string>
+	<key>ModerationAPIURL</key>
+	<string>https://norge360-moderation.huzberkay.workers.dev</string>
+    <key>Norge360PushEnvironment</key>
+    <string>$(APS_ENVIRONMENT)</string>
+    <key>NSCameraUsageDescription</key>
+    <string>Use the camera to choose a private background for this conversation.</string>
+    <key>UILaunchScreen</key>
+    <dict/>
+</dict>
+</plist>

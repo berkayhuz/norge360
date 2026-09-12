@@ -1,0 +1,612 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "post_detail.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Post"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gönderi"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Innlegg"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مشاركة"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ارسال کنید"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publier"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publicar"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beitrag"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Опублікувати"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сообщение"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opublikuj"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ku dhaji"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ፖስት"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ለጥፍ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پوسٹ"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پست کنید"
+          }
+        }
+      }
+    },
+    "post_detail.open": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open this post"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gönderiyi aç"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Åpne dette innlegget"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "افتح هذه المشاركة"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "این پست را باز کنید"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvre ce message"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abre esta publicación"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnen Sie diesen Beitrag"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Відкрийте цю публікацію"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Открыть этот пост"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwórz ten post"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fur qoraalkan"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ነዚ ጽሑፍ ክፈትዎ።"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ይህን ልጥፍ ይክፈቱ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اس پوسٹ کو کھولیں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "این پست را باز کنید"
+          }
+        }
+      }
+    },
+    "post_detail.unavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Post unavailable"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gönderi kullanılamıyor"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Innlegget er utilgjengelig"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المشاركة غير متاحة"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پست در دسترس نیست"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Poste indisponible"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publicación no disponible"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beitrag nicht verfügbar"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Публікація недоступна"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сообщение недоступно"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Post niedostępny"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Boostada lama heli karo"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ፖስት ኣይተረኽበን።"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ልጥፍ አይገኝም"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پوسٹ دستیاب نہیں ہے۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پست موجود نیست"
+          }
+        }
+      }
+    },
+    "post_detail.unavailable_body": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This post was removed or is no longer available to you."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bu gönderi kaldırıldı veya artık sizin için erişilebilir değil."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dette innlegget er fjernet eller ikke lenger tilgjengelig for deg."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تمت إزالة هذه المشاركة أو أنها لم تعد متاحة لك."
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "این پست حذف شد یا دیگر در دسترس شما نیست."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce message a été supprimé ou n'est plus disponible pour vous."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esta publicación fue eliminada o ya no está disponible para usted."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieser Beitrag wurde entfernt oder ist für Sie nicht mehr verfügbar."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Цю публікацію видалено або вона більше не доступна для вас."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Этот пост был удален или больше не доступен для вас."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ten post został usunięty lub nie jest już dla Ciebie dostępny."
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Boostada waa laga saaray ama kuma heli kartid."
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "እዚ ጽሑፍ ተኣልዩ ወይ ድሕሪ ሕጂ ንዓኻትኩም ኣይርከብን።"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ይህ ልጥፍ ተወግዷል ወይም ከእንግዲህ ለእርስዎ አይገኝም።"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "یہ پوسٹ ہٹا دی گئی تھی یا اب آپ کے لیے دستیاب نہیں ہے۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "این نوشته حذف شد یا دیگر در دسترس شما نیست."
+          }
+        }
+      }
+    },
+    "post_detail.community_note": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shared by a community member. Personal experiences are not official guidance."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bir topluluk üyesi tarafından paylaşıldı. Kişisel deneyimler resmî rehberlik değildir."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delt av et fellesskapsmedlem. Personlige erfaringer er ikke offisiell veiledning."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تمت مشاركتها بواسطة أحد أفراد المجتمع. التجارب الشخصية ليست توجيهات رسمية."
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "توسط یکی از اعضای انجمن به اشتراک گذاشته شده است. تجربیات شخصی راهنمایی رسمی نیستند."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Partagé par un membre de la communauté. Les expériences personnelles ne constituent pas une orientation officielle."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compartido por un miembro de la comunidad. Las experiencias personales no son una guía oficial."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Von einem Community-Mitglied geteilt. Persönliche Erfahrungen sind keine offizielle Anleitung."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Поділився учасник спільноти. Особистий досвід не є офіційним керівництвом."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Опубликовано участником сообщества. Личный опыт не является официальным руководством."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Udostępnione przez członka społeczności. Osobiste doświadczenia nie stanowią oficjalnych wskazówek."
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Waxaa wadaaga xubin bulshada ka tirsan. Waayo-aragnimada shakhsi ahaaneed maaha hagitaan rasmi ah."
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ብሓደ ኣባል ሕብረተሰብ ዝካፈል። ውልቃዊ ተመኩሮታት ወግዓዊ መምርሒ ኣይኮነን።"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "በማህበረሰብ አባል የተጋራ። የግል ተሞክሮዎች ኦፊሴላዊ መመሪያዎች አይደሉም።"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "کمیونٹی کے ایک رکن کے ذریعے اشتراک کردہ۔ ذاتی تجربات سرکاری رہنمائی نہیں ہیں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "توسط یک عضوه جامعه به اشتراک گذاشته شده است. تجارب شخصی راهنمایی رسمی نیستند."
+          }
+        }
+      }
+    },
+    "post_photo.edit": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit photo"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fotoğrafı düzenle"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rediger bilde"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تحرير الصورة"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ویرایش عکس"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifier la photo"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Editar foto"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Foto bearbeiten"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Редагувати фото"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Редактировать фотографию"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edytuj zdjęcie"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wax ka beddel sawirka"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ስእሊ ኣርትዕ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ፎቶ አርትዕ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تصویر میں ترمیم کریں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ویرایش عکس"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

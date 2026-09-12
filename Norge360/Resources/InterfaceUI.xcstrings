@@ -1,0 +1,3743 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "image.adjust_hint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drag to frame your photo. Adjust it before sharing."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fotoğrafı sürükleyerek konumlandır. Paylaşmadan önce düzenle."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dra for å ramme inn bildet. Juster det før du deler."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اسحب لتأطير صورتك. اضبطه قبل المشاركة."
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "بکشید تا عکس خود را قاب کنید. قبل از اشتراک گذاری آن را تنظیم کنید."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Faites glisser pour encadrer votre photo. Ajustez-le avant de partager."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arrastra para enmarcar tu foto. Ajústalo antes de compartir."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ziehen Sie, um Ihr Foto einzurahmen. Passen Sie es vor dem Teilen an."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перетягніть, щоб обрамити фотографію. Налаштуйте його, перш ніж ділитися."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перетащите, чтобы создать рамку для фотографии. Настройте его, прежде чем делиться."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przeciągnij, aby wykadrować zdjęcie. Dostosuj go przed udostępnieniem."
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jiid si aad u sawirto sawirkaaga. hagaaji ka hor inta aadan wadaagin."
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ስእልኻ ፍሬም ንምግባር ስሓብ። ቅድሚ ምክፋልኩም ኣስተኻኽልዎ።"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ፎቶህን ለመቅረጽ ጎትት። ከማጋራትዎ በፊት ያስተካክሉት።"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اپنی تصویر کو فریم کرنے کے لیے گھسیٹیں۔ شیئر کرنے سے پہلے اسے ایڈجسٹ کریں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "برای قاب کردن عکس تان بکشید. قبل از اشتراک گذاری آنرا تنظیم کنید."
+          }
+        }
+      }
+    },
+    "image.zoom": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zoom"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yakınlaştır"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zoom"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تكبير"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "بزرگنمایی ضربه بزنید؛"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zoomer"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ampliar"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zoomen"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Збільшити"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Увеличить"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Powiększ"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Soo dhawoow"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ዙም ምግባር"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "አጉላ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "زوم"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "زوم"
+          }
+        }
+      }
+    },
+    "image.crop": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Crop"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kırp"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beskjære"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المحاصيل"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "برش"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recadrer"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cultivo"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zuschneiden"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "кадрування"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Обрезка"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przytnij"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dalagga"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ዝራእቲ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ሰብል"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "فصل"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "محصول"
+          }
+        }
+      }
+    },
+    "image.aspect.free": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Original"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Orijinal"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Original"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أصلي"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اصل"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Originale"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Originales"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Original"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Оригінал"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Оригинал"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oryginał"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asalka"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ኦርጅናል"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ኦሪጅናል"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اصل"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اصلی"
+          }
+        }
+      }
+    },
+    "image.aspect.square": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Square"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kare"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Square"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مربع"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مربع"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carré"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cuadrado"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quadratisch"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Квадратний"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Площадь"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kwadrat"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Square"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ስኴር"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ካሬ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مربع"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مربع"
+          }
+        }
+      }
+    },
+    "image.aspect.portrait": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Portrait"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dikey"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Portrett"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "صورة"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پرتره"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Portrait"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "retrato"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Porträt"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Портрет"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Портрет"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Portret"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sawirka"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ስእሊ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "የቁም ሥዕል"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پورٹریٹ"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پرتره"
+          }
+        }
+      }
+    },
+    "image.aspect.cover": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wide"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geniş"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bred"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "واسعة"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "عریض"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Large"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ancho"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Breit"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Широкий"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Широкий"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Szeroki"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Balaadhan"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ገፊሕ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ሰፊ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "چوڑا"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "وسیع"
+          }
+        }
+      }
+    },
+    "image.rotate": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rotate"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Döndür"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Roter"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تدوير"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "چرخش"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rotation"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "rotar"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drehen"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Обертати"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Поворот"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Obróć"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Isku rog"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ምዝዋር"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "አሽከርክር"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "گھمائیں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "بچرخانید"
+          }
+        }
+      }
+    },
+    "image.reset": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reset"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sıfırla"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tilbakestill"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إعادة تعيين"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "بازنشانی کنید"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réinitialiser"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiniciar"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zurücksetzen"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Скинути"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сброс"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zresetuj"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dib u dajin"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ዳግማይ ምትካል"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ዳግም አስጀምር"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "دوبارہ ترتیب دیں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تنظیم مجدد"
+          }
+        }
+      }
+    },
+    "image.review": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Review photo"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fotoğrafı düzenle"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anmeld bildet"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مراجعة الصورة"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "بررسی عکس"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Revoir la photo"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Foto de revisión"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rezensionsfoto"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Фото огляду"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Обзор фото"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przejrzyj zdjęcie"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sawirka dib u eeg"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ሪቪው ፎቶ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ፎቶን ይገምግሙ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تصویر کا جائزہ لیں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "عکس مرور"
+          }
+        }
+      }
+    },
+    "image.use": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use photo"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fotoğrafı kullan"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bruk bilde"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "استخدم الصورة"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "از عکس استفاده کنید"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Utiliser une photo"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "usar foto"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Foto verwenden"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Використовуйте фото"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Использовать фото"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Użyj zdjęcia"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Isticmaal sawir"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ስእሊ ተጠቐም"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ፎቶ ተጠቀም"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تصویر استعمال کریں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "از عکس استفاده کنید"
+          }
+        }
+      }
+    },
+    "image.unavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Photo unavailable"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fotoğraf görüntülenemiyor"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bildet er ikke tilgjengelig"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الصورة غير متاحة"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "عکس در دسترس نیست"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Photo indisponible"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Foto no disponible"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Foto nicht verfügbar"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Фото недоступне"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Фото недоступно"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zdjęcie niedostępne"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sawirka lama heli karo"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ስእሊ ኣይተረኽበን።"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ፎቶ የለም።"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تصویر دستیاب نہیں ہے۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "عکس موجود نیست"
+          }
+        }
+      }
+    },
+    "image.close": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close photo"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fotoğrafı kapat"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lukk bilde"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إغلاق الصورة"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "بستن عکس"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fermer la photo"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cerrar foto"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Foto schließen"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Закрити фото"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Закрыть фото"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zamknij zdjęcie"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sawirka xidh"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ስእሊ ዕጸው"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ፎቶ ዝጋ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تصویر بند کریں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "عکس نزدیک"
+          }
+        }
+      }
+    },
+    "search.clear": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear search"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aramayı temizle"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tøm søk"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مسح البحث"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "جستجو را پاک کنید"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Effacer la recherche"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Borrar búsqueda"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suche löschen"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Очистити пошук"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Очистить поиск"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wyczyść wyszukiwanie"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nadiifi raadinta"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ንጹር ምድላይ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ፍለጋን አጽዳ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تلاش صاف کریں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "جستجو پاک کنید"
+          }
+        }
+      }
+    },
+    "explore.latest_hint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Newest community posts first"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En yeni topluluk gönderileri önce"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nyeste fellesskapsinnlegg først"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أحدث مشاركات المجتمع أولاً"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "جدیدترین پست های انجمن ابتدا"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les messages les plus récents de la communauté en premier"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las publicaciones más recientes de la comunidad primero"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neueste Community-Beiträge zuerst"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Спершу найновіші публікації спільноти"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сначала самые новые публикации сообщества"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Najpierw najnowsze posty w społeczności"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Qoraalada ugu cusub ee bulshada marka hore"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ሓደስቲ ናይ ማሕበረሰብ ጽሑፋት መጀመርታ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "መጀመሪያ አዲስ የማህበረሰብ ልጥፎች"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "کمیونٹی کی تازہ ترین پوسٹس پہلے"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "جدیدترین پست های جامعه اول"
+          }
+        }
+      }
+    },
+    "explore.relevance_hint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your groups first, then recent posts"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Önce grupların, ardından yeni gönderiler"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gruppene dine først, deretter siste innlegg"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مجموعاتك أولاً، ثم المشاركات الأخيرة"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ابتدا گروه های شما، سپس پست های اخیر"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vos groupes d'abord, puis les messages récents"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tus grupos primero, luego las publicaciones recientes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zuerst Ihre Gruppen, dann aktuelle Beiträge"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Спочатку ваші групи, а потім останні публікації"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сначала ваши группы, затем последние публикации."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Najpierw Twoje grupy, potem ostatnie posty"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kooxihiina marka hore, ka dibna qoraalladii u dambeeyay"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "መጀመርታ ጉጅለታትኩም፡ ድሕሪኡ ኣብ ቀረባ እዋን ዝወጹ ጽሑፋት"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "በመጀመሪያ ቡድኖችዎ፣ ከዚያ የቅርብ ጊዜ ልጥፎች"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پہلے آپ کے گروپس، پھر حالیہ پوسٹس"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اول گروه های شما بعد پست های اخیر"
+          }
+        }
+      }
+    },
+    "explore.relevant": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "For you"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Senin için"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "For deg"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "بالنسبة لك"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "برای شما"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pour toi"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "para ti"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für dich"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Для тебе"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Для тебя"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dla ciebie"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adiga"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ንዓኻ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ለእርስዎ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "آپ کے لیے"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "برای شما"
+          }
+        }
+      }
+    },
+    "explore.latest": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Latest"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En yeni"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Siste"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الأحدث"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "آخرین"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dernier"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lo último"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neueste"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Останній"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Последние"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Najnowsze"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ugu dambeeyay"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ዳሕረዋይ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "የቅርብ ጊዜ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تازہ ترین"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "آخرین"
+          }
+        }
+      }
+    },
+    "explore.sort": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Post order"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gönderi sıralaması"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Legg inn bestilling"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "طلب آخر"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ارسال سفارش"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publier la commande"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Orden posterior"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bestellung aufgeben"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Розмістити замовлення"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Разместить заказ"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zamówienie pocztowe"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dalabka boostada"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ፖስታ ትእዛዝ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ትዕዛዝ ይለጥፉ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پوسٹ آرڈر"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "سفارش پست کنید"
+          }
+        }
+      }
+    },
+    "hub.eyebrow": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "YOUR LIFE IN NORWAY"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NORVEÇ’TE HAYATIN"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DITT LIV I NORGE"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حياتك في النرويج"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "زندگی شما در نروژ"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VOTRE VIE EN NORVÈGE"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TU VIDA EN NORUEGA"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "IHR LEBEN IN NORWEGEN"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ВАШЕ ЖИТТЯ В НОРВЕГІЇ"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ВАША ЖИЗНЬ В НОРВЕГИИ"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TWOJE ŻYCIE W NORWEGII"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOLOSHAADA NORWAY"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ህይወትካ ኣብ ኖርወይ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ኑሮዎ በኖርዌይ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ناروے میں آپ کی زندگی"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "زندگی شما در ناروی"
+          }
+        }
+      }
+    },
+    "hub.welcome": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Find your people."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sana yakın insanlarla tanış."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finn dine folk."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ابحث عن شعبك."
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "افراد خود را پیدا کنید."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trouvez votre peuple."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Encuentra a tu gente."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finden Sie Ihre Leute."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Знайдіть своїх людей."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Найдите своих людей."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Znajdź swoich ludzi."
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dadkaaga raadi."
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ህዝብኻ ድለ።"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "የእርስዎን ሰዎች ያግኙ።"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اپنے لوگوں کو تلاش کریں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مردم خود را پیدا کنید."
+          }
+        }
+      }
+    },
+    "hub.welcome_body": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local conversations, shared interests and a little help along the way."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yerel sohbetler, ortak ilgi alanları ve her adımda biraz destek."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lokale samtaler, felles interesser og litt hjelp underveis."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المحادثات المحلية والاهتمامات المشتركة والقليل من المساعدة على طول الطريق."
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "گفتگوهای محلی، علایق مشترک و کمی کمک در طول مسیر."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Des conversations locales, des intérêts partagés et un peu d’aide en cours de route."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conversaciones locales, intereses compartidos y un poco de ayuda en el camino."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lokale Gespräche, gemeinsame Interessen und ein wenig Hilfe unterwegs."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Місцеві розмови, спільні інтереси та невелика допомога на цьому шляху."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Местные разговоры, общие интересы и небольшая помощь в пути."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lokalne rozmowy, wspólne zainteresowania i mała pomoc po drodze."
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sheeko maxalli ah, danaha la wadaago iyo in yar oo caawimo ah inta lagu jiro jidka."
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ናይ ከባቢ ዕላላት፡ ናይ ሓባር ድሌታትን ንእሽቶ ሓገዝን ኣብ መንገዲ።"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "የአካባቢ ውይይቶች፣ የጋራ ፍላጎቶች እና በመንገድ ላይ ትንሽ እገዛ።"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مقامی گفتگو، مشترکہ دلچسپیاں اور راستے میں تھوڑی مدد۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مکالمات محلی، علایق مشترک و یک کمک کوچک در طول راه."
+          }
+        }
+      }
+    },
+    "hub.groups_short": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Find common ground"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ortak noktada buluş"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finn felles grunnlag"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "العثور على أرضية مشتركة"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "زمینه مشترک پیدا کنید"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trouver un terrain d'entente"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Encuentra puntos en común"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gemeinsamkeiten finden"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Знайти спільну мову"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Найдите общий язык"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Znajdź wspólną płaszczyznę"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Raadi meel la wadaago"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ናይ ሓባር ርድኢት ድለዩ።"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "የጋራ መግባባት ይፈልጉ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مشترکہ زمین تلاش کریں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "زمینه مشترک پیدا کنید"
+          }
+        }
+      }
+    },
+    "hub.events_short": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meet in real life"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yüz yüze tanış"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Møtes i det virkelige liv"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يجتمع في الحياة الحقيقية"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "در زندگی واقعی ملاقات کنید"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rencontrez-vous dans la vraie vie"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conocerse en la vida real."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Treffen Sie sich im wirklichen Leben"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Знайомство в реальному житті"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Встретимся в реальной жизни"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spotkaj się w prawdziwym życiu"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La kulan nolosha dhabta ah"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ኣብ ሓቀኛ ህይወት ተራኸቡ።"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "በእውነተኛ ህይወት ውስጥ ይገናኙ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حقیقی زندگی میں ملیں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "در زندگی واقعی آشنا شوید"
+          }
+        }
+      }
+    },
+    "hub.find_people": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Places to connect"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buluşma noktaları"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Steder å koble til"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أماكن للتواصل"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مکان هایی برای اتصال"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Des lieux pour se connecter"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lugares para conectarse"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Orte zum Verbinden"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Місця для підключення"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Места для общения"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Miejsca do połączenia"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meelaha lagu xidho"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ንምትእስሳር ዝሕግዙ ቦታታት"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "የሚገናኙባቸው ቦታዎች"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "جڑنے کے لیے جگہیں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مکان های برای اتصال"
+          }
+        }
+      }
+    },
+    "hub.see_all": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "See all"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tümünü gör"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se alle"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "شاهد الكل"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "همه را ببینید"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voir tout"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ver todo"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle anzeigen"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Переглянути всі"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Посмотреть все"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zobacz wszystko"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dhammaan arag"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ኩሉ ርአ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ሁሉንም ይመልከቱ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "سب دیکھیں"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "همه را ببینید"
+          }
+        }
+      }
+    },
+    "hub.groups_explanation": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your groups and city, followed by more communities to explore."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Önce grupların ve şehrin, ardından keşfedebileceğin topluluklar."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dine grupper og byer, etterfulgt av flere fellesskap å utforske."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مجموعاتك ومدينتك، تليها المزيد من المجتمعات لاستكشافها."
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "گروه ها و شهر شما و پس از آن جوامع بیشتری برای کاوش."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vos groupes et votre ville, suivis d'autres communautés à explorer."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tus grupos y ciudad, seguidos de más comunidades para explorar."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ihre Gruppen und Ihre Stadt, gefolgt von weiteren Gemeinden, die es zu erkunden gilt."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ваші групи та місто, а потім інші спільноти для вивчення."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ваши группы и город, а также другие сообщества для изучения."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Twoje grupy i miasto, a następnie więcej społeczności do odkrycia."
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kooxahaaga iyo magaaladaada, waxaa ku xiga jaaliyado badan si aad u sahamiso."
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ጉጅለታትኩምን ከተማኹምን፡ ስዒቡ ድማ ተወሳኺ ማሕበረሰባት ክትድህስሱ።"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ቡድኖችዎ እና ከተማዎ፣ ተጨማሪ ማህበረሰቦችን ይከተሉ።"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "آپ کے گروپس اور شہر، اس کے بعد مزید کمیونٹیز دریافت کریں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "گروه ها و شهر شما، به تعقیب آن جوامع بیشتر برای اکتشاف."
+          }
+        }
+      }
+    },
+    "hub.joined": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Joined"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Katıldın"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ble med"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "انضم"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پیوست"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rejoint"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se unió"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beigetreten"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Приєднався"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Присоединился"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dołączył"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ku biiray"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ተጸንቢሩ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ተቀላቅሏል።"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "شامل ہو گئے۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پیوست"
+          }
+        }
+      }
+    },
+    "hub.retry": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try again"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tekrar dene"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prøv igjen"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حاول مرة أخرى"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "دوباره امتحان کنید"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réessayez"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inténtalo de nuevo"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versuchen Sie es erneut"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Спробуйте знову"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Попробуйте еще раз"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spróbuj ponownie"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Isku day mar kale"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "እንደገና ፈትን።"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "እንደገና ይሞክሩ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "دوبارہ کوشش کریں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "دوباره تلاش کنید"
+          }
+        }
+      }
+    },
+    "hub.plan_heading": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Make Norway feel like home"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Norveç’e alışmanı kolaylaştır"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Få Norge til å føle seg som hjemme"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اجعل النرويج تشعر وكأنك في بيتك"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "کاری کنید که نروژ احساس کند خانه شماست"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Faites en sorte que la Norvège se sente comme chez vous"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Haz que Noruega se sienta como en casa"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sorgen Sie dafür, dass sich Norwegen wie zu Hause fühlt"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нехай Норвегія почувається як вдома"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пусть Норвегия почувствует себя как дома"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spraw, aby Norwegia poczuła się jak w domu"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ka dhig Norway sidii guri"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ኖርወይ ከም ገዛና ክትስምዓ ግበር"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ኖርዌይ እንደ ቤት እንዲሰማት ያድርጉ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ناروے کو گھر جیسا محسوس کریں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ناروی را مانند خانه احساس کنید"
+          }
+        }
+      }
+    },
+    "hub.continue_plan": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continue my plan"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Planıma devam et"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fortsett planen min"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مواصلة خطتي"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "به برنامه من ادامه بده"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continuer mon plan"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "continuar mi plan"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Setzen Sie meinen Plan fort"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Продовжуйте мій план"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Продолжить мой план"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kontynuuj mój plan"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Qorshahayga sii wad"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "መደበይ ቀጽሎ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "እቅዴን ቀጥል።"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "میرا منصوبہ جاری رکھیں"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "برنامه من را ادامه دهید"
+          }
+        }
+      }
+    },
+    "image.move_left": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move photo left"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fotoğrafı sola taşı"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Flytt bildet til venstre"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نقل الصورة إلى اليسار"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "عکس را به چپ منتقل کنید"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Déplacer la photo vers la gauche"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mover foto a la izquierda"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Foto nach links verschieben"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перемістити фото вліво"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Переместить фотографию влево"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przesuń zdjęcie w lewo"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "U dhaqaaq sawirka bidix"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ስእሊ ንጸጋም ኣንቀሳቕሶ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ፎቶ ወደ ግራ ውሰድ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تصویر بائیں منتقل کریں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "عکس را به چپ حرکت دهید"
+          }
+        }
+      }
+    },
+    "image.move_right": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move photo right"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fotoğrafı sağa taşı"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Flytt bildet til høyre"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نقل الصورة إلى اليمين"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "عکس را به راست منتقل کنید"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Déplacer la photo vers la droite"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mover foto a la derecha"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Foto nach rechts verschieben"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перемістити фотографію праворуч"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Переместить фото вправо"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przesuń zdjęcie w prawo"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "U dhaqaaq sawirka midig"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ስእሊ ንየማን ኣንቀሳቕሶ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ፎቶውን ወደ ቀኝ ያንቀሳቅሱ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تصویر کو دائیں منتقل کریں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "عکس را به سمت راست حرکت دهید"
+          }
+        }
+      }
+    },
+    "image.move_up": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move photo up"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fotoğrafı yukarı taşı"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Flytt bildet opp"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نقل الصورة لأعلى"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "انتقال عکس به بالا"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Déplacer la photo vers le haut"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mover foto hacia arriba"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Foto nach oben verschieben"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перемістити фото вгору"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Переместить фото вверх"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przesuń zdjęcie w górę"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kor u qaad sawirka"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ስእሊ ንላዕሊ ኣንቀሳቕሶ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ፎቶ ወደ ላይ ይውሰዱት።"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تصویر اوپر منتقل کریں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "عکس را به بالا حرکت دهید"
+          }
+        }
+      }
+    },
+    "feed.filter": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed filter"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Akış filtresi"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fôrfilter"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مرشح الأعلاف"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "فیلتر خوراک"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtre d'alimentation"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtro de alimentación"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Futterfilter"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Підживлювальний фільтр"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Кормовой фильтр"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtr paszowy"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "filtarka quudinta"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "መጽረዪ መግቢ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "የምግብ ማጣሪያ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "فیڈ فلٹر"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "فیلتر تغذیه"
+          }
+        }
+      }
+    },
+    "feed.follows": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Follows"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Takip ettiklerin"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Følger"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يتبع"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "دنبال می کند"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suit"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sigue"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Folgt"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Слідує"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Подписывается"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podąża"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Raacda"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ይስዕብ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ይከተላል"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پیروی کرتا ہے۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "دنبال میکند"
+          }
+        }
+      }
+    },
+    "image.move_down": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move photo down"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fotoğrafı aşağı taşı"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Flytt bildet ned"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نقل الصورة إلى أسفل"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "عکس را به پایین منتقل کنید"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Déplacer la photo vers le bas"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mover foto hacia abajo"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Foto nach unten verschieben"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перемістити фото вниз"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Переместить фото вниз"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przesuń zdjęcie w dół"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hoos u qaad sawirka"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ስእሊ ንታሕቲ ኣግዕዞ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ፎቶ ወደ ታች ውሰድ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تصویر کو نیچے منتقل کریں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "عکس را به پایین حرکت دهید"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

@@ -1,0 +1,48 @@
+# Norge360 SwiftLint configuration.
+# Run from the repository root: swiftlint lint
+
+included:
+  - Norge360
+  - Norge360Tests
+
+excluded:
+  - .build
+  - DerivedData
+  - .swiftpm
+  - Packages
+
+reporter: xcode
+
+# swift-format owns multiline collection punctuation. Keeping this rule out of
+# SwiftLint prevents the two formatters from rewriting each other's output.
+disabled_rules:
+  - trailing_comma
+  - opening_brace
+
+# Keep warnings non-blocking locally while the existing codebase is adopted.
+# CI can use `swiftlint lint --strict` once the baseline is clean.
+strict: false
+
+opt_in_rules:
+  - force_unwrapping
+  - empty_count
+  - empty_string
+  - closure_spacing
+  - contains_over_filter_count
+  - first_where
+  - flatmap_over_map_reduce
+  - modifier_order
+  - overridden_super_call
+  - private_action
+  - private_outlet
+  - redundant_nil_coalescing
+  - sorted_imports
+
+cyclomatic_complexity:
+  warning: 10
+  error: 20
+
+# Codable request types commonly contain a CodingKeys enum. Allow that
+# intentional two-level nesting without hiding deeper architectural nesting.
+nesting:
+  type_level: 2

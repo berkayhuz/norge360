@@ -1,0 +1,12 @@
+# Periphery scans the application target and keeps SwiftUI preview declarations.
+# Review every result before deleting code; generated and reflective code can
+# look unused to a static analyzer.
+
+project: Norge360.xcodeproj
+schemes:
+  - Norge360
+exclude_tests: false
+retain_swift_ui_previews: true
+retain_objc_accessible: true
+retain_codable_properties: true
+format: xcode

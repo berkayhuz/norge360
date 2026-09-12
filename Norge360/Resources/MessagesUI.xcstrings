@@ -1,0 +1,4551 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "chat.appearance": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appearance"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Görünüm"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Utseende"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المظهر"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ظاهر"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apparence"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apariencia"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aussehen"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Зовнішній вигляд"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Внешний вид"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wygląd"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Muuqashada"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "መልክዕ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "መልክ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ظاہری شکل"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ظاهر"
+          }
+        }
+      }
+    },
+    "chat.appearance_note": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "These appearance choices apply only to your view of this conversation."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bu görünüm tercihleri yalnızca sizin sohbet ekranınıza uygulanır."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disse utseendevalgene gjelder bare for synet ditt på denne samtalen."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تنطبق اختيارات المظهر هذه فقط على طريقة عرضك لهذه المحادثة."
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "این انتخاب های ظاهری فقط برای دیدگاه شما از این مکالمه اعمال می شود."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ces choix d'apparence s'appliquent uniquement à votre vision de cette conversation."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estas opciones de apariencia se aplican sólo a su vista de esta conversación."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Darstellungsoptionen gelten nur für Ihre Sicht auf dieses Gespräch."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ці варіанти зовнішнього вигляду стосуються лише вашого бачення цієї розмови."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Эти варианты внешнего вида применяются только к вашему взгляду на этот разговор."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Te opcje wyglądu dotyczą tylko Twojego widoku tej rozmowy."
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Doorashooyinkan muuqaalka ah waxay khuseeyaan oo keliya aragtidaada wada hadalka."
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "እዞም ናይ መልክዕ ምርጫታት እዚኣቶም ነቲ ብዛዕባ እዚ ዝርርብ ዘለካ ኣረኣእያ ጥራይ እዮም ዚምልከቱ።"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "እነዚህ የመልክ ምርጫዎች በዚህ ውይይት ላይ ባለዎት አመለካከት ላይ ብቻ ተግባራዊ ይሆናሉ።"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ظاہری شکل کے یہ انتخاب صرف اس گفتگو کے آپ کے نقطہ نظر پر لاگو ہوتے ہیں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "این انتخاب های ظاهری فقط در مورد دید شما در مورد این مکالمه صدق میکند."
+          }
+        }
+      }
+    },
+    "chat.appearance_preview": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Make this conversation yours"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bu sohbeti kendinize göre düzenleyin"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gjør denne samtalen din"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اجعل هذه المحادثة لك"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "این گفتگو را از آن خود کنید"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Faites de cette conversation la vôtre"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Haz tuya esta conversación"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Machen Sie dieses Gespräch zu Ihrem"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Зробіть цю розмову вашою"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сделайте этот разговор своим"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uczyń tę rozmowę swoją"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wada hadalkan ka dhig mid adiga leh"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "እዚ ዕላል ናትካ ግበሮ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ይህን ውይይት ያንተ ያድርጉት"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اس گفتگو کو اپنا بنائیں"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "این گپ را مال خود بسازید"
+          }
+        }
+      }
+    },
+    "chat.background": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Background pattern"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arkaplan deseni"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bakgrunnsmønster"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نمط الخلفية"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الگوی پس زمینه"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Motif de fond"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Patrón de fondo"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hintergrundmuster"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "фоновий візерунок"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Фоновый узор"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wzór tła"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Qaabka asalka ah"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ድሕረ ባይታ ቅዲ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "የበስተጀርባ ንድፍ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پس منظر پیٹرن"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الگوی پس زمینه"
+          }
+        }
+      }
+    },
+    "chat.background.dots": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dots"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noktalar"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prikker"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "النقاط"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نقطه ها"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Points"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Puntos"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Punkte"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Крапки"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Точки"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kropki"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dhibcaha"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ነጥብታት"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ነጥቦች"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نقطے"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نقاط"
+          }
+        }
+      }
+    },
+    "chat.background.grid": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grid"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Izgara"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rutenett"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الشبكة"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "شبکه"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grille"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cuadrícula"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gitter"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сітка"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сетка"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Siatka"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xarig"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ሽቦ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ፍርግርግ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "گرڈ"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "شبکه"
+          }
+        }
+      }
+    },
+    "chat.background.plain": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plain"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Düz"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vanlig"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "عادي"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "دشت"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plaine"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Llano"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einfach"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Рівнина"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Обычный"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zwykły"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cad"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ስሩዕ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ሜዳ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "سادہ"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "دشت"
+          }
+        }
+      }
+    },
+    "chat.block_note": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blocking prevents conversation access and further contact in either direction. You can manage blocked members in Settings."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Engelleme, her iki yönde de sohbete erişimi ve iletişimi önler. Engellediğiniz üyeleri Ayarlar üzerinden yönetebilirsiniz."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blokkering forhindrer samtaletilgang og ytterligere kontakt i begge retninger. Du kan administrere blokkerte medlemmer i Innstillinger."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يمنع الحظر الوصول إلى المحادثة ومزيد من الاتصال في أي من الاتجاهين. يمكنك إدارة الأعضاء المحظورين في الإعدادات."
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مسدود کردن از دسترسی به مکالمه و تماس بیشتر در هر جهت جلوگیری می کند. می توانید اعضای مسدود شده را در تنظیمات مدیریت کنید."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le blocage empêche l’accès à la conversation et tout autre contact dans les deux sens. Vous pouvez gérer les membres bloqués dans Paramètres."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El bloqueo impide el acceso a la conversación y un mayor contacto en cualquier dirección. Puedes administrar miembros bloqueados en Configuración."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Blockieren verhindert den Zugang zu Gesprächen und weiteren Kontakt in beide Richtungen. Sie können blockierte Mitglieder in den Einstellungen verwalten."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Блокування забороняє доступ до розмови та подальший контакт у будь-якому напрямку. Керувати заблокованими учасниками можна в налаштуваннях."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Блокировка предотвращает доступ к разговору и дальнейший контакт в любом направлении. Вы можете управлять заблокированными участниками в настройках."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blokowanie uniemożliwia dostęp do rozmowy i dalszy kontakt w którąkolwiek stronę. Możesz zarządzać zablokowanymi członkami w Ustawieniach."
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xannibaadu waxay ka hortagtaa gelitaanka wada hadalka iyo xidhiidh dheeraad ah oo labada dhinac ah. Waxaad maamuli kartaa xubnaha la xannibay ee ku jira Settings."
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ምዕጋት ዕላል ምብጻሕን ተወሳኺ ርክብን ብኽልቲኡ ኣንፈት ይኽልክል። ኣብ ቅጥዕታት ዝተዓጽዉ ኣባላት ከተመሓድር ትኽእል ኢኻ።"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ማገድ የውይይት መዳረሻን እና ተጨማሪ ግንኙነትን በሁለቱም አቅጣጫዎች ይከለክላል። በቅንብሮች ውስጥ የታገዱ አባላትን ማስተዳደር ትችላለህ።"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مسدود کرنا کسی بھی سمت میں بات چیت تک رسائی اور مزید رابطے کو روکتا ہے۔ آپ سیٹنگز میں بلاک شدہ ممبران کا نظم کر سکتے ہیں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مسدود کردن از دسترسی به مکالمه و تماس بیشتر در هر دو جهت جلوگیری میکند. شما میتوانید اعضای مسدود شده را در تنظیمات مدیریت کنید."
+          }
+        }
+      }
+    },
+    "chat.bubble_color": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Message bubble color"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mesaj balonu rengi"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Farge på meldingsboble"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لون فقاعة الرسالة"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "رنگ حباب پیام"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couleur de la bulle de message"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Color de la burbuja del mensaje"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Farbe der Nachrichtenblase"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Колір бульбашки повідомлення"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Цвет пузырька сообщения"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kolor bańki wiadomości"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Midabka xumbo fariinta"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "መልእኽቲ ፍንጣጣ ሕብሪ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "የመልእክት አረፋ ቀለም"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پیغام کے بلبلے کا رنگ"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "رنگ حباب پیام"
+          }
+        }
+      }
+    },
+    "chat.clear_search": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear search"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aramayı temizle"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tøm søk"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مسح البحث"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "جستجو را پاک کنید"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Effacer la recherche"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Borrar búsqueda"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suche löschen"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Очистити пошук"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Очистить поиск"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wyczyść wyszukiwanie"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nadiifi raadinta"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ንጹር ምድላይ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ፍለጋን አጽዳ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تلاش صاف کریں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "جستجو پاک کنید"
+          }
+        }
+      }
+    },
+    "chat.close": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kapat"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lukk"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إغلاق"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "بستن"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fermer"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cerrar"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schließen"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Закрити"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Закрыть"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zamknij"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xir"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ዕጸዎ።"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ዝጋ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "بند"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "بسته کنید"
+          }
+        }
+      }
+    },
+    "chat.close_search": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close search"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aramayı kapat"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lukk søk"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إغلاق البحث"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "جستجو را ببندید"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fermer la recherche"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cerrar búsqueda"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suche schließen"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Закрити пошук"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Закрыть поиск"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zamknij wyszukiwanie"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xir raadinta"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ምድላይ ዕጸዎ።"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ፍለጋን ዝጋ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تلاش بند کریں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "جستجو را ببندید"
+          }
+        }
+      }
+    },
+    "chat.color.blue": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blue"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mavi"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blått"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أزرق"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "آبی"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bleu"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "azul"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blau"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Синій"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Синий"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niebieski"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buluug"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ሰማያዊ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ሰማያዊ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نیلا"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "آبی"
+          }
+        }
+      }
+    },
+    "chat.color.neutral": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neutral"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nötr"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nøytral"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "محايد"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "خنثی"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neutre"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neutro"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neutral"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нейтральний"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нейтральный"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neutralny"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dhexdhexaad"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ገለልተኛ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ገለልተኛ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "غیر جانبدار"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "خنثی"
+          }
+        }
+      }
+    },
+    "chat.color.purple": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Purple"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mor"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lilla"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أرجواني"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "بنفش"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Violet"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Púrpura"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lila"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Фіолетовий"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Фиолетовый"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fioletowy"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Purple"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ሐምላይ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ሐምራዊ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "جامنی"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ارغوانی"
+          }
+        }
+      }
+    },
+    "chat.color.teal": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teal"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turkuaz"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blågrønn"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "البط البري"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "آبی رنگ"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sarcelle"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "verde azulado"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blaugrün"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Чирок"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Бирюзовый"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turkusowy"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teel"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ቲል"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ሻይ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ٹیل"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تیل"
+          }
+        }
+      }
+    },
+    "chat.delete_conversation": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete conversation"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sohbeti sil"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Slett samtale"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حذف المحادثة"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مکالمه را حذف کنید"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimer la conversation"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eliminar conversación"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konversation löschen"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Видалити бесіду"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Удалить разговор"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usuń rozmowę"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tirtir wada hadalka"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ዕላል ምድምሳስ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ውይይት ሰርዝ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "گفتگو کو حذف کریں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حذف مکالمه"
+          }
+        }
+      }
+    },
+    "chat.delete_conversation_confirm": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This removes the conversation from your inbox only. It does not delete messages for the other member or from an open safety review."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bu işlem sohbeti yalnızca gelen kutunuzdan kaldırır. Diğer üyenin mesajlarını veya açık güvenlik incelemesindeki içerikleri silmez."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dette fjerner kun samtalen fra innboksen din. Den sletter ikke meldinger for det andre medlemmet eller fra en åpen sikkerhetsgjennomgang."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يؤدي هذا إلى إزالة المحادثة من البريد الوارد الخاص بك فقط. ولا يحذف الرسائل الخاصة بالعضو الآخر أو من مراجعة السلامة المفتوحة."
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "با این کار مکالمه فقط از صندوق ورودی شما حذف می شود. پیام‌های عضو دیگر یا از بررسی ایمنی باز را حذف نمی‌کند."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cela supprime uniquement la conversation de votre boîte de réception. Il ne supprime pas les messages destinés à l'autre membre ni ceux d'un examen de sécurité ouvert."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esto elimina la conversación únicamente de tu bandeja de entrada. No elimina mensajes del otro miembro ni de una revisión de seguridad abierta."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dadurch wird die Konversation nur aus Ihrem Posteingang entfernt. Nachrichten für das andere Mitglied oder aus einer offenen Sicherheitsüberprüfung werden nicht gelöscht."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Це видалить розмову лише з папки \"Вхідні\". Це не видаляє повідомлення для іншого учасника або з відкритої перевірки безпеки."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Это удалит разговор только из вашего почтового ящика. Он не удаляет сообщения другого участника или из открытой проверки безопасности."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spowoduje to usunięcie rozmowy wyłącznie z Twojej skrzynki odbiorczej. Nie usuwa wiadomości od innego członka ani z otwartego przeglądu bezpieczeństwa."
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tani waxay wada hadalka ka saaraysaa sanduuqaaga fariimaha kaliya. Ma tirtirto fariimaha xubinta kale ama dib u eegista badbaadada furan."
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "እዚ ድማ ነቲ ዕላል ካብ ኢንቦክስካ ጥራይ የወግዶ። ንኻልእ ኣባል ወይ ካብ ክፉት ናይ ድሕነት ዳግመ ግምት መልእኽትታት ኣይድምስስን እዩ።"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ይህ ውይይቱን ከገቢ መልእክት ሳጥንህ ብቻ ያስወግዳል። ለሌላ አባል ወይም ከክፍት የደህንነት ግምገማ መልዕክቶችን አይሰርዝም።"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "یہ بات چیت کو صرف آپ کے ان باکس سے ہٹا دیتا ہے۔ یہ دوسرے ممبر کے لیے یا کھلے حفاظتی جائزے سے پیغامات کو حذف نہیں کرتا ہے۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "این فقط مکالمه را از صندوق ورودی شما حذف میکند. این پیام ها را برای عضو دیگر یا از یک بررسی ایمنی باز حذف نمیکند."
+          }
+        }
+      }
+    },
+    "chat.mute": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mute notifications"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bildirimleri sessize al"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Slå av lyden for varsler"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تجاهل الإخطارات"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نادیده گرفتن اعلان ها"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Désactiver les notifications"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Silenciar notificaciones"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Benachrichtigungen stummschalten"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вимкнути сповіщення"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отключить уведомления"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wycisz powiadomienia"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "aamusi ogeysiisyada"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "መፍለጢታት ድምጺ ኣልቦ ምግባር"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ማሳወቂያዎችን ድምጸ-ከል አድርግ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اطلاعات کو خاموش کریں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اعلان ها را خاموش کنید"
+          }
+        }
+      }
+    },
+    "chat.pin": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pin conversation"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sohbeti sabitle"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fest samtale"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تثبيت المحادثة"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پین کردن مکالمه"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Épingler la conversation"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fijar conversación"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konversation anpinnen"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Закріпити бесіду"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Закрепить беседу"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przypnij rozmowę"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pin wada hadalka"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ፒን ዕላል"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ውይይትን ሰካ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "گفتگو کو پن کریں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مکالمه را پین کنید"
+          }
+        }
+      }
+    },
+    "chat.pinned": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pinned"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sabitlendi"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Festet"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مثبت"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پین شده"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Épinglé"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fijado"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Angepinnt"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Закріплено"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Закреплено"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przypięty"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ku dheggan"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ፒን ተገይሩሉ።"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ተሰክቷል።"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پن لگا ہوا"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پین شده"
+          }
+        }
+      }
+    },
+    "chat.unmute": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unmute notifications"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bildirim sesini aç"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Slå på lyden for varsler"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إلغاء تجاهل الإشعارات"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لغو نادیده گرفتن اعلان‌ها"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activer les notifications"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dejar de silenciar notificaciones"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stummschaltung von Benachrichtigungen aufheben"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Увімкнути сповіщення"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Включить уведомления"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wyłącz wyciszenie powiadomień"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Codka ka saar wargelinta"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "መፍለጢታት ድምጺ ኣልቦ ምግባር"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "የማሳወቂያዎችን ድምጸ-ከል አንሳ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اطلاعات کو چالو کریں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "خاموش کردن اعلان ها"
+          }
+        }
+      }
+    },
+    "chat.unpin": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unpin conversation"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sohbet sabitlemesini kaldır"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Løsne samtalen"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إزالة تثبيت المحادثة"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پین مکالمه را بردارید"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Désépingler la conversation"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desanclar conversación"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konversation lösen"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Відкріпити бесіду"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Открепить беседу"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Odepnij rozmowę"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fur wada hadalka"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ዕላል ምፍታሕ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ውይይት ይንቀሉ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "گفتگو کا پن ہٹا دیں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مکالمه را باز کنید"
+          }
+        }
+      }
+    },
+    "chat.muted": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Muted"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sessize alındı"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dempet"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "كتم الصوت"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "بی صدا شد"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En sourdine"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "silenciado"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stummgeschaltet"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вимкнено"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Без звука"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wyciszony"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "la aamusay"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ድምጺ ኣልቦ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ድምጸ-ከል ተደርጓል"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "خاموش"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "خاموش شده"
+          }
+        }
+      }
+    },
+    "chat.no_results": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No results"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sonuç bulunamadı"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ingen resultater"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لا توجد نتائج"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "هیچ نتیجه ای وجود ندارد"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun résultat"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sin resultados"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Ergebnisse"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Результатів немає"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нет результатов"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Brak wyników"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Natiijooyin ma jiraan"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ውጽኢት የለን"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ምንም ውጤት የለም።"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "کوئی نتیجہ نہیں نکلا۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "هیچ نتیجه نداده"
+          }
+        }
+      }
+    },
+    "chat.open_profile": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens member profile"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Üyenin profilini açar"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Åpner medlemsprofil"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يفتح ملف تعريف العضو"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نمایه اعضا را باز می کند"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvre le profil du membre"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abre el perfil de miembro"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das Mitgliederprofil"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Відкриває профіль учасника"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Открывает профиль участника"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwiera profil członka"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fura astaanta xubinta"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ናይ ኣባል ፕሮፋይል ይኸፍት"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "የአባልነት መገለጫ ይከፍታል።"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ممبر پروفائل کھولتا ہے۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پروفایل عضو را باز میکند"
+          }
+        }
+      }
+    },
+    "chat.privacy": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Privacy & notifications"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gizlilik ve bildirimler"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personvern og varsler"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الخصوصية والإخطارات"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حریم خصوصی و اعلان ها"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Confidentialité et notifications"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Privacidad y notificaciones"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Datenschutz und Benachrichtigungen"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Конфіденційність і сповіщення"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Конфиденциальность и уведомления"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prywatność i powiadomienia"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Qarsoonaanta & ogeysiisyada"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ብሕታዊነት & መፍለጢታት"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ግላዊነት እና ማሳወቂያዎች"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "رازداری اور اطلاعات"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حریم خصوصی و اعلان ها"
+          }
+        }
+      }
+    },
+    "chat.report_member": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Report member"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Üyeyi şikayet et"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meld medlem"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تقرير العضو"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "گزارش عضو"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signaler un membre"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Miembro del informe"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mitglied melden"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Повідомити про учасника"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пожаловаться на участника"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Członek raportu"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xubin ka warbixi"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ኣባል ጸብጻብ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "አባል ሪፖርት አድርግ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "رپورٹ ممبر"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "عضو گزارش"
+          }
+        }
+      }
+    },
+    "chat.report_note": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To report a specific message, press and hold that message in the conversation."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Belirli bir mesajı şikayet etmek için sohbette o mesaja basılı tutun."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "For å rapportere en bestemt melding, trykk og hold den meldingen i samtalen."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "للإبلاغ عن رسالة معينة، اضغط مع الاستمرار على تلك الرسالة في المحادثة."
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "برای گزارش یک پیام خاص، آن پیام را در مکالمه فشار دهید و نگه دارید."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pour signaler un message spécifique, appuyez longuement sur ce message dans la conversation."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para reportar un mensaje específico, mantenga presionado ese mensaje en la conversación."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Um eine bestimmte Nachricht zu melden, halten Sie diese Nachricht im Gespräch gedrückt."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Щоб повідомити про певне повідомлення, натисніть і утримуйте це повідомлення в бесіді."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Чтобы пожаловаться на конкретное сообщение, нажмите и удерживайте это сообщение в разговоре."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aby zgłosić konkretną wiadomość, naciśnij i przytrzymaj tę wiadomość w rozmowie."
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Si aad uga warbixiso fariin gaar ah, taabo oo ku hay fariintaas wada hadalka."
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ፍሉይ መልእኽቲ ንምሕባር፡ ነቲ መልእኽቲ ኣብቲ ዕላል ጸቒጥካ ምሓዝ።"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "አንድን የተወሰነ መልእክት ሪፖርት ለማድረግ፣ በውይይቱ ውስጥ ያንን መልእክት ተጭነው ይያዙት።"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "کسی مخصوص پیغام کی اطلاع دینے کے لیے، بات چیت میں اس پیغام کو دبائے رکھیں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "برای گزارش دادن یک پیام مشخص، آن پیام را در مکالمه فشار داده و نگه دارید."
+          }
+        }
+      }
+    },
+    "chat.report_received": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Report received"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Şikayet alındı"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rapport mottatt"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تم استلام التقرير"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "گزارش دریافت شد"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rapport reçu"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Informe recibido"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bericht erhalten"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Звіт отримано"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отчет получен"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otrzymano raport"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warbixin la helay"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ጸብጻብ በጺሑ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ሪፖርት ደርሷል"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "رپورٹ موصول ہوئی۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "گزارش دریافت شده"
+          }
+        }
+      }
+    },
+    "chat.restrict": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restrict conversation"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sohbeti kısıtla"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Begrens samtalen"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تقييد المحادثة"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مکالمه را محدود کنید"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restreindre la conversation"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restringir la conversación"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konversation einschränken"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Обмежити розмову"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ограничить разговор"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ogranicz rozmowę"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xakamee wada hadalka"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ዕላል ገደብ ግበር"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ውይይትን ገድብ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "گفتگو کو محدود کریں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مکالمه را محدود کنید"
+          }
+        }
+      }
+    },
+    "chat.restricted": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restricted"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kısıtlananlar"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Begrenset"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مقيد"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "محدود شده است"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restreint"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restringido"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eingeschränkt"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Обмежений"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ограниченный"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ograniczone"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La xaddiday"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ዝተገደበ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "የተገደበ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "محدود"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "محدود شده"
+          }
+        }
+      }
+    },
+    "chat.restricted_composer": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This conversation is restricted. Turn off Restrict in conversation settings to reply."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bu sohbet kısıtlandı. Yanıtlamak için sohbet ayarlarından kısıtlamayı kaldırın."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Denne samtalen er begrenset. Slå av Begrens i samtaleinnstillingene for å svare."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "هذه المحادثة مقيدة. قم بإيقاف تشغيل التقييد في إعدادات المحادثة للرد."
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "این گفتگو محدود است. برای پاسخ دادن، Restrict را در تنظیمات مکالمه خاموش کنید."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cette conversation est restreinte. Désactivez Restreindre dans les paramètres de conversation pour répondre."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esta conversación está restringida. Desactive Restringir en la configuración de conversación para responder."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieses Gespräch ist eingeschränkt. Deaktivieren Sie in den Konversationseinstellungen die Option „Antworten beschränken“."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ця бесіда обмежена. Щоб відповісти, вимкніть параметр «Обмежити» в налаштуваннях розмови."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Этот разговор ограничен. Отключите параметр «Ограничить» в настройках беседы для ответа."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ta rozmowa jest ograniczona. Wyłącz opcję Ogranicz w ustawieniach rozmowy, aby odpowiedzieć."
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wadahadalkan waa la xaddiday. Demi Xaddidaad dejinta wadahadalka si aad uga jawaabto."
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "እዚ ዕላል እዚ ድሩት እዩ። መልሲ ንምሃብ ኣብ ቅጥዕታት ዕላል Restrict ኣጥፍእዎ።"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ይህ ውይይት የተገደበ ነው። ምላሽ ለመስጠት በውይይት ቅንጅቶች ውስጥ ገደብ ያጥፉ።"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "یہ گفتگو محدود ہے۔ جواب دینے کے لیے گفتگو کی ترتیبات میں پابندی کو آف کریں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "این گفتگو محدود شده است. برای پاسخ دادن، محدودیت را در تنظیمات مکالمه خاموش کنید."
+          }
+        }
+      }
+    },
+    "chat.restriction_note": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mute stops push notifications for this conversation. Restrict also moves it to Restricted and hides read receipts. You can still read incoming messages and remove the restriction here at any time."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sessize alma bu sohbetin anlık bildirimlerini kapatır. Kısıtlama ayrıca sohbeti Kısıtlananlar bölümüne taşır ve okundu bilgisini gizler. Gelen mesajları okuyabilir ve kısıtlamayı buradan istediğiniz zaman kaldırabilirsiniz."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demp stopper pushvarslinger for denne samtalen. Begrens flytter den også til Begrenset og skjuler lesekvitteringer. Du kan fortsatt lese innkommende meldinger og fjerne begrensningen her når som helst."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يؤدي كتم الصوت إلى إيقاف دفع الإشعارات لهذه المحادثة. يؤدي \"تقييد\" أيضًا إلى نقله إلى \"مقيد\" ويخفي إيصالات القراءة. لا يزال بإمكانك قراءة الرسائل الواردة وإزالة القيود هنا في أي وقت."
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نادیده گرفتن اعلان‌های فشاری این مکالمه را متوقف می‌کند. Restrict همچنین آن را به Restricted منتقل می کند و رسیدهای خوانده شده را پنهان می کند. همچنان می‌توانید پیام‌های دریافتی را بخوانید و محدودیت را در اینجا در هر زمانی حذف کنید."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La fonction Muet arrête les notifications push pour cette conversation. Restreindre le déplace également vers Restreint et masque les confirmations de lecture. Vous pouvez toujours lire les messages entrants et supprimer la restriction ici à tout moment."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Silenciar detiene las notificaciones automáticas de esta conversación. Restringir también lo mueve a Restringido y oculta los recibos de lectura. Aún puedes leer los mensajes entrantes y eliminar la restricción aquí en cualquier momento."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Durch die Stummschaltung werden Push-Benachrichtigungen für diese Konversation gestoppt. „Einschränken“ verschiebt es auch in „Eingeschränkt“ und blendet Lesebestätigungen aus. Sie können eingehende Nachrichten weiterhin lesen und die Einschränkung hier jederzeit aufheben."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вимкнення звуку зупиняє push-сповіщення для цієї розмови. Обмежити також переміщує його в обмежений і приховує сповіщення про прочитання. Ви все ще можете читати вхідні повідомлення та зняти обмеження тут у будь-який час."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отключить звук останавливает push-уведомления для этого разговора. Ограничение также переводит его в режим «Ограничено» и скрывает уведомления о прочтении. Вы по-прежнему можете прочитать входящие сообщения и снять ограничение здесь в любое время."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wyciszenie zatrzymuje powiadomienia push dla tej rozmowy. Ogranicz powoduje również przeniesienie go do opcji Ograniczone i ukrywa potwierdzenia odczytu. W każdej chwili możesz nadal czytać przychodzące wiadomości i usuwać ograniczenia."
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carrabka aamusi wuxuu joojiyaa ogaysiisyada riixitaanka ee wadahadalkan. Xannidu waxay sidoo kale u rari doontaa xaddidan waxayna qarisaa rasiidhada akhrinta. Waxaad weli akhrin kartaa fariimaha soo socda oo aad ka saari kartaa xaddidaadda halkan wakhti kasta."
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ድምጺ ኣልቦ ነዚ ዕላል ዝኸውን ናይ ምድፋእ መተሓሳሰቢታት ደው የብሎ። Restrict ናብ Restricted እውን የግዕዞን ዝተነበበ ቅብሊታት ይሓብእን። ሕጂ ውን ዝኣትዉ መልእኽትታት ከተንብቡን ነቲ ገደብ ኣብዚ ኣብ ዝኾነ እዋን ከተውጽእዎን ትኽእሉ ኢኹም።"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ድምጸ-ከል ለዚህ ውይይት የግፋ ማሳወቂያዎችን ያቆማል። መገደብ ወደ የተገደበ ያንቀሳቅሰዋል እና የተነበበ ደረሰኞችን ይደብቃል። አሁንም ገቢ መልዕክቶችን ማንበብ እና እዚህ በማንኛውም ጊዜ እገዳውን ማስወገድ ይችላሉ።"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "خاموش اس گفتگو کے لیے پش اطلاعات کو روکتا ہے۔ Restrict بھی اسے Restricted میں لے جاتا ہے اور پڑھنے کی رسیدیں چھپاتا ہے۔ آپ اب بھی آنے والے پیغامات پڑھ سکتے ہیں اور کسی بھی وقت یہاں سے پابندی ہٹا سکتے ہیں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "خاموش کردن اعلان های فشاری را برای این مکالمه متوقف میسازد. محدود کردن همچنان آنرا به محدود شده انتقال میدهد و رسید های خوانده شده را پنهان میکند. شما هنوز هم میتوانید پیام های ورودی را بخوانید و در هر زمان محدودیت را اینجا حذف کنید."
+          }
+        }
+      }
+    },
+    "chat.retention_note": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Messages do not expire automatically. Delete for me hides a message from your view; it does not remove the other member’s copy or records needed to review a safety report."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mesajlar otomatik olarak silinmez. Benim için sil, mesajı sizin görünümünüzden gizler; diğer üyenin kopyasını veya şikayet incelemesi için gerekli kayıtları silmez."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meldinger utløper ikke automatisk. Slett for meg skjuler en melding fra visningen din; det fjerner ikke det andre medlemmets kopi eller registreringer som er nødvendige for å se gjennom en sikkerhetsrapport."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لا تنتهي صلاحية الرسائل تلقائيًا. الحذف بالنسبة لي يخفي رسالة من وجهة نظرك؛ ولا يؤدي ذلك إلى إزالة نسخة العضو الآخر أو السجلات اللازمة لمراجعة تقرير السلامة."
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پیام ها به طور خودکار منقضی نمی شوند. حذف برای من پیامی را از دید شما پنهان می کند. کپی یا سوابق دیگر اعضا را که برای بررسی گزارش ایمنی لازم است حذف نمی کند."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les messages n'expirent pas automatiquement. Supprimer pour moi masque un message de votre vue ; il ne supprime pas la copie ou les dossiers de l’autre membre nécessaires à l’examen d’un rapport de sécurité."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los mensajes no caducan automáticamente. Eliminar para mí oculta un mensaje de tu vista; no elimina la copia ni los registros del otro miembro necesarios para revisar un informe de seguridad."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nachrichten verfallen nicht automatisch. Durch „Für mich löschen“ wird eine Nachricht aus Ihrer Ansicht ausgeblendet. Es werden keine Kopien oder Aufzeichnungen des anderen Mitglieds entfernt, die zur Überprüfung eines Sicherheitsberichts erforderlich sind."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Термін дії повідомлень не закінчується автоматично. Видалити для мене приховує повідомлення від вашого перегляду; він не видаляє копію або записи іншого учасника, необхідні для перегляду звіту про безпеку."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Срок действия сообщений не истекает автоматически. Удалить для меня скрывает сообщение от вашего просмотра; он не удаляет копию или записи другого участника, необходимые для просмотра отчета о безопасности."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wiadomości nie wygasają automatycznie. Usuń dla mnie ukrywa wiadomość przed Twoim widokiem; nie usuwa kopii ani zapisów drugiego członka potrzebnych do przeglądu raportu o bezpieczeństwie."
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fariimaha si toos ah uma dhacayaan I tir tir waxay kaa qarinaysaa fariin aragtidaada; kama saarayso nuqulka xubinta kale ama diiwaanka loo baahan yahay si loo eego warbixinta badbaadada."
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "መልእኽትታት ብኣውቶማቲክ ግዜኦም ኣይሓልፉን እዮም። Delete for me ካብ ርእይቶኻ መልእኽቲ ይሓብእ፤ ንጸብጻብ ድሕነት ንምግምጋም ዘድሊ ቅዳሕ ወይ መዛግብቲ ናይቲ ካልእ ኣባል ኣየወግድን እዩ።"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "መልዕክቶች በራስ-ሰር ጊዜያቸው አያበቃም። ለእኔ ሰርዝ ከእይታህ መልእክት ይደብቃል; የደህንነት ሪፖርትን ለመገምገም የሌላውን አባል ቅጂ ወይም መዛግብት አያስወግድም።"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پیغامات خود بخود ختم نہیں ہوتے ہیں۔ میرے لیے حذف کرنا آپ کے خیال سے ایک پیغام چھپاتا ہے۔ یہ دوسرے ممبر کی کاپی یا ریکارڈز کو نہیں ہٹاتا ہے جو حفاظتی رپورٹ کا جائزہ لینے کے لیے درکار ہے۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پیام ها بطور خودکار منقضی نمیشوند. حذف برای من یک پیام را از دید شما پنهان میکند؛ این کاپی یا سوابق عضو دیگر را که برای مرور یک گزارش ایمنی نیاز است حذف نمیکند."
+          }
+        }
+      }
+    },
+    "chat.safety": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Safety"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Güvenlik"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sikkerhet"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "السلامة"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ایمنی"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sécurité"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seguridad"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sicherheit"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Безпека"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Безопасность"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bezpieczeństwo"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Badbaadada"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ድሕነት"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ደህንነት"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "حفاظت"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ایمنی"
+          }
+        }
+      }
+    },
+    "chat.search_conversations": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search conversations"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sohbetlerde ara"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Søk etter samtaler"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "بحث في المحادثات"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "جستجوی مکالمات"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rechercher des conversations"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buscar conversaciones"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gespräche suchen"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пошук розмов"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Поиск бесед"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wyszukaj rozmowy"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Raadi wada sheekaysiga"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ዕላላት ድለዩ።"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ውይይቶችን ፈልግ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مکالمات تلاش کریں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "جستجوی مکالمات"
+          }
+        }
+      }
+    },
+    "chat.search_messages": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search in conversation"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sohbette ara"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Søk i samtale"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "البحث في المحادثة"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "جستجو در مکالمه"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rechercher dans une conversation"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buscar en conversación"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suche im Gespräch"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пошук у розмові"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Искать в разговоре"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wyszukaj w rozmowie"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ka raadi wada hadalka"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ኣብ ዕላል ድለዩ።"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "በውይይት ውስጥ ይፈልጉ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "گفتگو میں تلاش کریں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "جستجو در مکالمه"
+          }
+        }
+      }
+    },
+    "chat.send": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Send message"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mesajı gönder"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Send melding"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أرسل رسالة"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ارسال پیام"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Envoyer un message"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "enviar mensaje"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nachricht senden"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Надіслати повідомлення"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отправить сообщение"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wyślij wiadomość"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fariin dir"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "መልእኽቲ ስደዱ"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "መልእክት ላክ"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پیغام بھیجیں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پیام بفرستید"
+          }
+        }
+      }
+    },
+    "chat.settings": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conversation settings"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sohbet ayarları"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Samtaleinnstillinger"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إعدادات المحادثة"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تنظیمات مکالمه"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paramètres de conversation"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Configuración de conversación"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konversationseinstellungen"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Налаштування розмови"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Настройки разговора"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ustawienia rozmowy"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dejinta wada sheekeysiga"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ናይ ዕላል ቅጥዕታት"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "የውይይት ቅንብሮች"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "بات چیت کی ترتیبات"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تنظیمات مکالمه"
+          }
+        }
+      }
+    },
+    "chat.settings_error": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your changes could not be saved. Please try again."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Değişiklikleriniz kaydedilemedi. Lütfen tekrar deneyin."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Endringene dine kunne ikke lagres. Vennligst prøv igjen."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لا يمكن حفظ تغييراتك. يرجى المحاولة مرة أخرى."
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تغییرات شما ذخیره نشد. لطفا دوباره امتحان کنید."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vos modifications n'ont pas pu être enregistrées. Veuillez réessayer."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudieron guardar los cambios. Por favor inténtalo de nuevo."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ihre Änderungen konnten nicht gespeichert werden. Bitte versuchen Sie es erneut."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ваші зміни не вдалося зберегти. Спробуйте ще раз."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось сохранить изменения. Пожалуйста, попробуйте еще раз."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie udało się zapisać zmian. Spróbuj ponownie."
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Isbedeladaada waa la badbaadin kari waayay Fadlan isku day mar kale"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ለውጥታትካ ክቕመጥ ኣይከኣለን። በጃኹም ደጊምኩም ፈትኑ።"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ለውጦችህ ሊቀመጡ አልቻሉም። እባክህ እንደገና ሞክር።"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "آپ کی تبدیلیاں محفوظ نہیں ہو سکیں۔ براہ کرم دوبارہ کوشش کریں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تغییرات شما ذخیره نشد. لطفاً دوباره امتحان کنید."
+          }
+        }
+      }
+    },
+    "chat.start_conversation": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Say hello"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merhaba deyin"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Si hei"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "قل مرحبا"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "سلام کن"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dis bonjour"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "saludar"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sag Hallo"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "передай привіт"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Скажи привет"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przywitaj się"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Salaan dheh"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ሰላም በል"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ሰላም በል።"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ہیلو کہو"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "سلام بگو"
+          }
+        }
+      }
+    },
+    "chat.timed_messages": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disappearing messages"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Süreli mesajlar"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meldinger som forsvinner"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اختفاء الرسائل"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پیام های ناپدید شدن"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Messages qui disparaissent"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mensajes que desaparecen"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verschwindende Nachrichten"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Повідомлення, що зникають"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Исчезающие сообщения"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Znikające wiadomości"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fariimaha qarsoon"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ዝጠፍኡ መልእኽትታት"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "የጠፉ መልዕክቶች"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "غائب ہونے والے پیغامات"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پیام های در حال ناپدید شدن"
+          }
+        }
+      }
+    },
+    "chat.try_another_search": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try another name or username."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Başka bir ad veya kullanıcı adı deneyin."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prøv et annet navn eller brukernavn."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "جرب اسمًا أو اسم مستخدم آخر."
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نام یا نام کاربری دیگری را امتحان کنید."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Essayez un autre nom ou nom d'utilisateur."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pruebe con otro nombre o nombre de usuario."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versuchen Sie es mit einem anderen Namen oder Benutzernamen."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Спробуйте інше ім’я або ім’я користувача."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Попробуйте другое имя или имя пользователя."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wypróbuj inną nazwę lub nazwę użytkownika."
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Isku day magac kale ama isticmaale."
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ካልእ ስም ወይ ስም ተጠቃሚ ፈትን።"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ሌላ ስም ወይም የተጠቃሚ ስም ይሞክሩ።"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "دوسرا نام یا صارف نام آزمائیں۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "یک نام یا نام کاربری دیگر را امتحان کنید."
+          }
+        }
+      }
+    },
+    "chat.unavailable": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not available yet"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Henüz kullanılamıyor"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ikke tilgjengelig ennå"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "غير متوفر بعد"
+          }
+        },
+        "fa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "هنوز در دسترس نیست"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pas encore disponible"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aún no disponible"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch nicht verfügbar"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ще не доступний"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пока недоступно"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jeszcze niedostępne"
+          }
+        },
+        "so": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wali lama heli karo"
+          }
+        },
+        "ti": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ገና ኣይተረኽበን።"
+          }
+        },
+        "am": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "እስካሁን አልተገኘም።"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ابھی دستیاب نہیں ہے۔"
+          }
+        },
+        "fa-AF": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "هنوز موجود نیست"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}
