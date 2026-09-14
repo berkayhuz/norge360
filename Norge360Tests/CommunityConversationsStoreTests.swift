@@ -69,6 +69,7 @@ private actor ConversationSendServiceSpy: CommunityConversationsProviding {
     }
 
     func stageImage(conversationID: UUID, jpegData: Data) async throws -> UUID { UUID() }
+    func scanStatus(attachmentID: UUID) async throws -> CommunityPrivateImageScanOutcome { .passed }
     func imageURL(attachmentID: UUID) async throws -> URL { URL(string: "https://example.com")! }
     func cancelImage(attachmentID: UUID) async throws {}
     func markRead(conversationID: UUID) async throws {}

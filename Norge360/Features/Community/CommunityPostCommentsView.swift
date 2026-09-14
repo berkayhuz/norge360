@@ -9,6 +9,8 @@ struct CommunityPostCommentsView: View {
 
     let item: CommunityFeedItem
     @State private var comments: [CommunityCommentItem] = []
+    @State private var nextCommentsCursor: String?
+    @State private var isLoadingMoreComments = false
     @State private var draft = ""
     @State private var isLoading = true
     @State private var isSending = false
@@ -43,6 +45,10 @@ struct CommunityPostCommentsView: View {
                                 onBlock: { blockTarget = item }
                             )
                             .id(item.id)
+                            .onAppear {
+                                guard item.id == comments.last?.id else { return }
+                                Task { await loadMoreComments() }
+                            }
                         }
                     }
                 }
@@ -184,11 +190,17 @@ struct CommunityPostCommentsView: View {
         isLoading = true
         defer { isLoading = false }
         do {
-            comments = try await feedStore.comments(for: item.post.id)
+            let page = try await feedStore.comments(for: item.post.id)
+            comments = page.items
+            nextCommentsCursor = page.nextCursor
         } catch is CancellationError {
             return
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = UserFacingErrorMapper.message(
+                for: error,
+                fallbackKey: "feed.error",
+                operation: "comments.load"
+            )
         }
     }
 
@@ -202,9 +214,13 @@ struct CommunityPostCommentsView: View {
                 to: item.post.id, body: draft.trimmingCharacters(in: .whitespacesAndNewlines))
             draft = ""
             feedStore.clearHashtagSuggestions()
-            comments = try await feedStore.comments(for: item.post.id)
+            await loadComments()
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = UserFacingErrorMapper.message(
+                for: error,
+                fallbackKey: "feed.error",
+                operation: "comments.send"
+            )
         }
     }
 
@@ -214,7 +230,11 @@ struct CommunityPostCommentsView: View {
             try await feedStore.deleteComment(id: item.comment.id, from: self.item.post.id)
             comments.removeAll { $0.id == item.id }
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = UserFacingErrorMapper.message(
+                for: error,
+                fallbackKey: "feed.error",
+                operation: "comments.delete"
+            )
         }
     }
 
@@ -226,4 +246,26 @@ struct CommunityPostCommentsView: View {
         await loadComments()
     }
 
+}
+
+extension CommunityPostCommentsView {
+    fileprivate func loadMoreComments() async {
+        guard !isLoadingMoreComments, let nextCommentsCursor else { return }
+        isLoadingMoreComments = true
+        defer { isLoadingMoreComments = false }
+        do {
+            let page = try await feedStore.comments(for: item.post.id, cursor: nextCommentsCursor)
+            let existingIDs = Set(comments.map(\.id))
+            comments.append(contentsOf: page.items.filter { !existingIDs.contains($0.id) })
+            self.nextCommentsCursor = page.nextCursor
+        } catch is CancellationError {
+            return
+        } catch {
+            errorMessage = UserFacingErrorMapper.message(
+                for: error,
+                fallbackKey: "feed.error",
+                operation: "comments.load_more"
+            )
+        }
+    }
 }

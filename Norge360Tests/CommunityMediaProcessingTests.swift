@@ -5,6 +5,23 @@ import XCTest
 @testable import Norge360
 
 final class CommunityMediaProcessingTests: XCTestCase {
+    func testNetworkImageDecoderRejectsOversizedPayloadBeforeDecoding() {
+        let oversizedData = Data(
+            repeating: 0,
+            count: CommunityImageNetworkLoader.maximumDownloadedBytes + 1
+        )
+
+        XCTAssertNil(CommunityImageDecoding.image(from: oversizedData))
+    }
+
+    func testNetworkImageDecoderDownsamplesFullImageToSafeDimension() throws {
+        let input = try makePNG(size: CGSize(width: 5_000, height: 4_000))
+
+        let image = try XCTUnwrap(CommunityImageDecoding.image(from: input))
+
+        XCTAssertLessThanOrEqual(max(image.cgImage?.width ?? 0, image.cgImage?.height ?? 0), 4_096)
+    }
+
     func testPrepareJPEGDownsamplesLargeInputAndBoundsOutput() async throws {
         let input = try makePNG(size: CGSize(width: 3_200, height: 2_400))
 

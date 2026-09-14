@@ -44,6 +44,8 @@ enum LegalDocument {
                 (AppStrings.legal("sensitive_title"), AppStrings.legal("sensitive_body")),
                 (AppStrings.legal("security_title"), AppStrings.legal("security_body")),
                 (AppStrings.legal("rights_title"), AppStrings.legal("rights_body")),
+                (AppStrings.legal("export_title"), AppStrings.legal("export_body")),
+                (AppStrings.legal("retention_title"), AppStrings.legal("retention_body")),
             ]
         case .communityGuidelines:
             return [

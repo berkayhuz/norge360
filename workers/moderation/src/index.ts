@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { Hono, type Context } from "hono";
 
 type Variables = {
@@ -25,6 +25,10 @@ type PushWebhookTable = PushSignalTable | "community_group_chat_push_fanout_jobs
 type LogLevel = "info" | "warn" | "error";
 type LogField = string | number | boolean | null | undefined;
 type LogFields = Record<string, LogField>;
+
+type JSONBodyReadResult =
+  | { ok: true; value: Record<string, unknown> }
+  | { ok: false; reason: "invalid" | "too_large" };
 
 function structuredLog(level: LogLevel, operation: string, fields: LogFields = {}): void {
   const entry = {
@@ -57,23 +61,6 @@ const allowedEnforcementActions = new Set<EnforcementAction>([
   "restrict_author",
   "revoke_author_restriction"
 ]);
-
-type CommunityNotificationWebhookPayload = {
-  type?: string;
-  table?: PushWebhookTable;
-  schema?: string;
-  record?: {
-    id?: string;
-    recipient_id?: string;
-    type?: string;
-  };
-};
-
-type GroupChatUploadRequest = {
-  groupID?: string;
-  mimeType?: string;
-  byteSize?: number;
-};
 
 type CommunityMediaScanMessage = {
   version: 1;
@@ -136,17 +123,78 @@ const communityMediaCleanupDispatchRounds = 4;
 const communityMediaCleanupRetryDelaySeconds = 60;
 const communityPushDeliveryRetryDelaySeconds = 30;
 const communityPushDeliveryLeaseSeconds = 120;
+const communityPushDeliveryRecoveryBatchSize = 100;
+const communityModerationRetentionBatchSize = 500;
+const communityTransportRetentionBatchSize = 500;
+const communityAccountExportMaximumCharacters = 16_000_000;
+const communityAccountExportPageSize = 100;
+const communityAccountExportSections = [
+  "posts",
+  "post_media",
+  "post_edit_history",
+  "post_hashtags",
+  "comments",
+  "comment_hashtags",
+  "events",
+  "event_rsvps",
+  "event_likes",
+  "post_likes",
+  "follows",
+  "blocks",
+  "group_memberships",
+  "group_join_requests",
+  "group_invitations",
+  "event_invitations",
+  "notifications",
+  "conversations",
+  "conversation_memberships",
+  "messages_authored",
+  "message_preferences",
+  "message_hides",
+  "conversation_preferences",
+  "group_chat_messages_authored",
+  "group_chat_message_hides",
+  "group_chat_reads",
+  "group_chat_preferences",
+  "direct_media_metadata",
+  "group_chat_media_metadata",
+  "reports_submitted",
+  "group_moderation_activity",
+  "push_devices",
+  "push_preferences"
+] as const;
 
-type DirectMessageImageUploadRequest = {
-  conversationID?: string;
-  mimeType?: string;
-  byteSize?: number;
+type CommunityAccountExportPage = {
+  rows: unknown;
+  has_more: boolean;
 };
+
+class CommunityPushDeliveryRetryableError extends Error {
+  readonly delaySeconds: number;
+
+  constructor(delaySeconds = communityPushDeliveryRetryDelaySeconds) {
+    super("push_delivery_retryable");
+    this.name = "CommunityPushDeliveryRetryableError";
+    this.delaySeconds = Math.max(1, Math.min(600, Math.ceil(delaySeconds)));
+  }
+}
 
 type PushDevice = {
   id: string;
   token: string;
   environment: "development" | "production";
+};
+
+type PushDeliveryClaimRow = {
+  device_id: string;
+  claim_state: "claimed" | "leased" | "terminal" | "available" | "inactive";
+  lease_until: string | null;
+  attempts: number;
+};
+
+type ExpiredPushDeliveryRow = {
+  source_table: PushSignalTable;
+  event_id: string;
 };
 
 type APNsDeliveryResult = {
@@ -174,6 +222,7 @@ type CloudflareImageDeliveryCache = {
 
 type PrivateMediaViewCache = {
   url: string;
+  providerAssetID: string;
   expiresAt: number;
 };
 
@@ -197,15 +246,52 @@ type ProfileMediaCleanupRow = {
   attempts: number;
 };
 
+type CommunityStorageCleanupRow = {
+  id: string;
+  bucket_id: "post-media" | "group-media";
+  storage_path: string;
+  attempts: number;
+};
+
+type AccountDeletionStorageRow = { name: string; id: string | null };
+type AccountDeletionProviderRow = { provider_asset_id: string | null; message_id?: string | null };
+type AccountDeletionStorageBucket = "avatars" | "profile-media" | "post-media" | "event-media";
+type AccountDeletionJob = {
+  user_id: string;
+  status: "pending" | "cleanup_pending" | "finalizing" | "completed";
+  inventory_ready: boolean;
+};
+type AccountDeletionStart = { job_status: AccountDeletionJob["status"] };
+type AccountDeletionMediaRow = {
+  media_id: string;
+  media_kind: "storage" | "provider";
+  bucket: string;
+  object_key: string;
+};
+
+const accountDeletionPageSize = 1_000;
+const accountDeletionStorageListPageSize = 100;
+const accountDeletionStorageBatchSize = 100;
+const accountDeletionMediaBatchSize = 50;
+const accountDeletionJobBatchSize = 5;
+const accountDeletionProviderConcurrency = 5;
+const accountDeletionStorageBuckets: AccountDeletionStorageBucket[] = [
+  "avatars",
+  "profile-media",
+  "post-media",
+  "event-media"
+];
+
 // Workers may reuse a single isolate. This bounded cache avoids signing a new
 // APNs JWT for each notification without making authorization state durable.
 let apnsTokenCache: APNsTokenCache | undefined;
 let cloudflareImagesSigningKeyCache: CloudflareImagesSigningKeyCache | undefined;
 
 // These caches are deliberately bounded and keyed by the authenticated viewer
-// plus attachment. A cached URL never outlives the five-minute provider token;
-// the shorter local TTL reduces repeated authorization/provider work without
-// extending access after an already-issued token would expire.
+// plus attachment. Authorization is checked on every request before a cached
+// URL is considered; the cache only avoids repeating provider signing after
+// the current database decision allows access. A cached URL never outlives
+// the five-minute provider token.
 const privateMediaViewURLCache = new Map<string, PrivateMediaViewCache>();
 const privateMediaViewInFlight = new Map<string, Promise<PrivateMediaViewResult>>();
 const cloudflareImageDeliveryCache = new Map<string, CloudflareImageDeliveryCache>();
@@ -217,6 +303,9 @@ const cloudflareImageDeliveryCacheTTLSeconds = 10 * 60;
 const cloudflareImageDeliveryCacheMaxEntries = 256;
 const providerRequestTimeoutMilliseconds = 10_000;
 const providerSafeRetryAttempts = 3;
+const mediaJSONBodyLimitBytes = 4 * 1024;
+const moderationJSONBodyLimitBytes = 16 * 1024;
+const pushWebhookJSONBodyLimitBytes = 8 * 1024;
 
 const app = new Hono<{ Bindings: Env; Variables: Variables }>();
 
@@ -259,6 +348,212 @@ app.onError((error, context) => {
 
 app.get("/health", (context) => context.json({ status: "ok" }));
 
+// Account deletion is intentionally outside the moderator-only /v1/* route.
+// It authenticates the caller, derives the account ID from the verified token,
+// and creates a durable server-owned job. Storage/provider/Auth work is
+// performed by the scheduled processor so a provider failure is retryable.
+app.post("/account/delete", async (context) => {
+  const userID = await authenticatedUserID(context);
+  if (!userID) return context.json({ error: "invalid_session" }, 401);
+
+  const serviceClient = createServiceClient(context.env);
+  const { data: ownedGroups, error: ownershipError } = await serviceClient
+    .from("community_group_memberships")
+    .select("group_id")
+    .eq("user_id", userID)
+    .eq("role", "owner")
+    .limit(1);
+  if (ownershipError) {
+    structuredLog("error", "account_deletion_ownership_lookup_failed", {
+      request_id: context.get("requestID"),
+      error_code: ownershipError.code
+    });
+    return context.json({ error: "account_deletion_unavailable" }, 503);
+  }
+  if ((ownedGroups ?? []).length > 0) {
+    return context.json({ error: "group_ownership_transfer_required" }, 409);
+  }
+
+  const { data: deletionJobData, error: beginError } = await serviceClient.rpc(
+    "begin_community_account_deletion",
+    { account_user_id: userID }
+  );
+  if (beginError) {
+    if (beginError.message?.includes("owned groups require ownership transfer")) {
+      return context.json({ error: "group_ownership_transfer_required" }, 409);
+    }
+    structuredLog("error", "account_deletion_job_start_failed", {
+      request_id: context.get("requestID"),
+      error_code: beginError.code
+    });
+    return context.json({ error: "account_deletion_unavailable" }, 503);
+  }
+
+  context.executionCtx.waitUntil(processPendingAccountDeletionJobs(context.env, userID));
+  const deletionJob = Array.isArray(deletionJobData)
+    ? deletionJobData as AccountDeletionStart[]
+    : [];
+  return context.json({ status: deletionJob?.[0]?.job_status ?? "pending" }, 202);
+});
+
+// The export is generated from an explicit database allowlist. It excludes
+// APNs tokens, storage paths and provider asset IDs, which are operational
+// secrets rather than portable member data.
+app.post("/account/export", async (context) => {
+  const userID = await authenticatedUserID(context);
+  if (!userID) return context.json({ error: "invalid_session" }, 401);
+
+  const serviceClient = createServiceClient(context.env);
+  const { data: exportQuota, error: exportQuotaError } = await serviceClient
+    .rpc("consume_community_request_rate_limit", {
+      target_bucket: "account_export",
+      target_limit: 3,
+      target_window_seconds: 3_600,
+      target_user_id: userID
+    })
+    .maybeSingle<{ allowed: boolean }>();
+  if (exportQuotaError || !exportQuota) {
+    structuredLog("error", "account_export_rate_limit_failed", {
+      request_id: context.get("requestID"),
+      error_code: exportQuotaError?.code ?? "invalid_rate_limit_shape"
+    });
+    return context.json({ error: "account_export_unavailable" }, 503);
+  }
+  if (!exportQuota.allowed) {
+    return new Response(JSON.stringify({ error: "account_export_rate_limited" }), {
+      status: 429,
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+        "Cache-Control": "no-store",
+        "Retry-After": "3600"
+      }
+    });
+  }
+
+  const { data: metadata, error: metadataError } = await serviceClient.rpc(
+    "export_community_account_metadata",
+    { account_user_id: userID }
+  );
+  if (metadataError || !isRecord(metadata)) {
+    structuredLog("error", "account_export_metadata_failed", {
+      request_id: context.get("requestID"),
+      error_code: metadataError?.code ?? "invalid_export_metadata_shape"
+    });
+    return context.json({ error: "account_export_unavailable" }, 503);
+  }
+
+  const exportMetadataKeys = [
+    "schema_version",
+    "generated_at",
+    "account",
+    "profile",
+    "account_profile",
+    "relocation_plan",
+    "follow_visibility"
+  ] as const;
+  if (exportMetadataKeys.some((key) => !(key in metadata))) {
+    structuredLog("error", "account_export_metadata_incomplete", {
+      request_id: context.get("requestID")
+    });
+    return context.json({ error: "account_export_unavailable" }, 503);
+  }
+
+  const encoder = new TextEncoder();
+  const stream = new ReadableStream<Uint8Array>({
+    start(controller) {
+      let serializedCharacters = 0;
+      const enqueueText = (value: string): void => {
+        serializedCharacters += value.length;
+        if (serializedCharacters > communityAccountExportMaximumCharacters) {
+          throw new Error("account export too large");
+        }
+        controller.enqueue(encoder.encode(value));
+      };
+
+      void (async () => {
+        try {
+          const metadataJSON = exportMetadataKeys.map((key) => {
+            const serialized = JSON.stringify(metadata[key]);
+            if (serialized === undefined) throw new Error("invalid export metadata value");
+            return `${JSON.stringify(key)}:${serialized}`;
+          });
+          enqueueText(`{${metadataJSON.join(",")}`);
+
+          for (const [sectionIndex, section] of communityAccountExportSections.entries()) {
+            enqueueText(`,${JSON.stringify(section)}:[`);
+            let pageNumber = 0;
+            let emittedRows = 0;
+            let isFirstRow = true;
+
+            while (true) {
+              const { data: page, error: pageError } = await serviceClient
+                .rpc("export_community_account_section", {
+                  account_user_id: userID,
+                  target_section: section,
+                  page_number: pageNumber,
+                  page_size: communityAccountExportPageSize
+                })
+                .maybeSingle<CommunityAccountExportPage>();
+              if (
+                pageError
+                || !page
+                || !Array.isArray(page.rows)
+                || page.rows.length > communityAccountExportPageSize + 1
+                || typeof page.has_more !== "boolean"
+              ) {
+                throw new Error(pageError?.message ?? `invalid export page: ${section}`);
+              }
+
+              for (const row of page.rows.slice(0, communityAccountExportPageSize)) {
+                const serialized = JSON.stringify(row);
+                if (serialized === undefined) throw new Error(`invalid export row: ${section}`);
+                if (!isFirstRow) enqueueText(",");
+                enqueueText(serialized);
+                isFirstRow = false;
+                emittedRows += 1;
+              }
+
+              if (!page.has_more) break;
+              if (page.rows.length !== communityAccountExportPageSize + 1) {
+                throw new Error(`invalid export continuation: ${section}`);
+              }
+              pageNumber += 1;
+              if (pageNumber > 100_000) throw new Error(`export page overflow: ${section}`);
+            }
+
+            enqueueText("]");
+            structuredLog("info", "account_export_section_streamed", {
+              request_id: context.get("requestID"),
+              section,
+              section_index: sectionIndex,
+              row_count: emittedRows
+            });
+          }
+
+          enqueueText("}");
+          controller.close();
+        } catch (error) {
+          structuredLog("error", "account_export_stream_failed", {
+            request_id: context.get("requestID"),
+            error_type: error instanceof Error ? error.name : "unknown_error",
+            error_message: error instanceof Error ? error.message : "unknown_error"
+          });
+          controller.error(error);
+        }
+      })();
+    }
+  });
+
+  return new Response(stream, {
+    status: 200,
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Content-Disposition": `attachment; filename="norge360-data-export-${userID}.json"`,
+      "Cache-Control": "no-store"
+    }
+  });
+});
+
 // This member-authenticated endpoint only stages a media object. It does not
 // make it readable or attach it to a message; a future review/scan step does.
 // The Cloudflare Images token stays in this Worker. The app receives only a
@@ -267,23 +562,32 @@ app.post("/media/group-chat/upload-url", async (context) => {
   const userID = await authenticatedUserID(context);
   if (!userID) return context.json({ error: "invalid_session" }, 401);
 
-  const body = await context.req.json<GroupChatUploadRequest>().catch(() => null);
-  const mimeType = body?.mimeType;
-  const byteSize = body?.byteSize;
+  const bodyResult = await readBoundedJSONBody(context, mediaJSONBodyLimitBytes);
+  if (!bodyResult.ok) {
+    return context.json(
+      { error: bodyResult.reason === "too_large" ? "request_body_too_large" : "invalid_json_body" },
+      bodyResult.reason === "too_large" ? 413 : 400
+    );
+  }
+  const body = bodyResult.value;
+  const groupID = body.groupID;
+  const mimeType = body.mimeType;
+  const byteSize = body.byteSize;
   const allowedMIMETypes = new Set(["image/jpeg", "image/png", "image/heic", "image/webp"]);
-  if (!body || !body.groupID || !isUUID(body.groupID) || !mimeType || !allowedMIMETypes.has(mimeType) ||
-      !Number.isInteger(byteSize) || byteSize === undefined || byteSize < 1 || byteSize > 10_485_760) {
+  if (typeof groupID !== "string" || !isUUID(groupID) || typeof mimeType !== "string" ||
+      !allowedMIMETypes.has(mimeType) || typeof byteSize !== "number" ||
+      !Number.isSafeInteger(byteSize) || byteSize < 1 || byteSize > 10_485_760) {
     return context.json({ error: "invalid_media_request" }, 400);
   }
   // UUID text is case-insensitive, but the database's group-scoped opaque
   // path check compares text. Normalize once at the trust boundary so iOS
   // UUID serialization cannot create a false authorization failure.
-  const groupID = body.groupID.toLowerCase();
+  const normalizedGroupID = groupID.toLowerCase();
 
   const serviceClient = createServiceClient(context.env);
   const [{ data: membership, error: membershipError }, { data: ban, error: banError }] = await Promise.all([
-    serviceClient.from("community_group_memberships").select("group_id").eq("group_id", groupID).eq("user_id", userID).maybeSingle(),
-    serviceClient.from("community_group_bans").select("group_id").eq("group_id", groupID).eq("user_id", userID).maybeSingle()
+    serviceClient.from("community_group_memberships").select("group_id").eq("group_id", normalizedGroupID).eq("user_id", userID).maybeSingle(),
+    serviceClient.from("community_group_bans").select("group_id").eq("group_id", normalizedGroupID).eq("user_id", userID).maybeSingle()
   ]);
   if (membershipError || banError) {
     structuredLog("error", "group_media_authorization_lookup_failed", {
@@ -294,52 +598,38 @@ app.post("/media/group-chat/upload-url", async (context) => {
   }
   if (!membership || ban) return context.json({ error: "media_unavailable" }, 403);
 
-  // A direct-upload URL is a billable, abuse-prone capability. Keep this
-  // deliberately tighter than normal chat-message creation.
-  const { count: recentUploadCount, error: rateLimitError } = await serviceClient
-    .from("community_group_chat_attachments")
-    .select("id", { count: "exact", head: true })
-    .eq("uploader_id", userID)
-    .gte("created_at", new Date(Date.now() - 60_000).toISOString());
-  if (rateLimitError) {
-    structuredLog("error", "group_media_rate_limit_lookup_failed", {
-      request_id: context.get("requestID"),
-      error_code: rateLimitError.code
-    });
-    return context.json({ error: "media_unavailable" }, 503);
-  }
-  if ((recentUploadCount ?? 0) >= 6) return context.json({ error: "media_rate_limited" }, 429);
-
-  const attachmentID = crypto.randomUUID();
-  // Kept as an opaque, group-scoped legacy reference. The asset itself lives
-  // in Cloudflare Images; clients never receive this path or a public URL.
-  const storageReference = `${groupID}/${userID}/${attachmentID}`;
-
-  const { error: attachmentError } = await serviceClient
-    .from("community_group_chat_attachments")
-    .insert({
-      id: attachmentID,
-      group_id: groupID,
-      uploader_id: userID,
-      storage_path: storageReference,
-      mime_type: mimeType,
-      byte_size: byteSize,
-      status: "pending_upload",
-      storage_provider: "cloudflare_images"
-    });
-  if (attachmentError) {
-    // Intentionally log only the database constraint diagnostic, never the
-    // opaque path, image payload, user input, or authentication material.
+  // A direct-upload URL is a billable, abuse-prone capability. The RPC
+  // reserves the user quota and stages the attachment in one transaction.
+  const { data: stagedAttachment, error: stagingError } = await serviceClient.rpc(
+    "stage_community_group_chat_attachment",
+    {
+      target_group_id: normalizedGroupID,
+      target_uploader_id: userID,
+      target_mime_type: mimeType,
+      target_byte_size: byteSize
+    }
+  ).maybeSingle<{ attachment_id: string | null; storage_path: string | null; rate_limited: boolean }>();
+  if (stagingError) {
     structuredLog("error", "group_media_attachment_staging_failed", {
       request_id: context.get("requestID"),
-      error_code: attachmentError.code
+      error_code: stagingError.code
     });
     return context.json({ error: "media_unavailable" }, 503);
   }
+  if (!stagedAttachment) return context.json({ error: "media_unavailable" }, 503);
+  if (stagedAttachment.rate_limited) return context.json({ error: "media_rate_limited" }, 429);
+  if (!stagedAttachment.attachment_id || !stagedAttachment.storage_path) {
+    structuredLog("error", "group_media_attachment_staging_failed", {
+      request_id: context.get("requestID"),
+      error_code: "invalid_staging_shape"
+    });
+    return context.json({ error: "media_unavailable" }, 503);
+  }
+  const attachmentID = stagedAttachment.attachment_id;
 
   const upload = await createCloudflareImageUpload(context.env, {
     attachmentID,
-    groupID,
+    groupID: normalizedGroupID,
     uploaderID: userID
   });
   if (!upload) {
@@ -352,10 +642,13 @@ app.post("/media/group-chat/upload-url", async (context) => {
     .update({ provider_asset_id: upload.imageID })
     .eq("id", attachmentID);
   if (providerIDError) {
-    // The image remains private and never becomes visible, but delete it to
-    // avoid orphaned billable storage when database persistence fails.
-    await deleteCloudflareImage(context.env, upload.imageID);
-    await serviceClient.from("community_group_chat_attachments").delete().eq("id", attachmentID);
+    await quarantineUntrackedMediaProviderAsset(
+      context.env,
+      serviceClient,
+      "community_group_chat_attachments",
+      attachmentID,
+      upload.imageID
+    );
     structuredLog("error", "group_media_provider_identifier_persistence_failed", {
       request_id: context.get("requestID"),
       error_code: providerIDError.code
@@ -440,7 +733,13 @@ app.delete("/media/group-chat/:attachmentID", async (context) => {
     return context.json({ error: "media_unavailable" }, 503);
   }
   if (!claimed) return context.json({ error: "media_unavailable" }, 409);
-  if (attachment.provider_asset_id) await deleteCloudflareImage(context.env, attachment.provider_asset_id);
+  if (attachment.provider_asset_id && !await deleteCloudflareImage(context.env, attachment.provider_asset_id)) {
+    structuredLog("error", "group_media_cancellation_provider_cleanup_deferred", {
+      request_id: context.get("requestID"),
+      attachment_id: attachment.id
+    });
+    return context.json({ error: "media_unavailable" }, 503);
+  }
   const { error: deleteError } = await serviceClient.from("community_group_chat_attachments")
     .delete().eq("id", attachment.id).eq("status", "deleted").is("message_id", null);
   if (deleteError) {
@@ -459,52 +758,60 @@ app.delete("/media/group-chat/:attachmentID", async (context) => {
 app.post("/media/direct-chat/upload-url", async (context) => {
   const userID = await authenticatedUserID(context);
   if (!userID) return context.json({ error: "invalid_session" }, 401);
-  const body = await context.req.json<DirectMessageImageUploadRequest>().catch(() => null);
+  const bodyResult = await readBoundedJSONBody(context, mediaJSONBodyLimitBytes);
+  if (!bodyResult.ok) {
+    return context.json(
+      { error: bodyResult.reason === "too_large" ? "request_body_too_large" : "invalid_json_body" },
+      bodyResult.reason === "too_large" ? 413 : 400
+    );
+  }
+  const body = bodyResult.value;
+  const conversationID = body.conversationID;
+  const mimeType = body.mimeType;
+  const byteSize = body.byteSize;
   const allowedMIMETypes = new Set(["image/jpeg", "image/png", "image/heic", "image/webp"]);
-  if (!body?.conversationID || !isUUID(body.conversationID) || !body.mimeType || !allowedMIMETypes.has(body.mimeType) ||
-      !Number.isInteger(body.byteSize) || body.byteSize === undefined || body.byteSize < 1 || body.byteSize > 10_485_760) {
+  if (typeof conversationID !== "string" || !isUUID(conversationID) || typeof mimeType !== "string" ||
+      !allowedMIMETypes.has(mimeType) || typeof byteSize !== "number" ||
+      !Number.isSafeInteger(byteSize) || byteSize < 1 || byteSize > 10_485_760) {
     return context.json({ error: "invalid_media_request" }, 400);
   }
-  const conversationID = body.conversationID.toLowerCase();
+  const normalizedConversationID = conversationID.toLowerCase();
   const serviceClient = createServiceClient(context.env);
-  const conversation = await activeDirectConversationForMember(serviceClient, conversationID, userID);
+  const conversation = await activeDirectConversationForMember(serviceClient, normalizedConversationID, userID);
   if (!conversation) return context.json({ error: "media_unavailable" }, 403);
 
-  const { count, error: rateLimitError } = await serviceClient
-    .from("community_direct_message_attachments")
-    .select("id", { count: "exact", head: true })
-    .eq("uploader_id", userID)
-    .gte("created_at", new Date(Date.now() - 60_000).toISOString());
-  if (rateLimitError) {
-    structuredLog("error", "direct_media_rate_limit_lookup_failed", {
-      request_id: context.get("requestID"),
-      error_code: rateLimitError.code
-    });
-    return context.json({ error: "media_unavailable" }, 503);
-  }
-  if ((count ?? 0) >= 6) return context.json({ error: "media_rate_limited" }, 429);
-
-  const attachmentID = crypto.randomUUID();
-  const { error: insertError } = await serviceClient
-    .from("community_direct_message_attachments")
-    .insert({
-      id: attachmentID,
-      conversation_id: conversationID,
-      uploader_id: userID,
-      storage_reference: `${conversationID}/${userID}/${attachmentID}`,
-      mime_type: body.mimeType,
-      byte_size: body.byteSize,
-      status: "pending_upload"
-    });
-  if (insertError) {
+  const { data: stagedAttachment, error: stagingError } = await serviceClient.rpc(
+    "stage_community_direct_message_attachment",
+    {
+      target_conversation_id: normalizedConversationID,
+      target_uploader_id: userID,
+      target_mime_type: mimeType,
+      target_byte_size: byteSize
+    }
+  ).maybeSingle<{ attachment_id: string | null; storage_path: string | null; rate_limited: boolean }>();
+  if (stagingError) {
     structuredLog("error", "direct_media_attachment_staging_failed", {
       request_id: context.get("requestID"),
-      error_code: insertError.code
+      error_code: stagingError.code
     });
     return context.json({ error: "media_unavailable" }, 503);
   }
+  if (!stagedAttachment) return context.json({ error: "media_unavailable" }, 503);
+  if (stagedAttachment.rate_limited) return context.json({ error: "media_rate_limited" }, 429);
+  if (!stagedAttachment.attachment_id || !stagedAttachment.storage_path) {
+    structuredLog("error", "direct_media_attachment_staging_failed", {
+      request_id: context.get("requestID"),
+      error_code: "invalid_staging_shape"
+    });
+    return context.json({ error: "media_unavailable" }, 503);
+  }
+  const attachmentID = stagedAttachment.attachment_id;
 
-  const upload = await createCloudflareImageUpload(context.env, { attachmentID, groupID: conversationID, uploaderID: userID });
+  const upload = await createCloudflareImageUpload(context.env, {
+    attachmentID,
+    groupID: normalizedConversationID,
+    uploaderID: userID
+  });
   if (!upload) {
     await serviceClient.from("community_direct_message_attachments").delete().eq("id", attachmentID);
     return context.json({ error: "media_unavailable" }, 503);
@@ -515,8 +822,13 @@ app.post("/media/direct-chat/upload-url", async (context) => {
     .eq("id", attachmentID)
     .eq("status", "pending_upload");
   if (providerError) {
-    await deleteCloudflareImage(context.env, upload.imageID);
-    await serviceClient.from("community_direct_message_attachments").delete().eq("id", attachmentID);
+    await quarantineUntrackedMediaProviderAsset(
+      context.env,
+      serviceClient,
+      "community_direct_message_attachments",
+      attachmentID,
+      upload.imageID
+    );
     structuredLog("error", "direct_media_provider_identifier_persistence_failed", {
       request_id: context.get("requestID"),
       error_code: providerError.code
@@ -595,7 +907,13 @@ app.delete("/media/direct-chat/:attachmentID", async (context) => {
     return context.json({ error: "media_unavailable" }, 503);
   }
   if (!claimed) return context.json({ error: "media_unavailable" }, 409);
-  if (attachment.provider_asset_id) await deleteCloudflareImage(context.env, attachment.provider_asset_id);
+  if (attachment.provider_asset_id && !await deleteCloudflareImage(context.env, attachment.provider_asset_id)) {
+    structuredLog("error", "direct_media_cancellation_provider_cleanup_deferred", {
+      request_id: context.get("requestID"),
+      attachment_id: attachment.id
+    });
+    return context.json({ error: "media_unavailable" }, 503);
+  }
   const { error: deleteError } = await serviceClient
     .from("community_direct_message_attachments")
     .delete()
@@ -621,13 +939,17 @@ app.post("/internal/push/community-notification", async (context) => {
     return context.body(null, 401);
   }
 
-  const payload = await context.req.json<CommunityNotificationWebhookPayload>().catch(() => null);
-  const notificationID = payload?.record?.id;
+  const bodyResult = await readBoundedJSONBody(context, pushWebhookJSONBodyLimitBytes);
+  if (!bodyResult.ok) {
+    return context.body(null, bodyResult.reason === "too_large" ? 413 : 400);
+  }
+  const payload = bodyResult.value;
+  const notificationID = isRecord(payload.record) ? payload.record.id : undefined;
   if (
-    payload?.type !== "INSERT" ||
+    payload.type !== "INSERT" ||
     !isPushWebhookTable(payload.table) ||
     payload.schema !== "public" ||
-    !notificationID ||
+    typeof notificationID !== "string" ||
     !isUUID(notificationID)
   ) {
     return context.body(null, 400);
@@ -750,7 +1072,9 @@ app.get("/v1/reports/:reportID/context", async (context) => {
   if (!report) return context.json({ error: "report_not_found" }, 404);
 
   const [target, actions] = await Promise.all([
-    loadModerationTarget(serviceClient, report),
+    report.target_id
+      ? loadModerationTarget(serviceClient, report)
+      : Promise.resolve({ data: null, error: null }),
     serviceClient
       .from("community_moderation_action_audit")
       .select("id, action, subject_user_id, restriction_id, reverses_action_id, note, member_notice, created_at")
@@ -774,24 +1098,28 @@ app.post("/v1/reports/:reportID/resolve", async (context) => {
     return context.json({ error: "invalid_report_id" }, 400);
   }
 
-  const body = await context.req.json<{
-    status?: string;
-    action?: string;
-    note?: string;
-  }>().catch(() => null);
-  if (!body || !allowedStatuses.has(body.status as ReviewStatus) || !allowedResolutions.has(body.action as ReportResolution)) {
+  const bodyResult = await readBoundedJSONBody(context, moderationJSONBodyLimitBytes);
+  if (!bodyResult.ok) {
+    return context.json(
+      { error: bodyResult.reason === "too_large" ? "request_body_too_large" : "invalid_json_body" },
+      bodyResult.reason === "too_large" ? 413 : 400
+    );
+  }
+  const body = bodyResult.value;
+  if (typeof body.status !== "string" || !allowedStatuses.has(body.status as ReviewStatus) ||
+      typeof body.action !== "string" || !allowedResolutions.has(body.action as ReportResolution)) {
     return context.json({ error: "invalid_resolution" }, 400);
   }
-  const note = body.note?.trim() ?? null;
-  if (note && note.length > 1_000) {
+  const note = normalizedOptionalText(body.note, 1_000);
+  if (note === undefined) {
     return context.json({ error: "resolution_note_too_long" }, 400);
   }
 
   const { error } = await createServiceClient(context.env).rpc("resolve_community_report", {
     target_report_id: reportID,
     acting_moderator_id: context.get("moderatorID"),
-    next_review_status: body.status,
-    next_resolution_action: body.action,
+    next_review_status: body.status as ReviewStatus,
+    next_resolution_action: body.action as ReportResolution,
     next_resolution_note: note
   });
 
@@ -813,20 +1141,23 @@ app.post("/v1/reports/:reportID/actions", async (context) => {
   const reportID = context.req.param("reportID");
   if (!isUUID(reportID)) return context.json({ error: "invalid_report_id" }, 400);
 
-  const body = await context.req.json<{
-    action?: string;
-    note?: string;
-    memberNotice?: string;
-    restrictionHours?: number | null;
-  }>().catch(() => null);
-  if (!body || !allowedEnforcementActions.has(body.action as EnforcementAction)) {
+  const bodyResult = await readBoundedJSONBody(context, moderationJSONBodyLimitBytes);
+  if (!bodyResult.ok) {
+    return context.json(
+      { error: bodyResult.reason === "too_large" ? "request_body_too_large" : "invalid_json_body" },
+      bodyResult.reason === "too_large" ? 413 : 400
+    );
+  }
+  const body = bodyResult.value;
+  if (typeof body.action !== "string" || !allowedEnforcementActions.has(body.action as EnforcementAction)) {
     return context.json({ error: "invalid_moderation_action" }, 400);
   }
   const note = normalizedOptionalText(body.note, 1_000);
   const memberNotice = normalizedOptionalText(body.memberNotice, 500);
   const restrictionHours = body.restrictionHours === null || body.restrictionHours === undefined
     ? null
-    : Number.isInteger(body.restrictionHours) && body.restrictionHours >= 1 && body.restrictionHours <= 8_760
+    : typeof body.restrictionHours === "number" && Number.isSafeInteger(body.restrictionHours) &&
+      body.restrictionHours >= 1 && body.restrictionHours <= 8_760
       ? body.restrictionHours
       : undefined;
   if (note === undefined || memberNotice === undefined || restrictionHours === undefined) {
@@ -853,7 +1184,7 @@ app.post("/v1/reports/:reportID/actions", async (context) => {
   const { error } = await serviceClient.rpc(actionRPC, {
     target_report_id: reportID,
     acting_moderator_id: context.get("moderatorID"),
-    requested_action: body.action,
+    requested_action: body.action as EnforcementAction,
     moderation_note: note,
     restriction_hours: restrictionHours,
     member_notice: memberNotice
@@ -870,8 +1201,382 @@ app.post("/v1/reports/:reportID/actions", async (context) => {
 
 function createServiceClient(environment: Env) {
   return createClient(environment.SUPABASE_URL, environment.SUPABASE_SERVICE_ROLE_KEY, {
-    auth: { autoRefreshToken: false, persistSession: false }
+    auth: { autoRefreshToken: false, persistSession: false },
+    db: { timeout: supabaseRequestTimeoutMilliseconds, retry: false },
+    global: { fetch: supabaseFetchWithTimeout }
   });
+}
+
+const supabaseRequestTimeoutMilliseconds = 10_000;
+
+const supabaseFetchWithTimeout: typeof fetch = async (input, init = {}) => {
+  const controller = new AbortController();
+  const upstreamSignal = init.signal;
+  const abortFromUpstream = () => controller.abort();
+  const timeoutID = setTimeout(() => controller.abort(), supabaseRequestTimeoutMilliseconds);
+
+  if (upstreamSignal?.aborted) {
+    controller.abort();
+  } else {
+    upstreamSignal?.addEventListener("abort", abortFromUpstream, { once: true });
+  }
+
+  try {
+    return await fetch(input, { ...init, signal: controller.signal });
+  } finally {
+    clearTimeout(timeoutID);
+    upstreamSignal?.removeEventListener("abort", abortFromUpstream);
+  }
+};
+
+type AccountDeletionMedia = {
+  storage: Array<{ bucket: AccountDeletionStorageBucket; paths: string[] }>;
+  providerAssetIDs: string[];
+};
+
+async function collectAccountDeletionMedia(
+  serviceClient: SupabaseClient,
+  userID: string
+): Promise<AccountDeletionMedia | null> {
+  const storage: Array<{ bucket: AccountDeletionStorageBucket; paths: string[] }> = [];
+  for (const bucket of accountDeletionStorageBuckets) {
+    const paths = await listAccountStoragePaths(serviceClient, bucket, `${userID.toLowerCase()}/`);
+    if (paths === null) return null;
+    storage.push({ bucket, paths });
+  }
+
+  const directAssets = await listAccountProviderAssetIDs(
+    serviceClient,
+    "community_direct_message_attachments",
+    "uploader_id",
+    [userID],
+    true
+  );
+  if (directAssets === null) return null;
+
+  const groupAssets = await listAccountProviderAssetIDs(
+    serviceClient,
+    "community_group_chat_attachments",
+    "uploader_id",
+    [userID]
+  );
+  if (groupAssets === null) return null;
+
+  return {
+    storage,
+    providerAssetIDs: Array.from(new Set([...directAssets, ...groupAssets]))
+  };
+}
+
+async function listAccountStoragePaths(
+  serviceClient: SupabaseClient,
+  bucket: AccountDeletionStorageBucket,
+  prefix: string
+): Promise<string[] | null> {
+  const paths: string[] = [];
+  const pendingFolders = [prefix.replace(/\/$/, "")];
+  while (pendingFolders.length > 0) {
+    const folder = pendingFolders.shift();
+    if (!folder) continue;
+    for (let offset = 0; ; offset += accountDeletionStorageListPageSize) {
+      const { data, error } = await serviceClient.storage
+        .from(bucket)
+        .list(folder, {
+          limit: accountDeletionStorageListPageSize,
+          offset,
+          sortBy: { column: "name", order: "asc" }
+        });
+      if (error) {
+        structuredLog("error", "account_deletion_storage_lookup_failed", {
+          bucket,
+          error_code: "storage_list_failed"
+        });
+        return null;
+      }
+      for (const row of (data ?? []) as AccountDeletionStorageRow[]) {
+        const path = `${folder}/${row.name}`;
+        if (row.id) {
+          paths.push(path);
+        } else {
+          pendingFolders.push(path);
+        }
+      }
+      if (!data || data.length < accountDeletionStorageListPageSize) break;
+    }
+  }
+  return paths;
+}
+
+async function listAccountProviderAssetIDs(
+  serviceClient: SupabaseClient,
+  table: "community_direct_message_attachments" | "community_group_chat_attachments",
+  filterColumn: "uploader_id",
+  filterValues: string[],
+  retainAttachedMedia = false
+): Promise<string[] | null> {
+  const assetIDs: string[] = [];
+  for (let offset = 0; ; offset += accountDeletionPageSize) {
+    const { data, error } = await serviceClient
+      .from(table)
+      .select(retainAttachedMedia ? "provider_asset_id, message_id" : "provider_asset_id")
+      .in(filterColumn, filterValues)
+      .not("provider_asset_id", "is", null)
+      .range(offset, offset + accountDeletionPageSize - 1)
+      .returns<AccountDeletionProviderRow[]>();
+    if (error) {
+      structuredLog("error", "account_deletion_provider_lookup_failed", {
+        attachment_type: table,
+        error_code: error.code
+      });
+      return null;
+    }
+    assetIDs.push(
+      ...(data ?? []).flatMap((row) =>
+        row.provider_asset_id && !(retainAttachedMedia && row.message_id)
+          ? [row.provider_asset_id]
+          : []
+      )
+    );
+    if (!data || data.length < accountDeletionPageSize) break;
+  }
+  return assetIDs;
+}
+
+async function removeAccountStorage(
+  serviceClient: SupabaseClient,
+  storage: Array<{ bucket: AccountDeletionStorageBucket; paths: string[] }>
+): Promise<boolean> {
+  for (const { bucket, paths } of storage) {
+    for (let offset = 0; offset < paths.length; offset += accountDeletionStorageBatchSize) {
+      const { error } = await serviceClient.storage
+        .from(bucket)
+        .remove(paths.slice(offset, offset + accountDeletionStorageBatchSize));
+      if (error) {
+        structuredLog("error", "account_deletion_storage_remove_failed", {
+          bucket,
+          error_code: "storage_remove_failed"
+        });
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+function accountDeletionStorageBucket(value: string): AccountDeletionStorageBucket | null {
+  return accountDeletionStorageBuckets.includes(value as AccountDeletionStorageBucket)
+    ? value as AccountDeletionStorageBucket
+    : null;
+}
+
+async function updateAccountDeletionJob(
+  serviceClient: SupabaseClient,
+  userID: string,
+  status: AccountDeletionJob["status"],
+  failureReason: string | null,
+  retryAfterSeconds: number
+): Promise<boolean> {
+  const { error } = await serviceClient.rpc("update_community_account_deletion_job", {
+    account_user_id: userID,
+    next_status: status,
+    failure_reason: failureReason,
+    retry_after_seconds: retryAfterSeconds
+  });
+  if (error) {
+    structuredLog("error", "account_deletion_job_update_failed", {
+      error_code: error.code,
+      next_status: status
+    });
+    return false;
+  }
+  return true;
+}
+
+async function completeAccountDeletionMedia(
+  serviceClient: SupabaseClient,
+  mediaID: string,
+  succeeded: boolean,
+  failureReason: string | null
+): Promise<boolean> {
+  const { error } = await serviceClient.rpc("complete_community_account_deletion_media", {
+    target_media_id: mediaID,
+    succeeded,
+    failure_reason: failureReason
+  });
+  if (error) {
+    structuredLog("error", "account_deletion_media_state_update_failed", {
+      error_code: error.code,
+      succeeded
+    });
+    return false;
+  }
+  return true;
+}
+
+async function processPendingAccountDeletionJobs(bindings: Env, targetUserID?: string): Promise<void> {
+  const serviceClient = createServiceClient(bindings);
+  const { data: jobsData, error } = await serviceClient.rpc("claim_community_account_deletion_jobs", {
+    target_batch_size: targetUserID ? 1 : accountDeletionJobBatchSize,
+    target_user_id: targetUserID ?? null
+  });
+  if (error) {
+    structuredLog("error", "account_deletion_job_claim_failed", { error_code: error.code });
+    return;
+  }
+
+  const jobs = Array.isArray(jobsData) ? jobsData as AccountDeletionJob[] : [];
+  for (const job of jobs) {
+    try {
+      await processAccountDeletionJob(bindings, serviceClient, job);
+    } catch (error) {
+      structuredLog("error", "account_deletion_job_processing_failed", {
+        error_type: error instanceof Error ? error.name : "unknown_error"
+      });
+      await updateAccountDeletionJob(
+        serviceClient,
+        job.user_id,
+        job.status === "finalizing" ? "finalizing" : "cleanup_pending",
+        "unexpected_processor_failure",
+        300
+      );
+    }
+  }
+}
+
+async function processAccountDeletionJob(
+  bindings: Env,
+  serviceClient: SupabaseClient,
+  job: AccountDeletionJob
+): Promise<void> {
+  if (!job.inventory_ready) {
+    const media = await collectAccountDeletionMedia(serviceClient, job.user_id);
+    if (!media) {
+      await updateAccountDeletionJob(serviceClient, job.user_id, "pending", "media_inventory_failed", 300);
+      return;
+    }
+
+    const { error } = await serviceClient.rpc("record_community_account_deletion_inventory", {
+      account_user_id: job.user_id,
+      storage_objects: media.storage.flatMap(({ bucket, paths }) =>
+        paths.map((path) => ({ bucket, path }))
+      ),
+      provider_asset_ids: media.providerAssetIDs
+    });
+    if (error) {
+      structuredLog("error", "account_deletion_inventory_record_failed", {
+        error_code: error.code
+      });
+      await updateAccountDeletionJob(serviceClient, job.user_id, "pending", "media_inventory_record_failed", 300);
+      return;
+    }
+  }
+
+  const { data: mediaRowsData, error: mediaClaimError } = await serviceClient.rpc(
+    "claim_community_account_deletion_media",
+    {
+      account_user_id: job.user_id,
+      target_batch_size: accountDeletionMediaBatchSize
+    }
+  );
+  if (mediaClaimError) {
+    structuredLog("error", "account_deletion_media_claim_failed", {
+      error_code: mediaClaimError.code
+    });
+    await updateAccountDeletionJob(serviceClient, job.user_id, "cleanup_pending", "media_claim_failed", 300);
+    return;
+  }
+
+  const rows = Array.isArray(mediaRowsData) ? mediaRowsData as AccountDeletionMediaRow[] : [];
+  if (rows.length > 0) {
+    let cleanupFailed = false;
+    const storageRows = new Map<AccountDeletionStorageBucket, string[]>();
+    for (const row of rows) {
+      if (row.media_kind !== "storage") continue;
+      const bucket = accountDeletionStorageBucket(row.bucket);
+      if (!bucket) {
+        cleanupFailed = true;
+        await completeAccountDeletionMedia(serviceClient, row.media_id, false, "invalid_storage_bucket");
+        continue;
+      }
+      const paths = storageRows.get(bucket) ?? [];
+      paths.push(row.object_key);
+      storageRows.set(bucket, paths);
+    }
+
+    for (const [bucket, paths] of storageRows) {
+      const succeeded = await removeAccountStorage(serviceClient, [{ bucket, paths }]);
+      for (const row of rows.filter((item) => item.media_kind === "storage" && item.bucket === bucket)) {
+        if (!succeeded) {
+          cleanupFailed = true;
+          await completeAccountDeletionMedia(serviceClient, row.media_id, false, "storage_delete_failed");
+          continue;
+        }
+        if (!await completeAccountDeletionMedia(serviceClient, row.media_id, true, null)) {
+          cleanupFailed = true;
+        }
+      }
+      if (!succeeded) cleanupFailed = true;
+    }
+
+    const providerRows = rows.filter((item) => item.media_kind === "provider");
+    for (let offset = 0; offset < providerRows.length; offset += accountDeletionProviderConcurrency) {
+      const outcomes = await Promise.all(providerRows.slice(offset, offset + accountDeletionProviderConcurrency).map(async (row) => {
+        let succeeded = false;
+        try {
+          succeeded = await deleteCloudflareImage(bindings, row.object_key);
+        } catch (error) {
+          structuredLog("error", "account_deletion_provider_cleanup_failed", {
+            error_type: error instanceof Error ? error.name : "unknown_error"
+          });
+        }
+        const stateUpdated = await completeAccountDeletionMedia(
+          serviceClient,
+          row.media_id,
+          succeeded,
+          succeeded ? null : "provider_delete_failed"
+        );
+        return succeeded && stateUpdated;
+      }));
+      if (outcomes.some((succeeded) => !succeeded)) cleanupFailed = true;
+    }
+
+    await updateAccountDeletionJob(
+      serviceClient,
+      job.user_id,
+      "cleanup_pending",
+      cleanupFailed ? "media_delete_failed" : null,
+      cleanupFailed ? 300 : 0
+    );
+    return;
+  }
+
+  const { error: preparationError } = await serviceClient.rpc("prepare_community_account_deletion", {
+    account_user_id: job.user_id
+  });
+  if (preparationError) {
+    structuredLog("error", "account_deletion_database_preparation_failed", {
+      error_code: preparationError.code
+    });
+    await updateAccountDeletionJob(serviceClient, job.user_id, "cleanup_pending", "database_preparation_failed", 300);
+    return;
+  }
+  if (!await updateAccountDeletionJob(serviceClient, job.user_id, "finalizing", null, 300)) return;
+
+  const { error: deletionError } = await serviceClient.auth.admin.deleteUser(job.user_id);
+  if (deletionError) {
+    const { data: existingUser, error: lookupError } = await serviceClient.auth.admin.getUserById(job.user_id);
+    const userIsGone = !lookupError && !existingUser.user;
+    const notFound = lookupError?.status === 404 || lookupError?.code === "user_not_found";
+    if (!userIsGone && !notFound) {
+      structuredLog("error", "account_deletion_auth_delete_failed", {
+        error_code: deletionError.code
+      });
+      await updateAccountDeletionJob(serviceClient, job.user_id, "finalizing", "auth_delete_failed", 300);
+      return;
+    }
+  }
+
+  await updateAccountDeletionJob(serviceClient, job.user_id, "completed", null, 0);
 }
 
 async function enqueueCommunityMediaScan(
@@ -928,7 +1633,34 @@ async function mediaScanStatusResponse(
   attachmentID: string,
   viewerID: string
 ): Promise<Response> {
-  const { data: status, error } = await createServiceClient(context.env)
+  const serviceClient = createServiceClient(context.env);
+  const { data: statusQuota, error: statusQuotaError } = await serviceClient
+    .rpc("consume_community_request_rate_limit", {
+      target_bucket: "media_scan_status",
+      target_limit: 120,
+      target_window_seconds: 60,
+      target_user_id: viewerID
+    })
+    .maybeSingle<{ allowed: boolean }>();
+  if (statusQuotaError || !statusQuota) {
+    structuredLog("error", "community_media_scan_status_rate_limit_failed", {
+      request_id: context.get("requestID"),
+      error_code: statusQuotaError?.code ?? "invalid_rate_limit_shape"
+    });
+    return context.json({ error: "media_unavailable" }, 503);
+  }
+  if (!statusQuota.allowed) {
+    return new Response(JSON.stringify({ error: "media_scan_rate_limited" }), {
+      status: 429,
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+        "Cache-Control": "no-store",
+        "Retry-After": "60"
+      }
+    });
+  }
+
+  const { data: status, error } = await serviceClient
     .rpc("get_community_media_scan_status", {
       target_media_type: mediaType,
       target_attachment_id: attachmentID,
@@ -969,36 +1701,42 @@ async function issuePrivateMediaViewURL(
   userID: string
 ): Promise<PrivateMediaViewResult> {
   const cacheKey = `${mediaType}:${userID}:${attachmentID}`;
-  const cached = readPrivateMediaViewCache(cacheKey);
-  if (cached) return { status: "ok", url: cached };
+  const { data: authorization, error } = await createServiceClient(bindings)
+    .rpc("issue_community_media_view", {
+      target_media_type: mediaType,
+      target_attachment_id: attachmentID,
+      target_viewer_id: userID
+    })
+    .maybeSingle<MediaViewAuthorization>();
 
-  const existingRequest = privateMediaViewInFlight.get(cacheKey);
+  if (error) {
+    structuredLog("error", "private_media_view_authorization_failed", {
+      error_code: error.code
+    });
+    return { status: "unavailable" };
+  }
+  if (!authorization) return { status: "not_found" };
+  if (authorization.rate_limited) return { status: "rate_limited" };
+  const providerAssetID = authorization.provider_asset_id;
+  if (!providerAssetID) return { status: "not_found" };
+
+  const cached = readPrivateMediaViewCache(cacheKey);
+  if (cached?.providerAssetID === providerAssetID) {
+    return { status: "ok", url: cached.url };
+  }
+
+  // Only deduplicate the provider-signing portion. Every caller above has
+  // already received a fresh authorization decision from the database.
+  const providerRequestKey = `${cacheKey}:${providerAssetID}`;
+  const existingRequest = privateMediaViewInFlight.get(providerRequestKey);
   if (existingRequest) return existingRequest;
 
   const request = (async (): Promise<PrivateMediaViewResult> => {
-    const { data: authorization, error } = await createServiceClient(bindings)
-      .rpc("issue_community_media_view", {
-        target_media_type: mediaType,
-        target_attachment_id: attachmentID,
-        target_viewer_id: userID
-      })
-      .maybeSingle<MediaViewAuthorization>();
-
-    if (error) {
-      structuredLog("error", "private_media_view_authorization_failed", {
-        error_code: error.code
-      });
-      return { status: "unavailable" };
-    }
-    if (!authorization) return { status: "not_found" };
-    if (authorization.rate_limited) return { status: "rate_limited" };
-    if (!authorization.provider_asset_id) return { status: "not_found" };
-
     try {
-      const signedURL = await createCloudflareImageViewURL(bindings, authorization.provider_asset_id);
+      const signedURL = await createCloudflareImageViewURL(bindings, providerAssetID);
       if (!signedURL) return { status: "unavailable" };
       const url = signedURL.toString();
-      writePrivateMediaViewCache(cacheKey, url);
+      writePrivateMediaViewCache(cacheKey, providerAssetID, url);
       return { status: "ok", url };
     } catch (error) {
       structuredLog("error", "private_media_view_url_creation_failed", {
@@ -1008,15 +1746,15 @@ async function issuePrivateMediaViewURL(
     }
   })();
 
-  privateMediaViewInFlight.set(cacheKey, request);
+  privateMediaViewInFlight.set(providerRequestKey, request);
   try {
     return await request;
   } finally {
-    privateMediaViewInFlight.delete(cacheKey);
+    privateMediaViewInFlight.delete(providerRequestKey);
   }
 }
 
-function readPrivateMediaViewCache(cacheKey: string): string | null {
+function readPrivateMediaViewCache(cacheKey: string): PrivateMediaViewCache | null {
   const entry = privateMediaViewURLCache.get(cacheKey);
   if (!entry) return null;
   if (entry.expiresAt <= Date.now()) {
@@ -1025,10 +1763,10 @@ function readPrivateMediaViewCache(cacheKey: string): string | null {
   }
   privateMediaViewURLCache.delete(cacheKey);
   privateMediaViewURLCache.set(cacheKey, entry);
-  return entry.url;
+  return entry;
 }
 
-function writePrivateMediaViewCache(cacheKey: string, url: string): void {
+function writePrivateMediaViewCache(cacheKey: string, providerAssetID: string, url: string): void {
   if (privateMediaViewURLCache.has(cacheKey)) privateMediaViewURLCache.delete(cacheKey);
   while (privateMediaViewURLCache.size >= privateMediaViewCacheMaxEntries) {
     const oldestKey = privateMediaViewURLCache.keys().next().value;
@@ -1037,6 +1775,7 @@ function writePrivateMediaViewCache(cacheKey: string, url: string): void {
   }
   privateMediaViewURLCache.set(cacheKey, {
     url,
+    providerAssetID,
     expiresAt: Date.now() + (privateMediaViewCacheTTLSeconds * 1_000)
   });
 }
@@ -1144,7 +1883,9 @@ async function authenticatedSupabaseUser(
   if (!token || !hasValidSupabaseAccessTokenClaims(token, context.env.SUPABASE_URL)) return null;
 
   const client = createClient(context.env.SUPABASE_URL, context.env.SUPABASE_ANON_KEY, {
-    auth: { autoRefreshToken: false, persistSession: false }
+    auth: { autoRefreshToken: false, persistSession: false },
+    db: { timeout: supabaseRequestTimeoutMilliseconds, retry: false },
+    global: { fetch: supabaseFetchWithTimeout }
   });
   const { data, error } = await client.auth.getUser(token);
   // The local claim check is only an early policy gate. Supabase Auth remains
@@ -1318,6 +2059,16 @@ async function sendAPNsMessage({
   };
 }
 
+function pushDeliveryRetryDelay(leasedRows: PushDeliveryClaimRow[]): number {
+  const delays = leasedRows
+    .map((row) => row.lease_until ? Date.parse(row.lease_until) : NaN)
+    .filter((timestamp): timestamp is number => Number.isFinite(timestamp))
+    .map((timestamp) => Math.max(1, (timestamp - Date.now()) / 1_000));
+  return delays.length === 0
+    ? communityPushDeliveryRetryDelaySeconds
+    : Math.max(...delays) + 1;
+}
+
 async function processCommunityPushDelivery(
   bindings: Env,
   message: CommunityPushDeliveryMessage
@@ -1390,12 +2141,20 @@ async function processCommunityPushDelivery(
     throw new Error("push_delivery_claim_failed");
   }
 
-  const claimedRows = Array.isArray(claimedData)
-    ? claimedData as Array<{ device_id: string }>
+  const claimRows = Array.isArray(claimedData)
+    ? claimedData as PushDeliveryClaimRow[]
     : [];
-  const claimedDeviceIDs = new Set((claimedRows ?? []).map((row) => row.device_id));
+  const claimedDeviceIDs = new Set(
+    claimRows.filter((row) => row.claim_state === "claimed").map((row) => row.device_id)
+  );
   const claimedDevices = devices.filter((device) => claimedDeviceIDs.has(device.id));
-  if (claimedDevices.length === 0) return;
+  const leasedRows = claimRows.filter((row) => row.claim_state === "leased");
+  if (claimedDevices.length === 0) {
+    if (leasedRows.length > 0) {
+      throw new CommunityPushDeliveryRetryableError(pushDeliveryRetryDelay(leasedRows));
+    }
+    return;
+  }
 
   let jwt: string;
   try {
@@ -1417,7 +2176,7 @@ async function processCommunityPushDelivery(
     structuredLog("error", "apns_jwt_creation_failed", {
       error_type: error instanceof Error ? error.name : "unknown_error"
     });
-    throw new Error("push_delivery_retryable");
+    throw new CommunityPushDeliveryRetryableError(pushDeliveryRetryDelay(leasedRows));
   }
 
   const deliveryResults = await Promise.allSettled(
@@ -1457,8 +2216,8 @@ async function processCommunityPushDelivery(
     throw new Error("push_delivery_finalize_failed");
   }
 
-  if (finalization.some((delivery) => delivery.outcome === "retry")) {
-    throw new Error("push_delivery_retryable");
+  if (finalization.some((delivery) => delivery.outcome === "retry") || leasedRows.length > 0) {
+    throw new CommunityPushDeliveryRetryableError(pushDeliveryRetryDelay(leasedRows));
   }
 }
 
@@ -1559,6 +2318,48 @@ async function deleteCloudflareImage(bindings: Env, imageID: string | null): Pro
     return false;
   }
   return true;
+}
+
+async function quarantineUntrackedMediaProviderAsset(
+  bindings: Env,
+  serviceClient: ReturnType<typeof createServiceClient>,
+  table: "community_group_chat_attachments" | "community_direct_message_attachments",
+  attachmentID: string,
+  providerAssetID: string
+): Promise<void> {
+  if (await deleteCloudflareImage(bindings, providerAssetID)) {
+    const { error } = await serviceClient
+      .from(table)
+      .delete()
+      .eq("id", attachmentID)
+      .is("message_id", null);
+    if (error) {
+      structuredLog("error", "media_provider_cleanup_metadata_delete_failed", {
+        attachment_id: attachmentID,
+        error_code: error.code
+      });
+    }
+    return;
+  }
+
+  // Preserve the provider ID when the first cleanup attempt fails. The
+  // durable cleanup dispatcher can retry it; deleting this row would make
+  // the provider object impossible to discover and remove later.
+  const { error } = await serviceClient
+    .from(table)
+    .update({
+      provider_asset_id: providerAssetID,
+      status: "deleted",
+      deleted_at: new Date().toISOString()
+    })
+    .eq("id", attachmentID)
+    .is("message_id", null);
+  if (error) {
+    structuredLog("error", "media_provider_cleanup_quarantine_failed", {
+      attachment_id: attachmentID,
+      error_code: error.code
+    });
+  }
 }
 
 async function cloudflareImageWasUploaded(bindings: Env, imageID: string): Promise<boolean> {
@@ -1859,6 +2660,56 @@ function bytesToHex(bytes: Uint8Array): string {
   return [...bytes].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
+async function readBoundedJSONBody(
+  context: Context<{ Bindings: Env; Variables: Variables }>,
+  maximumBytes: number
+): Promise<JSONBodyReadResult> {
+  const contentLengthHeader = context.req.header("Content-Length");
+  if (contentLengthHeader !== undefined) {
+    const contentLength = Number(contentLengthHeader);
+    if (!Number.isSafeInteger(contentLength) || contentLength < 0) {
+      return { ok: false, reason: "invalid" };
+    }
+    if (contentLength > maximumBytes) return { ok: false, reason: "too_large" };
+  }
+
+  const body = context.req.raw.body;
+  if (!body) return { ok: false, reason: "invalid" };
+
+  const reader = body.getReader();
+  const chunks: Uint8Array[] = [];
+  let totalBytes = 0;
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      if (!value) continue;
+      totalBytes += value.byteLength;
+      if (totalBytes > maximumBytes) {
+        await reader.cancel("request_body_too_large");
+        return { ok: false, reason: "too_large" };
+      }
+      chunks.push(value);
+    }
+  } catch {
+    return { ok: false, reason: "invalid" };
+  }
+
+  const bytes = new Uint8Array(totalBytes);
+  let offset = 0;
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+
+  try {
+    const value: unknown = JSON.parse(new TextDecoder().decode(bytes));
+    return isRecord(value) ? { ok: true, value } : { ok: false, reason: "invalid" };
+  } catch {
+    return { ok: false, reason: "invalid" };
+  }
+}
+
 function isUUID(value: string): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
 }
@@ -1963,6 +2814,44 @@ async function pruneMessageSignals(bindings: Env): Promise<void> {
   }
 }
 
+async function pruneModerationRetention(bindings: Env): Promise<void> {
+  try {
+    const { data: removed, error } = await createServiceClient(bindings).rpc(
+      "purge_community_moderation_retention",
+      { target_batch_size: communityModerationRetentionBatchSize }
+    );
+    if (error) {
+      structuredLog("error", "moderation_retention_prune_failed", { error_code: error.code });
+      return;
+    }
+    const removedCount = typeof removed === "number" ? removed : Number(removed);
+    if (Number.isFinite(removedCount) && removedCount > 0) {
+      structuredLog("info", "moderation_retention_prune_completed", { removed_count: removedCount });
+    }
+  } catch {
+    structuredLog("error", "moderation_retention_prune_failed", { error_type: "unknown_error" });
+  }
+}
+
+async function pruneTransportRetention(bindings: Env): Promise<void> {
+  try {
+    const { data: removed, error } = await createServiceClient(bindings).rpc(
+      "purge_community_transport_retention",
+      { target_batch_size: communityTransportRetentionBatchSize }
+    );
+    if (error) {
+      structuredLog("error", "transport_retention_prune_failed", { error_code: error.code });
+      return;
+    }
+    const removedCount = typeof removed === "number" ? removed : Number(removed);
+    if (Number.isFinite(removedCount) && removedCount > 0) {
+      structuredLog("info", "transport_retention_prune_completed", { removed_count: removedCount });
+    }
+  } catch {
+    structuredLog("error", "transport_retention_prune_failed", { error_type: "unknown_error" });
+  }
+}
+
 async function processCommunityProfileMediaCleanup(bindings: Env): Promise<void> {
   const serviceClient = createServiceClient(bindings);
   const { data: rows, error } = await serviceClient
@@ -2043,6 +2932,104 @@ async function processCommunityProfileMediaCleanup(bindings: Env): Promise<void>
   }
 }
 
+async function processCommunityStorageCleanup(bindings: Env): Promise<void> {
+  const serviceClient = createServiceClient(bindings);
+  const { data: rows, error } = await serviceClient
+    .from("community_storage_cleanup_outbox")
+    .select("id, bucket_id, storage_path, attempts")
+    .is("processed_at", null)
+    .lte("available_at", new Date().toISOString())
+    .order("created_at", { ascending: true })
+    .limit(100)
+    .returns<CommunityStorageCleanupRow[]>();
+
+  if (error) {
+    structuredLog("error", "community_storage_cleanup_lookup_failed", { error_code: error.code });
+    return;
+  }
+
+  let processedCount = 0;
+  for (const row of rows ?? []) {
+    const nextAttempts = row.attempts + 1;
+    const { data: claimed, error: claimError } = await serviceClient
+      .from("community_storage_cleanup_outbox")
+      .update({
+        attempts: nextAttempts,
+        available_at: new Date(Date.now() + 60 * 60 * 1_000).toISOString()
+      })
+      .eq("id", row.id)
+      .eq("attempts", row.attempts)
+      .is("processed_at", null)
+      .select("id")
+      .maybeSingle();
+
+    if (claimError) {
+      structuredLog("error", "community_storage_cleanup_claim_failed", { error_code: claimError.code });
+      continue;
+    }
+    if (!claimed) continue;
+
+    const { error: removeError } = await serviceClient.storage
+      .from(row.bucket_id)
+      .remove([row.storage_path]);
+    if (removeError) {
+      const retryDelay = Math.min(
+        24 * 60 * 60 * 1_000,
+        60 * 60 * 1_000 * (2 ** Math.min(nextAttempts - 1, 5))
+      );
+      const { error: retryError } = await serviceClient
+        .from("community_storage_cleanup_outbox")
+        .update({
+          available_at: new Date(Date.now() + retryDelay).toISOString(),
+          last_error: "storage_delete_failed"
+        })
+        .eq("id", row.id)
+        .eq("attempts", nextAttempts)
+        .is("processed_at", null);
+      if (retryError) {
+        structuredLog("error", "community_storage_cleanup_retry_update_failed", {
+          error_code: retryError.code
+        });
+      } else {
+        structuredLog("error", "community_storage_cleanup_failed", {
+          error_type: removeError.name
+        });
+      }
+      continue;
+    }
+
+    const { error: completeError } = await serviceClient
+      .from("community_storage_cleanup_outbox")
+      .update({ processed_at: new Date().toISOString(), last_error: null })
+      .eq("id", row.id)
+      .eq("attempts", nextAttempts)
+      .is("processed_at", null);
+    if (completeError) {
+      structuredLog("error", "community_storage_cleanup_completion_failed", {
+        error_code: completeError.code
+      });
+    } else {
+      processedCount += 1;
+    }
+  }
+
+  const { data: purged, error: purgeError } = await serviceClient.rpc(
+    "purge_community_storage_cleanup_outbox",
+    { target_batch_size: 500 }
+  );
+  if (purgeError) {
+    structuredLog("error", "community_storage_cleanup_purge_failed", { error_code: purgeError.code });
+  }
+
+  const purgedCount = typeof purged === "number" ? purged : Number(purged);
+  if (processedCount > 0 || (Number.isFinite(purgedCount) && purgedCount > 0)) {
+    structuredLog("info", "community_storage_cleanup_completed", {
+      processed_count: processedCount,
+      purged_count: Number.isFinite(purgedCount) ? purgedCount : 0
+    });
+  }
+}
+
 async function processGroupChatFanoutJob(
   serviceClient: ReturnType<typeof createServiceClient>,
   jobID: string
@@ -2120,6 +3107,41 @@ async function dispatchPendingCommunityMediaScans(bindings: Env): Promise<void> 
   }
 }
 
+async function dispatchExpiredCommunityPushDeliveries(bindings: Env): Promise<void> {
+  const { data, error } = await createServiceClient(bindings)
+    .rpc("requeue_expired_community_push_deliveries", {
+      target_batch_size: communityPushDeliveryRecoveryBatchSize
+    })
+    .returns<ExpiredPushDeliveryRow[]>();
+  if (error) {
+    structuredLog("error", "expired_push_delivery_recovery_lookup_failed", {
+      error_code: error.code
+    });
+    return;
+  }
+  if (!Array.isArray(data) || data.length === 0) return;
+
+  const messages: CommunityPushDeliveryMessage[] = data
+    .filter((row): row is ExpiredPushDeliveryRow =>
+      Boolean(row) && isPushSignalTable(row.source_table) && isUUID(row.event_id)
+    )
+    .map((row) => ({
+      version: 1 as const,
+      kind: "push_delivery" as const,
+      sourceTable: row.source_table,
+      eventID: row.event_id
+    }));
+  if (messages.length === 0) return;
+
+  try {
+    await bindings.PUSH_DELIVERY_QUEUE.sendBatch(messages.map((body) => ({ body })));
+  } catch (error) {
+    structuredLog("error", "expired_push_delivery_recovery_dispatch_failed", {
+      error_type: error instanceof Error ? error.name : "unknown_error"
+    });
+  }
+}
+
 function normalizedOptionalText(value: unknown, maximumLength: number): string | null | undefined {
   if (value === undefined || value === null) return null;
   if (typeof value !== "string") return undefined;
@@ -2130,7 +3152,7 @@ function normalizedOptionalText(value: unknown, maximumLength: number): string |
 type ReportRow = {
   id: string;
   target_type: "profile" | "post" | "comment" | "event" | "group" | "message" | "group_message";
-  target_id: string;
+  target_id: string | null;
 };
 
 async function loadModerationTarget(serviceClient: ReturnType<typeof createServiceClient>, report: ReportRow) {
@@ -2182,6 +3204,8 @@ async function loadModerationTarget(serviceClient: ReturnType<typeof createServi
   }
 }
 
+export { app };
+
 export default {
   fetch: app.fetch,
   async queue(batch: MessageBatch<CommunityQueueMessage>, env: Env): Promise<void> {
@@ -2218,7 +3242,9 @@ export default {
           retry_count: message.attempts
         });
         message.retry({
-          delaySeconds: isCommunityMediaCleanupMessage(body)
+          delaySeconds: error instanceof CommunityPushDeliveryRetryableError
+            ? error.delaySeconds
+            : isCommunityMediaCleanupMessage(body)
             ? communityMediaCleanupRetryDelaySeconds
             : isCommunityMediaScanMessage(body)
               ? communityMediaScanRetryDelaySeconds
@@ -2231,9 +3257,14 @@ export default {
     ctx.waitUntil(Promise.all([
       dispatchPendingCommunityMediaScans(env),
       dispatchExpiredCommunityMediaCleanup(env),
+      dispatchExpiredCommunityPushDeliveries(env),
       pruneMessageSignals(env),
+      pruneModerationRetention(env),
+      pruneTransportRetention(env),
       processPendingGroupChatFanoutJobs(env),
-      processCommunityProfileMediaCleanup(env)
+      processCommunityProfileMediaCleanup(env),
+      processCommunityStorageCleanup(env),
+      processPendingAccountDeletionJobs(env)
     ]).then(() => undefined));
   }
 } satisfies ExportedHandler<Env, CommunityQueueMessage>;

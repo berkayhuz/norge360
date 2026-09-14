@@ -27,6 +27,7 @@ final class AppearanceSettings: ObservableObject {
     @Published var appearance: AppAppearance {
         didSet {
             defaults.set(appearance.rawValue, forKey: Self.storageKey)
+            NorgeAppearance.configure()
         }
     }
 

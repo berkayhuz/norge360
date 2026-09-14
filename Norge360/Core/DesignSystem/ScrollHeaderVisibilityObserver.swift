@@ -1,8 +1,9 @@
 import SwiftUI
+import UIKit
 
-/// Observes the actual UIKit scroll view behind a SwiftUI ScrollView. This is
-/// more reliable than measuring a zero-height SwiftUI child when the scroll
-/// content contains nested lazy stacks and safe-area insets.
+/// Observes scroll direction without changing the scroll view's content
+/// offset. A pan recognizer is used instead of a zero-height GeometryReader so
+/// the compact tab bar cannot feed a layout change back into the scroll view.
 struct ScrollHeaderVisibilityObserver: UIViewRepresentable {
     let onVisibilityChanged: (Bool) -> Void
 
@@ -12,7 +13,7 @@ struct ScrollHeaderVisibilityObserver: UIViewRepresentable {
 
     func makeUIView(context: Context) -> AttachmentView {
         let view = AttachmentView()
-        view.onMoveToWindow = { [weak coordinator = context.coordinator] view in
+        view.onHierarchyChanged = { [weak coordinator = context.coordinator] view in
             coordinator?.attach(to: view)
         }
         return view
@@ -28,11 +29,24 @@ struct ScrollHeaderVisibilityObserver: UIViewRepresentable {
     }
 
     final class AttachmentView: UIView {
-        var onMoveToWindow: ((UIView) -> Void)?
+        var onHierarchyChanged: ((UIView) -> Void)?
 
         override func didMoveToWindow() {
             super.didMoveToWindow()
-            onMoveToWindow?(self)
+            notifyHierarchyChanged()
+        }
+
+        override func didMoveToSuperview() {
+            super.didMoveToSuperview()
+            notifyHierarchyChanged()
+        }
+
+        private func notifyHierarchyChanged() {
+            guard window != nil else { return }
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                self.onHierarchyChanged?(self)
+            }
         }
     }
 
@@ -40,17 +54,24 @@ struct ScrollHeaderVisibilityObserver: UIViewRepresentable {
         var onVisibilityChanged: (Bool) -> Void
         weak var scrollView: UIScrollView?
         private var panGesture: UIPanGestureRecognizer?
+        private var retryCount = 0
+        private var lastVisibility: Bool?
 
         init(onVisibilityChanged: @escaping (Bool) -> Void) {
             self.onVisibilityChanged = onVisibilityChanged
         }
 
         func attach(to view: UIView) {
-            guard let scrollView = findScrollView(from: view) else { return }
+            guard let scrollView = findScrollView(from: view) else {
+                scheduleAttachRetry(to: view)
+                return
+            }
             guard self.scrollView !== scrollView else { return }
 
-            detach()
+            detachGesture()
             self.scrollView = scrollView
+            retryCount = 0
+            lastVisibility = nil
 
             let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
             panGesture.delegate = self
@@ -60,25 +81,26 @@ struct ScrollHeaderVisibilityObserver: UIViewRepresentable {
         }
 
         func detach() {
-            if let panGesture, let scrollView {
-                scrollView.removeGestureRecognizer(panGesture)
-            }
-            panGesture = nil
+            detachGesture()
             scrollView = nil
         }
 
         @objc private func handlePan(_ gesture: UIPanGestureRecognizer) {
-            guard let scrollView else { return }
-            if scrollView.contentOffset.y <= -scrollView.adjustedContentInset.top + 2 {
-                onVisibilityChanged(true)
+            guard gesture.state == .began || gesture.state == .changed,
+                let scrollView
+            else { return }
+
+            let topOffset = -scrollView.adjustedContentInset.top
+            if scrollView.contentOffset.y <= topOffset + 2 {
+                reportVisibility(true)
                 return
             }
 
             let velocity = gesture.velocity(in: scrollView).y
-            guard abs(velocity) > 25 else { return }
-            // Negative velocity means the finger/content is moving upward,
-            // which is the Instagram-style hide direction.
-            onVisibilityChanged(velocity > 0)
+            guard abs(velocity) > 12 else { return }
+            // Positive finger velocity means the user is moving back toward
+            // the top; negative velocity means the feed is being hidden.
+            reportVisibility(velocity > 0)
         }
 
         func gestureRecognizer(
@@ -86,6 +108,36 @@ struct ScrollHeaderVisibilityObserver: UIViewRepresentable {
             shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
         ) -> Bool {
             true
+        }
+
+        func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+            guard let pan = gestureRecognizer as? UIPanGestureRecognizer,
+                let scrollView
+            else { return true }
+            let velocity = pan.velocity(in: scrollView)
+            return abs(velocity.y) >= abs(velocity.x)
+        }
+
+        private func reportVisibility(_ visible: Bool) {
+            guard lastVisibility != visible else { return }
+            lastVisibility = visible
+            onVisibilityChanged(visible)
+        }
+
+        private func detachGesture() {
+            if let panGesture, let scrollView {
+                scrollView.removeGestureRecognizer(panGesture)
+            }
+            panGesture = nil
+        }
+
+        private func scheduleAttachRetry(to view: UIView) {
+            guard retryCount < 20 else { return }
+            retryCount += 1
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.03) { [weak self, weak view] in
+                guard let self, let view else { return }
+                self.attach(to: view)
+            }
         }
 
         private func findScrollView(from view: UIView) -> UIScrollView? {

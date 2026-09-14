@@ -30,7 +30,11 @@ struct SignOutButton: View {
                     do {
                         try await sessionCoordinator.signOut()
                     } catch {
-                        errorMessage = error.localizedDescription
+                        errorMessage = UserFacingErrorMapper.message(
+                            for: error,
+                            fallbackKey: "auth.error",
+                            operation: "auth.sign_out"
+                        )
                     }
                 }
             }

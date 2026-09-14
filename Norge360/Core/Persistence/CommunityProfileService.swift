@@ -194,7 +194,7 @@ actor CommunityProfileService: CommunityProfileProviding {
                 .from("avatars")
                 .upload(path, data: image.data, options: options)
         } catch {
-            logger.error("Avatar upload failed: \(error.localizedDescription, privacy: .public)")
+            logger.error("Avatar upload failed. type=\(String(reflecting: type(of: error)), privacy: .public)")
             throw error
         }
 
@@ -206,7 +206,7 @@ actor CommunityProfileService: CommunityProfileProviding {
                 )
                 .execute()
         } catch {
-            logger.error("Avatar profile update failed: \(error.localizedDescription, privacy: .public)")
+            logger.error("Avatar profile update failed. type=\(String(reflecting: type(of: error)), privacy: .public)")
             _ = try? await client.storage.from("avatars").remove(paths: [path])
             throw error
         }

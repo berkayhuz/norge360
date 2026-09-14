@@ -10,6 +10,7 @@ protocol CommunityGroupChatProviding: Sendable {
     func send(groupID: UUID, body: String) async throws
     func send(groupID: UUID, body: String, attachmentID: UUID) async throws
     func stageImage(groupID: UUID, jpegData: Data) async throws -> UUID
+    func scanStatus(attachmentID: UUID) async throws -> CommunityPrivateImageScanOutcome
     func imageURL(attachmentID: UUID) async throws -> URL
     func cancelImage(attachmentID: UUID) async throws
     func markRead(groupID: UUID) async throws
@@ -121,6 +122,10 @@ actor CommunityGroupChatService: CommunityGroupChatProviding {
 
     func stageImage(groupID: UUID, jpegData: Data) async throws -> UUID {
         try await mediaService.stageImage(groupID: groupID, jpegData: jpegData)
+    }
+
+    func scanStatus(attachmentID: UUID) async throws -> CommunityPrivateImageScanOutcome {
+        try await mediaService.scanStatus(attachmentID: attachmentID)
     }
 
     func imageURL(attachmentID: UUID) async throws -> URL {

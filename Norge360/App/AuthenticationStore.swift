@@ -18,6 +18,7 @@ final class AuthenticationStore: ObservableObject {
     deinit { lifecycleTask?.cancel() }
 
     var isAuthenticated: Bool { user != nil }
+    var currentUserID: UUID? { user?.id }
 
     func signIn(email: String, password: String) async throws {
         user = try await service.signIn(email: email, password: password)
@@ -59,6 +60,10 @@ final class AuthenticationStore: ObservableObject {
 
     func signOut() async throws {
         try await service.signOut()
+        clearLocalSession()
+    }
+
+    func clearLocalSession() {
         user = nil
         needsPasswordUpdate = false
     }

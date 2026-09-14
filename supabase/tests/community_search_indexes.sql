@@ -37,7 +37,8 @@ begin
     select * from (values
       ('public.search_community_profiles(text)'::regprocedure, 'lower(profile.display_name) like'),
       ('public.search_community_groups(text)'::regprocedure, 'lower(community_group.name) like'),
-      ('public.search_community_posts(text)'::regprocedure, 'lower(post.body) like')
+      ('public.search_community_posts(text)'::regprocedure, 'lower(post.body) like'),
+      ('public.search_community_post_results(text)'::regprocedure, 'lower(community_post.body) like')
     ) as functions(function_name, expected_predicate)
   loop
     select lower(pg_get_functiondef(expected.function_name))

@@ -22,6 +22,13 @@ begin
     raise exception 'authenticated clients can mutate event RSVPs outside the RPC';
   end if;
 
+  if has_table_privilege('authenticated', 'public.community_post_saves', 'INSERT')
+     or has_table_privilege('authenticated', 'public.community_post_saves', 'UPDATE')
+     or has_table_privilege('authenticated', 'public.community_post_saves', 'DELETE')
+     or not has_table_privilege('authenticated', 'public.community_post_saves', 'SELECT') then
+    raise exception 'saved posts do not have the expected RPC-only write boundary';
+  end if;
+
   if has_column_privilege('authenticated', 'public.community_reports', 'review_status', 'INSERT')
      or has_column_privilege('authenticated', 'public.community_reports', 'reviewed_by', 'INSERT')
      or has_column_privilege('authenticated', 'public.community_reports', 'resolution_action', 'INSERT')

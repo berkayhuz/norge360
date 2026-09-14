@@ -43,10 +43,23 @@ struct CommunityGroupImageView: View {
             CommunityCachedImage(url: photoURL) { image in
                 image.resizable().scaledToFill()
             } placeholder: {
-                placeholder
+                NorgeSkeleton(
+                    width: width,
+                    height: height ?? 72,
+                    cornerRadius: shapeCornerRadius
+                )
             }
         } else {
             placeholder
+        }
+    }
+
+    private var shapeCornerRadius: CGFloat {
+        switch shape {
+        case .circle:
+            min(width ?? 72, height ?? 72) / 2
+        case .roundedRectangle(let cornerRadius):
+            cornerRadius
         }
     }
 

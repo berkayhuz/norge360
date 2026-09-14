@@ -35,8 +35,9 @@ final class CommunityFollowStore: ObservableObject {
         likedPostsVisibility = .onlyMe
     }
 
-    func loadState(for userID: UUID) async throws {
-        if loadedUserIDs.contains(userID),
+    func loadState(for userID: UUID, forceRefresh: Bool = false) async throws {
+        if !forceRefresh,
+            loadedUserIDs.contains(userID),
             let loadedAt = stateLoadedAt[userID],
             Date().timeIntervalSince(loadedAt) <= Self.stateFreshness
         {

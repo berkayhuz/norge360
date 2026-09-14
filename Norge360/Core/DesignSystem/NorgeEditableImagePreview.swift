@@ -10,15 +10,21 @@ struct NorgeEditableImagePreview: View {
     let onEdit: () -> Void
     let onRemove: () -> Void
     var size: CGFloat = 112
+    var width: CGFloat?
+    var height: CGFloat?
+    @State private var previewImage: UIImage?
+
+    private var previewWidth: CGFloat { width ?? size }
+    private var previewHeight: CGFloat { height ?? size }
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
-            if let uiImage = UIImage(data: data) {
+            if let previewImage {
                 Button(action: onEdit) {
-                    Image(uiImage: uiImage)
+                    Image(uiImage: previewImage)
                         .resizable()
                         .scaledToFill()
-                        .frame(width: size, height: size)
+                        .frame(width: previewWidth, height: previewHeight)
                         .clipShape(
                             RoundedRectangle(cornerRadius: NorgeMediaMetrics.postCornerRadius, style: .continuous))
                 }
@@ -34,6 +40,16 @@ struct NorgeEditableImagePreview: View {
             }
             .buttonStyle(.plain)
             .accessibilityLabel(removeAccessibilityLabel)
+        }
+        .task(id: data) {
+            previewImage = nil
+            guard let previewData = try? await CommunityImageProcessing.previewJPEG(from: data),
+                !Task.isCancelled
+            else { return }
+            previewImage = CommunityImageDecoding.image(
+                from: previewData,
+                variant: .thumbnail(maxPixelDimension: max(1, Int(max(previewWidth, previewHeight).rounded())))
+            )
         }
     }
 }

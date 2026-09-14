@@ -6,8 +6,10 @@ import SwiftUI
 // swiftlint:disable file_length
 
 struct CommunityGroupsView: View {
+    @EnvironmentObject private var tabRouter: AppTabRouter
     @EnvironmentObject private var groupsStore: CommunityGroupsStore
     let usesEmbeddedChrome: Bool
+    let tracksTabBarScroll: Bool
     @State private var isPresentingCreateGroup = false
     @State private var searchText = ""
     @State private var scopeFilter: GroupScopeFilter = .all
@@ -15,8 +17,9 @@ struct CommunityGroupsView: View {
     @State private var isPresentingFilters = false
     @State private var selectedGroup: CommunityGroup?
 
-    init(usesEmbeddedChrome: Bool = false) {
+    init(usesEmbeddedChrome: Bool = false, tracksTabBarScroll: Bool = true) {
         self.usesEmbeddedChrome = usesEmbeddedChrome
+        self.tracksTabBarScroll = tracksTabBarScroll
     }
 
     var body: some View {
@@ -33,82 +36,66 @@ struct CommunityGroupsView: View {
                         description: AppStrings.localized("groups.empty_body")
                     )
                 } else {
-                    List {
-                        if groupsStore.errorMessage != nil {
-                            Section {
-                                NorgeInlineFeedback(message: AppStrings.localized("groups.error"))
-                            }
-                            .listRowBackground(Color.norgeAppBackground)
-                        }
+                    let joinedGroups = filteredGroups(
+                        groupsStore.groups.filter { groupsStore.joinedGroupIDs.contains($0.id) })
+                    let discoverableGroups = filteredGroups(
+                        groupsStore.groups.filter { !groupsStore.joinedGroupIDs.contains($0.id) })
 
-                        let joinedGroups = filteredGroups(
-                            groupsStore.groups.filter { groupsStore.joinedGroupIDs.contains($0.id) })
-                        if !joinedGroups.isEmpty {
-                            Section {
-                                ForEach(joinedGroups) { group in
-                                    CommunityGroupRow(
-                                        group: group,
-                                        isJoined: true,
-                                        isOwner: groupsStore.ownedGroupIDs.contains(group.id),
-                                        isPending: false,
-                                        isUpdating: groupsStore.updatingGroupIDs.contains(group.id),
-                                        onOpen: { selectedGroup = group },
-                                        onToggle: { await groupsStore.toggleMembership(for: group) },
-                                        onCancelRequest: {}
-                                    )
+                    ScrollViewReader { proxy in
+                        List {
+                            if groupsStore.errorMessage != nil {
+                                Section {
+                                    NorgeInlineFeedback(message: AppStrings.localized("groups.error"))
                                 }
-                            } header: {
-                                GroupSectionHeader(
-                                    title: AppStrings.localized("groups.yours"),
-                                    searchText: $searchText,
-                                    onFilter: { isPresentingFilters = true }
-                                )
+                                .listRowBackground(Color.norgeAppBackground)
                             }
-                            .listRowBackground(Color.norgeAppBackground)
-                        }
 
-                        let discoverableGroups = filteredGroups(
-                            groupsStore.groups.filter {
-                                !groupsStore.joinedGroupIDs.contains($0.id)
-                            })
-                        Section {
-                            if discoverableGroups.isEmpty {
-                                NorgeUnavailableState(
-                                    AppStrings.localized("groups.empty_title"),
-                                    systemImage: "person.3",
-                                    description: AppStrings.localized("groups.empty_body")
-                                )
-                                .frame(maxWidth: .infinity)
-                            } else {
-                                ForEach(discoverableGroups) { group in
-                                    CommunityGroupRow(
-                                        group: group,
-                                        isJoined: false,
-                                        isOwner: false,
-                                        isPending: groupsStore.pendingJoinGroupIDs.contains(group.id),
-                                        isUpdating: groupsStore.updatingGroupIDs.contains(group.id),
-                                        onOpen: { selectedGroup = group },
-                                        onToggle: { await groupsStore.toggleMembership(for: group) },
-                                        onCancelRequest: { await groupsStore.cancelJoinRequest(for: group.id) }
-                                    )
-                                }
-                            }
-                            if groupsStore.canLoadMore {
-                                GroupPaginationFooter(isLoading: groupsStore.isLoadingMore)
-                                    .task {
-                                        await groupsStore.loadMore(searchQuery: searchText)
+                            GroupSectionHeader(
+                                title: joinedGroups.isEmpty
+                                    ? AppStrings.localized("groups.discover")
+                                    : AppStrings.localized("groups.yours"),
+                                searchText: $searchText,
+                                onFilter: { isPresentingFilters = true }
+                            )
+                            .listRowBackground(Color.norgeAppBackground)
+                            .listRowSeparator(.hidden)
+                            .listRowInsets(
+                                EdgeInsets(
+                                    top: 0, leading: NorgeSpacing.medium, bottom: 8, trailing: NorgeSpacing.medium)
+                            )
+                            .id("community-groups-top")
+                            .overlay {
+                                if tracksTabBarScroll {
+                                    ScrollHeaderVisibilityObserver { visible in
+                                        tabRouter.setTabBarCompact(!visible, for: .community)
                                     }
+                                    .frame(width: 1, height: 1)
+                                    .allowsHitTesting(false)
+                                }
                             }
-                        } header: {
-                            if joinedGroups.isEmpty {
-                                GroupSectionHeader(
-                                    title: AppStrings.localized("groups.discover"),
-                                    searchText: $searchText,
-                                    onFilter: { isPresentingFilters = true }
-                                )
-                            } else {
+
+                            if !joinedGroups.isEmpty {
+                                Section {
+                                    ForEach(joinedGroups) { group in
+                                        CommunityGroupRow(
+                                            group: group,
+                                            isJoined: true,
+                                            isOwner: groupsStore.ownedGroupIDs.contains(group.id),
+                                            isPending: false,
+                                            isUpdating: groupsStore.updatingGroupIDs.contains(group.id),
+                                            onOpen: { selectedGroup = group },
+                                            onToggle: { await groupsStore.toggleMembership(for: group) },
+                                            onCancelRequest: {}
+                                        )
+                                    }
+                                }
+                                .listRowBackground(Color.norgeAppBackground)
+                            }
+
+                            if !joinedGroups.isEmpty {
                                 HStack {
                                     Text(AppStrings.localized("groups.more"))
+                                        .font(.subheadline.weight(.semibold))
                                     Spacer()
                                     Button {
                                         isPresentingFilters = true
@@ -122,16 +109,59 @@ struct CommunityGroupsView: View {
                                     .accessibilityLabel(AppStrings.localized("groups.filter"))
                                 }
                                 .textCase(nil)
+                                .listRowBackground(Color.norgeAppBackground)
+                                .listRowSeparator(.hidden)
+                                .listRowInsets(
+                                    EdgeInsets(
+                                        top: 8, leading: NorgeSpacing.medium, bottom: 0, trailing: NorgeSpacing.medium))
+                            }
+
+                            Section {
+                                if discoverableGroups.isEmpty {
+                                    NorgeUnavailableState(
+                                        AppStrings.localized("groups.empty_title"),
+                                        systemImage: "person.3",
+                                        description: AppStrings.localized("groups.empty_body")
+                                    )
+                                    .frame(maxWidth: .infinity)
+                                } else {
+                                    ForEach(discoverableGroups) { group in
+                                        CommunityGroupRow(
+                                            group: group,
+                                            isJoined: false,
+                                            isOwner: false,
+                                            isPending: groupsStore.pendingJoinGroupIDs.contains(group.id),
+                                            isUpdating: groupsStore.updatingGroupIDs.contains(group.id),
+                                            onOpen: { selectedGroup = group },
+                                            onToggle: { await groupsStore.toggleMembership(for: group) },
+                                            onCancelRequest: { await groupsStore.cancelJoinRequest(for: group.id) }
+                                        )
+                                    }
+                                }
+                                if groupsStore.canLoadMore {
+                                    GroupPaginationFooter(isLoading: groupsStore.isLoadingMore)
+                                        .task {
+                                            await groupsStore.loadMore(searchQuery: searchText)
+                                        }
+                                }
+                            }
+                            .listRowBackground(Color.norgeAppBackground)
+                        }
+                        .listStyle(.plain)
+                        .contentMargins(.top, 0, for: .scrollContent)
+                        .listRowSeparator(.hidden)
+                        .onChange(of: tabRouter.communityScrollToTopToken) { _, _ in
+                            withAnimation(.easeOut(duration: 0.24)) {
+                                proxy.scrollTo("community-groups-top", anchor: .top)
                             }
                         }
-                        .listRowBackground(Color.norgeAppBackground)
                     }
-                    .listStyle(.plain)
-                    .contentMargins(.top, 0, for: .scrollContent)
-                    .listRowSeparator(.hidden)
                 }
             }
-            .norgeScreen()
+            .scrollContentBackground(.hidden)
+            .background(Color.norgeAppBackground)
+            .presentationBackground(Color.norgeAppBackground)
+            .toolbar(usesEmbeddedChrome ? .hidden : .visible, for: .navigationBar)
             .navigationTitle(AppStrings.localized("feed.groups"))
             .navigationDestination(
                 isPresented: Binding(
@@ -226,7 +256,9 @@ private struct GroupPaginationFooter: View {
     var body: some View {
         HStack {
             Spacer()
-            if isLoading { ProgressView() }
+            if isLoading {
+                NorgeSkeleton(width: 180, height: 12)
+            }
             Spacer()
         }
         .frame(height: 44)
@@ -576,6 +608,8 @@ struct CommunityGroupDetailView: View {
     @State private var photoURL: URL?
     @State private var isUpdatingPhoto = false
     @State private var posts: [CommunityFeedItem] = []
+    @State private var nextPostsCursor: String?
+    @State private var isLoadingMorePosts = false
     @State private var isLoadingPosts = true
     @State private var isPresentingComposer = false
     @State private var postPendingRemoval: CommunityFeedItem?
@@ -657,6 +691,10 @@ extension CommunityGroupDetailView {
                         CommunityFeedPostView(item: item)
                             .listRowInsets(NorgeLayoutMetrics.standardListRowInset)
                             .listRowSeparator(.hidden)
+                            .onAppear {
+                                guard item.id == posts.last?.id else { return }
+                                Task { await loadMorePosts() }
+                            }
                             .contextMenu {
                                 if canModeratePosts {
                                     Button(
@@ -973,9 +1011,10 @@ extension CommunityGroupDetailView {
         do {
             async let membersRequest = groupsStore.members(for: group.id)
             async let postsRequest = feedStore.groupPosts(for: group.id)
-            let (loadedMembers, loadedPosts) = try await (membersRequest, postsRequest)
+            let (loadedMembers, loadedPage) = try await (membersRequest, postsRequest)
             members = loadedMembers
-            posts = loadedPosts
+            posts = loadedPage.items
+            nextPostsCursor = loadedPage.nextCursor
             isLoadingPosts = false
             postingPermission = group.postingPermission
             visibility = group.visibility
@@ -995,7 +1034,25 @@ extension CommunityGroupDetailView {
         isLoadingPosts = true
         defer { isLoadingPosts = false }
         do {
-            posts = try await feedStore.groupPosts(for: group.id)
+            let page = try await feedStore.groupPosts(for: group.id)
+            posts = page.items
+            nextPostsCursor = page.nextCursor
+        } catch {
+            errorMessage = AppStrings.localized("groups.posts_error")
+        }
+    }
+
+    private func loadMorePosts() async {
+        guard !isLoadingMorePosts, let nextPostsCursor else { return }
+        isLoadingMorePosts = true
+        defer { isLoadingMorePosts = false }
+        do {
+            let page = try await feedStore.groupPosts(for: group.id, cursor: nextPostsCursor)
+            let existingIDs = Set(posts.map(\.id))
+            posts.append(contentsOf: page.items.filter { !existingIDs.contains($0.id) })
+            self.nextPostsCursor = page.nextCursor
+        } catch is CancellationError {
+            return
         } catch {
             errorMessage = AppStrings.localized("groups.posts_error")
         }

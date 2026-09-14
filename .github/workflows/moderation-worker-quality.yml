@@ -5,11 +5,13 @@ on:
     paths:
       - "workers/moderation/**"
       - "scripts/check_worker_secrets.py"
+      - "scripts/test_worker_security.py"
       - ".github/workflows/moderation-worker-quality.yml"
   pull_request:
     paths:
       - "workers/moderation/**"
       - "scripts/check_worker_secrets.py"
+      - "scripts/test_worker_security.py"
       - ".github/workflows/moderation-worker-quality.yml"
 
 permissions:

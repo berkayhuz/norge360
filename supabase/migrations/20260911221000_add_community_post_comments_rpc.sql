@@ -59,7 +59,8 @@ as $$
           and community_group.moderation_state = 'active'
       )
     )
-  order by community_comment.created_at, community_comment.id;
+  order by community_comment.created_at, community_comment.id
+  limit 100;
 $$;
 
 revoke all on function public.list_community_post_comments(uuid) from public;

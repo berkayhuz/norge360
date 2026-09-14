@@ -37,6 +37,8 @@
     <string>$(APS_ENVIRONMENT)</string>
     <key>NSCameraUsageDescription</key>
     <string>Use the camera to choose a private background for this conversation.</string>
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>Save community photos to your Photos library.</string>
     <key>UILaunchScreen</key>
     <dict/>
 </dict>

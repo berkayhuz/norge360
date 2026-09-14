@@ -60,7 +60,11 @@ struct CommunityPostEditHistoryView: View {
         do {
             history = try await feedStore.postEditHistory(for: postID)
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = UserFacingErrorMapper.message(
+                for: error,
+                fallbackKey: "feed.error",
+                operation: "post_history.load"
+            )
         }
     }
 

@@ -31,7 +31,7 @@ struct CommunityChatAttachmentImage: View {
                 }
                 .buttonStyle(.plain)
             } else {
-                ProgressView().frame(width: 180, height: 120)
+                NorgeSkeleton(width: 180, height: 120, cornerRadius: NorgeMediaMetrics.postCornerRadius)
             }
         }
         .frame(maxWidth: 240, maxHeight: 300)

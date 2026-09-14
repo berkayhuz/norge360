@@ -118,13 +118,109 @@ struct NorgeLoadingState: View {
     var fillsAvailableSpace = false
 
     var body: some View {
-        ProgressView()
+        NorgeSkeletonList(rowCount: fillsAvailableSpace ? 4 : 2)
             .frame(
                 maxWidth: .infinity,
                 minHeight: minimumHeight,
                 maxHeight: fillsAvailableSpace ? .infinity : nil
             )
+            .padding(.horizontal, NorgeSpacing.medium)
             .padding(.top, topPadding)
+    }
+}
+
+/// A lightweight, theme-aware placeholder with a subtle moving highlight.
+/// It gives async content a stable shape before the real data arrives.
+struct NorgeSkeleton: View {
+    @Environment(\.colorScheme) private var colorScheme
+    let width: CGFloat?
+    let height: CGFloat
+    let cornerRadius: CGFloat
+    @State private var phase: CGFloat = -1
+
+    init(width: CGFloat? = nil, height: CGFloat, cornerRadius: CGFloat = 7) {
+        self.width = width
+        self.height = height
+        self.cornerRadius = cornerRadius
+    }
+
+    var body: some View {
+        RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+            .fill(baseColor)
+            .overlay {
+                GeometryReader { proxy in
+                    LinearGradient(
+                        colors: [.clear, highlightColor, .clear],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                    .frame(width: max(proxy.size.width * 0.55, 120))
+                    .offset(x: phase * max(proxy.size.width * 1.7, 220))
+                }
+                .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+            }
+            .frame(width: width, height: height)
+            .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+            .task {
+                withAnimation(.linear(duration: 1.25).repeatForever(autoreverses: false)) {
+                    phase = 1
+                }
+            }
+            .accessibilityHidden(true)
+    }
+
+    private var baseColor: Color {
+        colorScheme == .dark ? Color.white.opacity(0.11) : Color.black.opacity(0.08)
+    }
+
+    private var highlightColor: Color {
+        colorScheme == .dark ? Color.white.opacity(0.16) : Color.white.opacity(0.52)
+    }
+}
+
+/// Reusable feed-shaped placeholders used by all full-page loading states.
+struct NorgeSkeletonList: View {
+    var rowCount = 3
+    var showsMedia = true
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: NorgeLayoutMetrics.feedItemSpacing) {
+            ForEach(0..<max(rowCount, 1), id: \.self) { _ in
+                NorgeSkeletonFeedRow(showsMedia: showsMedia)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+private struct NorgeSkeletonFeedRow: View {
+    let showsMedia: Bool
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 10) {
+                NorgeSkeleton(width: 44, height: 44, cornerRadius: 22)
+                VStack(alignment: .leading, spacing: 6) {
+                    NorgeSkeleton(width: 142, height: 12)
+                    NorgeSkeleton(width: 92, height: 10)
+                }
+                Spacer(minLength: 0)
+                NorgeSkeleton(width: 34, height: 28, cornerRadius: 14)
+            }
+            NorgeSkeleton(height: 14)
+            NorgeSkeleton(width: 230, height: 14)
+            if showsMedia {
+                NorgeSkeleton(height: 176, cornerRadius: NorgeMediaMetrics.postCornerRadius)
+            }
+            HStack(spacing: 18) {
+                NorgeSkeleton(width: 48, height: 12)
+                NorgeSkeleton(width: 48, height: 12)
+                NorgeSkeleton(width: 48, height: 12)
+                Spacer(minLength: 0)
+                NorgeSkeleton(width: 30, height: 12)
+            }
+        }
+        .padding(.vertical, 6)
     }
 }
 

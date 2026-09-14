@@ -17,7 +17,7 @@ struct LanguagePicker: View {
     }
 
     private func languagePickerTitle(for language: AppLanguage) -> String {
-        guard !TranslationReviewRegistry.canDisplayLocalizedCopy(for: language) else {
+        guard !TranslationReviewRegistry.canDisplayLocalizedCopy(for: language, scope: .onboarding) else {
             return language.nativeName
         }
         return "\(language.nativeName) — \(AppStrings.translationPending)"

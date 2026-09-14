@@ -6,31 +6,31 @@ enum CityResourceCatalog {
         switch destinationCity.folding(options: .diacriticInsensitive, locale: .current).lowercased() {
         case "oslo":
             makeTask(
-                slug: "city-services-oslo", title: AppStrings.cityTaskOslo,
-                source: OfficialSourceCatalog.osloNewcomerGuide)
+                slug: "city-services-oslo", titleKey: "task.city.oslo", source: OfficialSourceCatalog.osloNewcomerGuide)
         case "bergen":
             makeTask(
-                slug: "city-services-bergen", title: AppStrings.cityTaskBergen,
+                slug: "city-services-bergen", titleKey: "task.city.bergen",
                 source: OfficialSourceCatalog.bergenNewcomerGuide)
         case "stavanger":
             makeTask(
-                slug: "city-services-stavanger", title: AppStrings.cityTaskStavanger,
+                slug: "city-services-stavanger", titleKey: "task.city.stavanger",
                 source: OfficialSourceCatalog.stavangerNewcomerGuide)
         case "trondheim":
             makeTask(
-                slug: "city-services-trondheim", title: AppStrings.cityTaskTrondheim,
+                slug: "city-services-trondheim", titleKey: "task.city.trondheim",
                 source: OfficialSourceCatalog.trondheimNewcomerGuide)
         case "tromso":
             makeTask(
-                slug: "city-services-tromso", title: AppStrings.cityTaskTromso,
+                slug: "city-services-tromso", titleKey: "task.city.tromso",
                 source: OfficialSourceCatalog.tromsoNewcomerGuide)
         default: nil
         }
     }
 
-    private static func makeTask(slug: String, title: String, source: OfficialSource) -> RelocationTask {
+    private static func makeTask(slug: String, titleKey: String, source: OfficialSource) -> RelocationTask {
         RelocationTask(
-            slug: slug, title: title, taskDescription: AppStrings.cityTaskDescription,
-            category: .arrival, priority: 60, officialSource: source)
+            slug: slug, titleKey: titleKey, taskDescriptionKey: "task.city.description",
+            category: .arrival, priority: 60, officialSource: source,
+            regulatoryDisclaimerKey: "task.regulatory_disclaimer")
     }
 }

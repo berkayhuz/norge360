@@ -76,6 +76,38 @@ final class CommunityImageCacheTests: XCTestCase {
         XCTAssertEqual(secondLoadCount, 1)
     }
 
+    func testDecodedMetadataRemainsBoundedWithManyVariants() async throws {
+        let context = try makeCache()
+        let imageData = try XCTUnwrap(makeImage().pngData())
+        let responseURL = try XCTUnwrap(URL(string: "https://cdn.example.test/image.jpg"))
+        let response = try XCTUnwrap(
+            HTTPURLResponse(url: responseURL, statusCode: 200, httpVersion: nil, headerFields: nil)
+        )
+        let cache = CommunityImageCache(
+            directory: context.directory,
+            maxDecodedItemCount: 2
+        ) { _ in (imageData, response) }
+
+        for index in 0..<4 {
+            let url = try XCTUnwrap(URL(string: "https://cdn.example.test/image-\\(index).jpg"))
+            _ = await cache.loadImage(for: url, variant: .thumbnail(maxPixelDimension: 32))
+        }
+
+        let metadataCount = await cache.decodedMetadataCount()
+        XCTAssertLessThanOrEqual(metadataCount, 2)
+    }
+
+    func testOversizedDiskEntryIsRejectedBeforeReading() async throws {
+        let context = try makeCache(maxTotalBytes: 2)
+        let url = try XCTUnwrap(URL(string: "https://cdn.example.test/oversized.jpg"))
+        await context.cache.save(Data([1, 2, 3]), for: url)
+
+        let data = await context.cache.load(for: url)
+
+        XCTAssertNil(data)
+        XCTAssertFalse(FileManager.default.fileExists(atPath: try cacheFileURL(for: url, in: context.directory).path))
+    }
+
     private struct CacheContext {
         let cache: CommunityImageCache
         let directory: URL

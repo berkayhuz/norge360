@@ -231,7 +231,7 @@ actor CommunityPrivateImageLoader {
             var request = URLRequest(url: url)
             request.cachePolicy = .reloadIgnoringLocalCacheData
             request.setValue("no-store", forHTTPHeaderField: "Cache-Control")
-            return try await session.data(for: request)
+            return try await CommunityImageNetworkLoader.data(for: request, using: session)
         }
         inFlight[url] = task
         defer { inFlight[url] = nil }
@@ -293,7 +293,7 @@ struct CommunityPrivateCachedImage<Content: View, Placeholder: View>: View {
             let (data, response) = try await CommunityPrivateImageLoader.shared.data(for: url)
             guard !Task.isCancelled,
                 (response as? HTTPURLResponse)?.statusCode == 200,
-                let downloadedImage = UIImage(data: data)
+                let downloadedImage = CommunityImageDecoding.image(from: data)
             else { return }
 
             let cost = downloadedImage.cgImage.map { $0.bytesPerRow * $0.height } ?? data.count

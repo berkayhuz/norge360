@@ -59,12 +59,31 @@ enum TranslationReviewRegistry {
         )
     }
 
-    /// Every supported language ships a complete UI resource bundle. The
-    /// runtime gate therefore verifies that the language is part of the
-    /// supported app surface; linguistic/legal editorial approval remains a
-    /// separate release responsibility and is not used as a reason to show
-    /// an unrelated screen in English.
+    /// Returns whether a complete UI resource bundle exists. General UI copy
+    /// can use the bundled translation even while regulated content remains
+    /// on the canonical source language.
     static func canDisplayLocalizedCopy(for language: AppLanguage) -> Bool {
         AppLanguage.allCases.contains(language)
+    }
+
+    static func canDisplayLocalizedCopy(
+        for language: AppLanguage,
+        scope: TranslationContentScope
+    ) -> Bool {
+        record(for: language, scope: scope).isReadyForRelease
+    }
+
+    /// Maps key namespaces to the content that needs editorial/source review.
+    /// Unknown keys are ordinary UI copy and use the bundled translation gate.
+    static func scope(for key: String) -> TranslationContentScope? {
+        if key.hasPrefix("legal.") { return .legalNotices }
+        if key.hasPrefix("task.") { return .taskDescriptions }
+        if key.hasPrefix("plan.") || key.hasPrefix("calculator.") || key.hasPrefix("source.") {
+            return .plan
+        }
+        if key.hasPrefix("onboarding.") || key.hasPrefix("account_setup.") {
+            return .onboarding
+        }
+        return nil
     }
 }

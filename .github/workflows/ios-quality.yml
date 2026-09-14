@@ -1,0 +1,59 @@
+name: iOS Quality
+
+on:
+  push:
+    paths:
+      - "Norge360/**"
+      - "Norge360Tests/**"
+      - "Norge360.xcodeproj/**"
+      - "scripts/check_localization.py"
+      - "scripts/check_explicit_supabase_selects.py"
+      - ".swift-format"
+      - "Makefile"
+      - ".github/workflows/ios-quality.yml"
+  pull_request:
+    paths:
+      - "Norge360/**"
+      - "Norge360Tests/**"
+      - "Norge360.xcodeproj/**"
+      - "scripts/check_localization.py"
+      - "scripts/check_explicit_supabase_selects.py"
+      - ".swift-format"
+      - "Makefile"
+      - ".github/workflows/ios-quality.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Validate iOS application
+    runs-on: macos-15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Select Xcode toolchain
+        run: sudo xcode-select -s /Applications/Xcode.app
+
+      - name: Validate Swift formatting
+        run: make format-check
+
+      - name: Validate localization resources
+        run: make localization-check
+
+      - name: Validate explicit Supabase projections
+        run: make explicit-select-check
+
+      - name: Run iOS unit and UI tests
+        run: >-
+          xcodebuild
+          -project Norge360.xcodeproj
+          -scheme Norge360
+          -destination 'platform=iOS Simulator,name=iPhone 16 Pro'
+          CODE_SIGNING_ALLOWED=NO
+          test

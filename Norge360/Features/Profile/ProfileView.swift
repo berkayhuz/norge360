@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 // The profile tab intentionally owns its plan summary, settings and account
 // actions in one navigation destination.
@@ -8,167 +9,191 @@ struct ProfileView: View {
     @EnvironmentObject private var authenticationStore: AuthenticationStore
 
     var body: some View {
-        if let userID = authenticationStore.user?.id {
-            CommunityMemberProfileView(userID: userID, usesRootTopBar: true)
-        } else {
-            NorgeLoadingState(fillsAvailableSpace: true)
+        Group {
+            if let userID = authenticationStore.user?.id {
+                CommunityMemberProfileView(userID: userID, usesRootTopBar: true)
+            } else {
+                NorgeLoadingState(fillsAvailableSpace: true)
+            }
         }
     }
 }
 
 struct ProfileSettingsView: View {
+    @EnvironmentObject private var tabRouter: AppTabRouter
+    @EnvironmentObject private var appearanceSettings: AppearanceSettings
     @EnvironmentObject private var communityProfileStore: CommunityProfileStore
     @EnvironmentObject private var moderationStore: CommunityModerationStore
     @EnvironmentObject private var searchHistoryStore: CommunitySearchHistoryStore
+    @AppStorage(UpcomingEventsHomePreference.hiddenKey) private var hidesUpcomingEvents = false
     @State private var searchText = ""
 
     var body: some View {
-        VStack(spacing: 0) {
+        List {
             TextField(AppStrings.localized("settings.search"), text: $searchText)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
                 .norgeCapsuleInput(height: 46, horizontalPadding: 16)
                 .padding(.horizontal, 16)
-                .padding(.top, 12)
+                .padding(.bottom, 4)
+                .listRowBackground(Color.norgeAppBackground)
+                .listRowSeparator(.hidden)
+                .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
 
-            List {
-                if matches("profile edit details visibility public private followers following likes liked posts") {
-                    Section(AppStrings.localized("settings.profile_section")) {
-                        if let profile = communityProfileStore.profile {
-                            NavigationLink {
-                                EditCommunityProfileDetailsView(profile: profile)
-                            } label: {
-                                Label(
-                                    AppStrings.localized("profile.edit_details"), systemImage: "person.text.rectangle")
-                            }
-                        }
+            if matches("profile edit details visibility public private followers following likes liked posts") {
+                Section(AppStrings.localized("settings.profile_section")) {
+                    if let profile = communityProfileStore.profile {
                         NavigationLink {
-                            ProfileVisibilitySettingsView()
-                        } label: {
-                            Label(AppStrings.localized("profile.visibility"), systemImage: "eye")
-                        }
-                        NavigationLink {
-                            FollowVisibilitySettingsView()
-                        } label: {
-                            Label(AppStrings.localized("follow.visibility_title"), systemImage: "person.2")
-                        }
-                        NavigationLink {
-                            LikedPostsVisibilitySettingsView()
-                        } label: {
-                            Label(AppStrings.localized("likes.visibility_title"), systemImage: "heart")
-                        }
-                        Button(AppStrings.localized("settings.clear_search_history"), role: .destructive) {
-                            searchHistoryStore.clear()
-                        }
-                    }
-                    .listRowBackground(Color.norgeAppBackground)
-                }
-                if matches("blocked members block") {
-                    Section(AppStrings.localized("blocks.title")) {
-                        NavigationLink {
-                            BlockedMembersView()
-                        } label: {
-                            Label(AppStrings.localized("blocks.manage"), systemImage: "hand.raised.slash")
-                        }
-
-                        Text(AppStrings.localized("blocks.note"))
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                    }
-                    .listRowBackground(Color.norgeAppBackground)
-                }
-                if matches("guidelines community rules safety") {
-                    Section(AppStrings.localized("guidelines.section")) {
-                        NavigationLink {
-                            LegalDocumentView(document: .communityGuidelines)
-                        } label: {
-                            Label(AppStrings.localized("guidelines.title"), systemImage: "checklist")
-                        }
-                    }
-                    .listRowBackground(Color.norgeAppBackground)
-                }
-                if moderationStore.role != nil {
-                    Section(AppStrings.localized("moderation.section")) {
-                        NavigationLink {
-                            CommunityModerationReviewView()
+                            EditCommunityProfileDetailsView(profile: profile)
                         } label: {
                             Label(
-                                AppStrings.localized("moderation.review_reports"), systemImage: "shield.lefthalf.filled"
-                            )
+                                AppStrings.localized("profile.edit_details"), systemImage: "person.text.rectangle")
                         }
                     }
-                    .listRowBackground(Color.norgeAppBackground)
-                } else if moderationStore.roleCheckFailed {
-                    Section(AppStrings.localized("moderation.section")) {
+                    NavigationLink {
+                        ProfileVisibilitySettingsView()
+                    } label: {
+                        Label(AppStrings.localized("profile.visibility"), systemImage: "eye")
+                    }
+                    NavigationLink {
+                        FollowVisibilitySettingsView()
+                    } label: {
+                        Label(AppStrings.localized("follow.visibility_title"), systemImage: "person.2")
+                    }
+                    NavigationLink {
+                        LikedPostsVisibilitySettingsView()
+                    } label: {
+                        Label(AppStrings.localized("likes.visibility_title"), systemImage: "heart")
+                    }
+                    Button(AppStrings.localized("settings.clear_search_history"), role: .destructive) {
+                        searchHistoryStore.clear()
+                    }
+                }
+                .listRowBackground(Color.norgeAppBackground)
+            }
+            if matches("blocked members block") {
+                Section(AppStrings.localized("blocks.title")) {
+                    NavigationLink {
+                        BlockedMembersView()
+                    } label: {
+                        Label(AppStrings.localized("blocks.manage"), systemImage: "hand.raised.slash")
+                    }
+
+                    Text(AppStrings.localized("blocks.note"))
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+                .listRowBackground(Color.norgeAppBackground)
+            }
+            if matches("guidelines community rules safety") {
+                Section(AppStrings.localized("guidelines.section")) {
+                    NavigationLink {
+                        LegalDocumentView(document: .communityGuidelines)
+                    } label: {
+                        Label(AppStrings.localized("guidelines.title"), systemImage: "checklist")
+                    }
+                }
+                .listRowBackground(Color.norgeAppBackground)
+            }
+            if moderationStore.role != nil {
+                Section(AppStrings.localized("moderation.section")) {
+                    NavigationLink {
+                        CommunityModerationReviewView()
+                    } label: {
                         Label(
-                            AppStrings.localized("moderation.unavailable_title"), systemImage: "exclamationmark.shield")
-                        Text(AppStrings.localized("moderation.unavailable_body"))
-                            .font(.footnote)
+                            AppStrings.localized("moderation.review_reports"), systemImage: "shield.lefthalf.filled"
+                        )
+                    }
+                }
+                .listRowBackground(Color.norgeAppBackground)
+            } else if moderationStore.roleCheckFailed {
+                Section(AppStrings.localized("moderation.section")) {
+                    Label(
+                        AppStrings.localized("moderation.unavailable_title"), systemImage: "exclamationmark.shield")
+                    Text(AppStrings.localized("moderation.unavailable_body"))
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                    if let diagnostic = moderationStore.roleCheckDiagnostic {
+                        Text(diagnostic)
+                            .font(.caption.monospaced())
                             .foregroundStyle(.secondary)
-                        if let diagnostic = moderationStore.roleCheckDiagnostic {
-                            Text(diagnostic)
-                                .font(.caption.monospaced())
-                                .foregroundStyle(.secondary)
-                        }
-                        Button(AppStrings.localized("moderation.retry")) {
-                            Task { await moderationStore.refreshRole() }
-                        }
-                        .disabled(moderationStore.isCheckingRole)
                     }
-                    .listRowBackground(Color.norgeAppBackground)
-                }
-                if matches("notifications new followers new posts groups messages appearance language theme") {
-                    Section(AppStrings.localized("settings.preferences_section")) {
-                        NavigationLink {
-                            NotificationSettingsView()
-                        } label: {
-                            Label(AppStrings.localized("settings.notifications"), systemImage: "bell")
-                        }
-                        NavigationLink {
-                            MessagePrivacySettingsView()
-                        } label: {
-                            Label(AppStrings.localized("messages.privacy_title"), systemImage: "message.badge")
-                        }
-                        NavigationLink {
-                            AppearanceSettingsView()
-                        } label: {
-                            Label(AppStrings.localized("appearance.title"), systemImage: "circle.lefthalf.filled")
-                        }
-                        NavigationLink {
-                            AppLanguageSettingsView()
-                        } label: {
-                            Label(AppStrings.localized("settings.language_title"), systemImage: "globe")
-                        }
+                    Button(AppStrings.localized("moderation.retry")) {
+                        Task { await moderationStore.refreshRole() }
                     }
-                    .listRowBackground(Color.norgeAppBackground)
+                    .disabled(moderationStore.isCheckingRole)
                 }
-                if matches("account security password sign out") {
-                    Section(AppStrings.auth("account")) {
-                        NavigationLink {
-                            AccountSecuritySettingsView()
-                        } label: {
-                            Label(AppStrings.localized("settings.account_security"), systemImage: "lock")
-                        }
-                        SignOutButton()
-                    }
-                    .listRowBackground(Color.norgeAppBackground)
-                    .listRowSeparator(.hidden)
-                }
+                .listRowBackground(Color.norgeAppBackground)
             }
-            .listStyle(.plain)
-            .contentMargins(.top, 0, for: .scrollContent)
-            .safeAreaInset(edge: .bottom) {
-                Color.clear.frame(height: 12)
+            if matches(
+                "notifications new followers new posts groups messages appearance language theme events upcoming")
+            {
+                Section(AppStrings.localized("settings.preferences_section")) {
+                    NavigationLink {
+                        NotificationSettingsView()
+                    } label: {
+                        Label(AppStrings.localized("settings.notifications"), systemImage: "bell")
+                    }
+                    NavigationLink {
+                        MessagePrivacySettingsView()
+                    } label: {
+                        Label(AppStrings.localized("messages.privacy_title"), systemImage: "message.badge")
+                    }
+                    Toggle(
+                        AppStrings.localized("settings.show_upcoming_events"),
+                        isOn: Binding(
+                            get: { !hidesUpcomingEvents },
+                            set: { hidesUpcomingEvents = !$0 }
+                        )
+                    )
+                    Text(AppStrings.localized("settings.show_upcoming_events_note"))
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                    NavigationLink {
+                        AppearanceSettingsView()
+                    } label: {
+                        Label(AppStrings.localized("appearance.title"), systemImage: "circle.lefthalf.filled")
+                    }
+                    NavigationLink {
+                        AppLanguageSettingsView()
+                    } label: {
+                        Label(AppStrings.localized("settings.language_title"), systemImage: "globe")
+                    }
+                }
+                .listRowBackground(Color.norgeAppBackground)
             }
+            if matches("account security password sign out") {
+                Section(AppStrings.auth("account")) {
+                    NavigationLink {
+                        AccountSecuritySettingsView()
+                    } label: {
+                        Label(AppStrings.localized("settings.account_security"), systemImage: "lock")
+                    }
+                    SignOutButton()
+                }
+                .listRowBackground(Color.norgeAppBackground)
+                .listRowSeparator(.hidden)
+            }
+        }
+        .listStyle(.plain)
+        .id(appearanceSettings.appearance)
+        .contentMargins(.top, 0, for: .scrollContent)
+        .safeAreaInset(edge: .bottom) {
+            Color.clear.frame(height: 12)
         }
         .norgeScreen()
         .navigationTitle(AppStrings.localized("profile.settings"))
+        .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(Color.norgeTopBarBackground, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .task {
             // A staff role can be granted while the app session is already
             // active. Refresh when Settings opens instead of requiring logout.
             await moderationStore.refreshRole()
+        }
+        .onAppear {
+            tabRouter.isTabBarHidden = true
+            tabRouter.isProfileSettingsFlowActive = true
         }
     }
 
@@ -334,7 +359,8 @@ private struct FollowVisibilitySettingsView: View {
         }
         .overlay {
             if isLoading {
-                ProgressView()
+                NorgeSkeletonList(rowCount: 2, showsMedia: false)
+                    .padding(16)
             }
         }
     }
@@ -414,7 +440,8 @@ private struct LikedPostsVisibilitySettingsView: View {
         }
         .overlay {
             if isLoading {
-                ProgressView()
+                NorgeSkeletonList(rowCount: 2, showsMedia: false)
+                    .padding(16)
             }
         }
     }
@@ -516,6 +543,7 @@ private struct AppearanceSettingsView: View {
             }
             .listRowBackground(Color.norgeAppBackground)
         }
+        .id(appearanceSettings.appearance)
         .norgeScreen()
         .navigationTitle(AppStrings.localized("appearance.title"))
         .navigationBarTitleDisplayMode(.inline)
@@ -651,10 +679,162 @@ private struct AccountSecuritySettingsView: View {
                 }
             }
             .listRowBackground(Color.norgeAppBackground)
+
+            Section {
+                AccountDataExportButton()
+            } footer: {
+                Text(AppStrings.localized("settings.export_data_note"))
+            }
+            .listRowBackground(Color.norgeAppBackground)
+
+            Section {
+                DeleteAccountButton()
+            } footer: {
+                Text(AppStrings.localized("settings.delete_account_note"))
+            }
+            .listRowBackground(Color.norgeAppBackground)
         }
         .norgeScreen()
         .navigationTitle(AppStrings.localized("settings.account_security"))
         .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+private struct AccountDataExportButton: View {
+    @EnvironmentObject private var sessionCoordinator: SessionCoordinator
+    @State private var exportURL: URL?
+    @State private var isSharePresented = false
+    @State private var isExporting = false
+    @State private var errorMessage: String?
+
+    var body: some View {
+        Group {
+            if exportURL != nil {
+                Button {
+                    isSharePresented = true
+                } label: {
+                    Label(AppStrings.localized("settings.export_data_share"), systemImage: "square.and.arrow.up")
+                }
+            } else {
+                Button {
+                    Task { await exportData() }
+                } label: {
+                    if isExporting {
+                        ProgressView()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    } else {
+                        Label(AppStrings.localized("settings.export_data"), systemImage: "arrow.down.doc")
+                    }
+                }
+                .disabled(isExporting)
+            }
+        }
+        .sheet(isPresented: $isSharePresented, onDismiss: discardExport) {
+            if let exportURL {
+                AccountDataExportShareSheet(url: exportURL, onComplete: discardExport)
+            }
+        }
+        .alert(
+            AppStrings.localized("settings.export_data"),
+            isPresented: Binding(
+                get: { errorMessage != nil },
+                set: { if !$0 { errorMessage = nil } }
+            )
+        ) {
+            Button(AppStrings.localized("common.cancel"), role: .cancel) {}
+        } message: {
+            Text(errorMessage ?? AppStrings.localized("settings.export_data_error"))
+        }
+    }
+
+    private func exportData() async {
+        isExporting = true
+        errorMessage = nil
+        defer { isExporting = false }
+        do {
+            exportURL = try await sessionCoordinator.exportAccountData()
+        } catch {
+            errorMessage =
+                (error as? LocalizedError)?.errorDescription
+                ?? AppStrings.localized("settings.export_data_error")
+        }
+    }
+
+    private func discardExport() {
+        guard let exportURL else { return }
+        self.exportURL = nil
+        isSharePresented = false
+        Task { await sessionCoordinator.discardExport(at: exportURL) }
+    }
+}
+
+private struct AccountDataExportShareSheet: UIViewControllerRepresentable {
+    let url: URL
+    let onComplete: () -> Void
+
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        let controller = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+        controller.completionWithItemsHandler = { _, _, _, _ in onComplete() }
+        return controller
+    }
+
+    func updateUIViewController(_ controller: UIActivityViewController, context: Context) {}
+}
+
+private struct DeleteAccountButton: View {
+    @EnvironmentObject private var sessionCoordinator: SessionCoordinator
+    @State private var isPresentingConfirmation = false
+    @State private var isDeleting = false
+    @State private var errorMessage: String?
+
+    var body: some View {
+        Button(role: .destructive) {
+            isPresentingConfirmation = true
+        } label: {
+            if isDeleting {
+                ProgressView()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            } else {
+                Label(AppStrings.localized("settings.delete_account"), systemImage: "person.crop.circle.badge.minus")
+            }
+        }
+        .disabled(isDeleting)
+        .confirmationDialog(
+            AppStrings.localized("settings.delete_account_confirmation_title"),
+            isPresented: $isPresentingConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button(AppStrings.localized("settings.delete_account_confirm"), role: .destructive) {
+                Task { await deleteAccount() }
+            }
+            Button(AppStrings.localized("common.cancel"), role: .cancel) {}
+        } message: {
+            Text(AppStrings.localized("settings.delete_account_confirmation_body"))
+        }
+        .alert(
+            AppStrings.localized("settings.delete_account"),
+            isPresented: Binding(
+                get: { errorMessage != nil },
+                set: { if !$0 { errorMessage = nil } }
+            )
+        ) {
+            Button(AppStrings.localized("common.cancel"), role: .cancel) {}
+        } message: {
+            Text(errorMessage ?? AppStrings.localized("settings.delete_account_error"))
+        }
+    }
+
+    private func deleteAccount() async {
+        isDeleting = true
+        errorMessage = nil
+        defer { isDeleting = false }
+        do {
+            try await sessionCoordinator.deleteAccount()
+        } catch {
+            errorMessage =
+                (error as? LocalizedError)?.errorDescription
+                ?? AppStrings.localized("settings.delete_account_error")
+        }
     }
 }
 

@@ -197,7 +197,13 @@ struct AccountSetupFlowView: View {
                     )
                 )
                 languageSettings.language = selectedLanguage
-            } catch { errorMessage = error.localizedDescription }
+            } catch {
+                errorMessage = UserFacingErrorMapper.message(
+                    for: error,
+                    fallbackKey: "account_setup.error",
+                    operation: "account_setup.complete"
+                )
+            }
         }
     }
 
@@ -205,7 +211,15 @@ struct AccountSetupFlowView: View {
         isWorking = true
         Task {
             defer { isWorking = false }
-            do { try await sessionCoordinator.signOut() } catch { errorMessage = error.localizedDescription }
+            do {
+                try await sessionCoordinator.signOut()
+            } catch {
+                errorMessage = UserFacingErrorMapper.message(
+                    for: error,
+                    fallbackKey: "auth.error",
+                    operation: "account_setup.sign_out"
+                )
+            }
         }
     }
 

@@ -202,6 +202,10 @@ final class CommunityConversationsStore: ObservableObject {
         try await service.stageImage(conversationID: conversationID, jpegData: jpegData)
     }
 
+    func scanStatus(attachmentID: UUID) async throws -> CommunityPrivateImageScanOutcome {
+        try await service.scanStatus(attachmentID: attachmentID)
+    }
+
     func imageURL(attachmentID: UUID) async throws -> URL {
         try await service.imageURL(attachmentID: attachmentID)
     }

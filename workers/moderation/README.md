@@ -24,6 +24,7 @@ This Worker is the server-only boundary for reviewing community reports and appl
    npm run secret-scan
    npm run check
    npm run types:check
+   npm test
    npm audit --omit=dev --audit-level=high
    npm run deploy:dry-run
    ```
@@ -96,7 +97,7 @@ The repository workflow runs dependency installation from `package-lock.json`, p
   `restrictionHours` from 1 through 8760; omit it for an indefinite posting
   restriction.
 
-The caller must have a valid Supabase session and an entry in `community_moderator_roles`. Bearer-authenticated routes reject malformed, expired, wrong-audience, or wrong-issuer tokens before calling Supabase Auth; `auth.getUser` remains authoritative for signature, session, and revocation checks. The Worker checks the session, checks the role, and the database RPC checks the role again before recording the review.
+The caller must have a valid Supabase session and an entry in `community_moderator_roles`. Bearer-authenticated routes reject malformed, expired, wrong-audience, or wrong-issuer tokens before calling Supabase Auth; `auth.getUser` remains authoritative for signature, session, and revocation checks. The Worker checks the session, checks the role, and the database RPC checks the role again before recording the review. `npm test` combines source-level security contracts with runtime Hono handler tests using controlled Supabase fetch mocks; provider, Queue, and disposable Supabase/RLS integration tests remain deployment-pipeline work.
 
 Reviewers can inspect and close reports, while moderators and admins can enforce
 actions. The Worker and database both enforce that separation. Event removal,

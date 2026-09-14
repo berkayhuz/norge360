@@ -3,8 +3,18 @@ import Foundation
 enum AppStrings {
     static func localized(_ key: String) -> String {
         let selectedLanguage = LanguageSettings.selectedLanguage
-        let displayLanguage =
-            TranslationReviewRegistry.canDisplayLocalizedCopy(for: selectedLanguage) ? selectedLanguage : .english
+        let displayLanguage: AppLanguage
+        if let scope = TranslationReviewRegistry.scope(for: key) {
+            displayLanguage =
+                TranslationReviewRegistry.canDisplayLocalizedCopy(for: selectedLanguage, scope: scope)
+                ? selectedLanguage
+                : .english
+        } else {
+            displayLanguage =
+                TranslationReviewRegistry.canDisplayLocalizedCopy(for: selectedLanguage)
+                ? selectedLanguage
+                : .english
+        }
         let tables = ["Localizable", "FeedUI", "ProfileUI", "MessagesUI", "InterfaceUI"]
         for language in [displayLanguage, .english] {
             let bundle = localizedBundle(for: language)
@@ -84,6 +94,9 @@ enum AppStrings {
     static var planTitle: String { localized("plan.title") }
     static var planProgress: String { localized("plan.progress") }
     static var planInformationNote: String { localized("plan.information_note") }
+    static var planSyncing: String { localized("plan.syncing") }
+    static var planSyncFailed: String { localized("plan.sync_failed") }
+    static var planSyncRetry: String { localized("plan.sync_retry") }
     static var sourceLastVerified: String { localized("source.last_verified") }
     static var taskStatus: String { localized("task.status") }
     static var officialSource: String { localized("task.official_source") }

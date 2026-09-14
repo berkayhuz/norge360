@@ -24,7 +24,7 @@ struct RootView: View {
     var body: some View {
         ZStack {
             Color.norgeAppBackground
-                .ignoresSafeArea()
+                .ignoresSafeArea(.container, edges: .top)
 
             if hasCompletedCurrentLaunch || authenticationStore.isLoading {
                 switch RootRouting.route(
@@ -251,7 +251,7 @@ private struct CommunityGroupChatSignalDestinationView: View {
     var body: some View {
         Group {
             if isLoading {
-                ProgressView()
+                NorgeLoadingState(fillsAvailableSpace: true)
             } else if let group {
                 CommunityGroupChatView(group: group)
             } else {

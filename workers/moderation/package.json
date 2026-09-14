@@ -7,7 +7,8 @@
     "check": "tsc --noEmit",
     "types:check": "wrangler types --check",
     "secret-scan": "python3 ../../scripts/check_worker_secrets.py",
-    "test": "python3 ../../scripts/test_worker_security.py",
+    "test": "python3 ../../scripts/test_worker_security.py && npm run test:runtime",
+    "test:runtime": "tsx --test src/index.runtime.test.ts",
     "deploy:dry-run": "wrangler deploy --dry-run",
     "dev": "wrangler dev",
     "deploy": "wrangler deploy"
@@ -17,6 +18,8 @@
     "hono": "^4.9.7"
   },
   "devDependencies": {
+    "@types/node": "^26.5.1",
+    "tsx": "^4.20.3",
     "typescript": "^5.9.2",
     "wrangler": "^4.130.0"
   },

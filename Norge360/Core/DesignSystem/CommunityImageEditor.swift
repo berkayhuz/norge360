@@ -149,7 +149,7 @@ struct CommunityImageEditor: View {
                         Text(AppStrings.localized("media.unsupported_image")).font(.footnote).foregroundStyle(.red)
                     }
                 } else if isPreparingImage {
-                    ProgressView()
+                    NorgeSkeleton(height: 240, cornerRadius: NorgeMediaMetrics.postCornerRadius)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     ContentUnavailableView(AppStrings.localized("media.unsupported_image"), systemImage: "photo")

@@ -100,7 +100,11 @@ struct EditCommunityPostView: View {
             try await feedStore.updatePost(id: item.post.id, body: draft)
             dismiss()
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = UserFacingErrorMapper.message(
+                for: error,
+                fallbackKey: "feed.error",
+                operation: "feed.edit_post"
+            )
         }
     }
 }
@@ -170,7 +174,11 @@ struct EditCommunityCommentView: View {
             await didSave()
             dismiss()
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = UserFacingErrorMapper.message(
+                for: error,
+                fallbackKey: "feed.error",
+                operation: "feed.edit_comment"
+            )
         }
     }
 }

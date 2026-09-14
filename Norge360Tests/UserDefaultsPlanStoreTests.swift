@@ -47,6 +47,17 @@ final class UserDefaultsPlanStoreTests: XCTestCase {
         XCTAssertNil(loadedAnonymousPlan)
     }
 
+    func testPersistsPlanRevisionAndDirtyState() async throws {
+        let store = try makeStore().store
+        let userID = UUID()
+        let snapshot = PlanPersistenceSnapshot(plan: makePlan(), revision: 7, isDirty: true)
+
+        await store.saveSnapshot(snapshot, scope: .authenticated(userID))
+
+        let loadedSnapshot = await store.loadSnapshot(scope: .authenticated(userID))
+        XCTAssertEqual(loadedSnapshot, snapshot)
+    }
+
     func testMigratesLegacyUserDefaultsPlanIntoProtectedFile() async throws {
         let context = try makeStore()
         let store = context.store
@@ -125,6 +136,21 @@ final class UserDefaultsPlanStoreTests: XCTestCase {
 
         XCTAssertNil(loadedPlan)
         XCTAssertFalse(FileManager.default.fileExists(atPath: fileURL.path))
+    }
+
+    func testAnonymousPlanIsNotPurgedByAuthenticatedRetention() async throws {
+        let context = try makeStore()
+        let store = context.store
+        let fileURL = context.directory.appendingPathComponent("anonymous.json")
+        let fixture = StoredPlanFixture(savedAt: .distantPast, plan: makePlan())
+
+        try FileManager.default.createDirectory(at: context.directory, withIntermediateDirectories: true)
+        try JSONEncoder().encode(fixture).write(to: fileURL)
+
+        let loadedPlan = await store.loadPlan(scope: .anonymous)
+
+        XCTAssertEqual(loadedPlan, fixture.plan)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: fileURL.path))
     }
 
     private func makePlan() -> RelocationPlan {

@@ -20,7 +20,19 @@ final class AppTabRouter: ObservableObject {
 
     @Published var selectedTab: Tab = .home
     @Published var profilePath: [UUID] = []
+    @Published var isTabBarHidden = false
+    /// Keeps the custom tab bar hidden while Settings is pushed on the
+    /// profile navigation stack, including when the user changes tabs with a
+    /// horizontal page gesture and later returns to Profile.
+    @Published var isProfileSettingsFlowActive = false
+    @Published var isHomeNotificationsFlowActive = false
+    @Published var isCommunityLikedEventsFlowActive = false
+    @Published var isTabBarCompact = false
+    @Published var homeScrollToTopToken = 0
     @Published var exploreScrollToTopToken = 0
+    @Published var messagesScrollToTopToken = 0
+    @Published var communityScrollToTopToken = 0
+    @Published var profileScrollToTopToken = 0
 
     func openProfile(_ userID: UUID) {
         selectedTab = .profile
@@ -28,9 +40,31 @@ final class AppTabRouter: ObservableObject {
     }
 
     func selectTab(_ tab: Tab) {
-        let isExploreReselected = selectedTab == .explore && tab == .explore
+        let isReselected = selectedTab == tab
         selectedTab = tab
-        if isExploreReselected { exploreScrollToTopToken &+= 1 }
+        if tab != .profile {
+            isTabBarHidden = false
+        }
+        isTabBarCompact = false
+        guard isReselected else { return }
+
+        switch tab {
+        case .home:
+            homeScrollToTopToken &+= 1
+        case .explore:
+            exploreScrollToTopToken &+= 1
+        case .messages:
+            messagesScrollToTopToken &+= 1
+        case .community:
+            communityScrollToTopToken &+= 1
+        case .profile:
+            profileScrollToTopToken &+= 1
+        }
+    }
+
+    func setTabBarCompact(_ compact: Bool, for tab: Tab) {
+        guard selectedTab == tab else { return }
+        isTabBarCompact = compact
     }
 
 }

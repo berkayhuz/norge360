@@ -31,7 +31,8 @@ alter table public.community_group_removed_post_media
   foreign key (removed_by) references auth.users(id) on delete set null;
 
 alter table public.community_moderation_action_audit
-  alter column moderator_id drop not null;
+  alter column moderator_id drop not null,
+  alter column target_id drop not null;
 alter table public.community_moderation_action_audit
   drop constraint if exists community_moderation_action_audit_moderator_id_fkey;
 alter table public.community_moderation_action_audit
@@ -47,7 +48,8 @@ alter table public.community_moderation_review_audit
   foreign key (moderator_id) references auth.users(id) on delete set null;
 
 alter table public.community_reports
-  alter column reporter_id drop not null;
+  alter column reporter_id drop not null,
+  alter column target_id drop not null;
 alter table public.community_reports
   drop constraint if exists community_reports_reporter_id_fkey;
 alter table public.community_reports
@@ -105,6 +107,16 @@ begin
   update public.community_reports
   set reporter_id = null
   where reporter_id = account_user_id;
+
+  -- A profile report target is the member UUID itself. Detach it before
+  -- deleting auth.users so retained reports cannot identify the deleted user.
+  update public.community_reports
+  set target_id = null
+  where target_type = 'profile' and target_id = account_user_id;
+
+  update public.community_moderation_action_audit
+  set target_id = null
+  where target_type = 'profile' and target_id = account_user_id;
 end;
 $$;
 

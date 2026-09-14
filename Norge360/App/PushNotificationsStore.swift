@@ -150,11 +150,11 @@ final class PushNotificationsStore: ObservableObject {
     }
 
     private func pushRegistrationError(for error: Error) -> String {
-        #if DEBUG
-            return "Debug APNs registration error: \(error.localizedDescription)"
-        #else
-            return AppStrings.localized("settings.notifications_push_setup_error")
-        #endif
+        UserFacingErrorMapper.message(
+            for: error,
+            fallbackKey: "settings.notifications_push_setup_error",
+            operation: "push.register_device"
+        )
     }
 }
 

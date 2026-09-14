@@ -27,4 +27,71 @@ final class CostOfLivingCalculatorTests: XCTestCase {
 
         XCTAssertEqual(result.food, 10_500)
     }
+
+    func testRejectsNonFiniteInputsInsteadOfProducingInfiniteOutput() {
+        XCTAssertNil(
+            calculator.estimate(
+                for: CalculatorScenario(grossAnnualSalary: .infinity)
+            )
+        )
+        XCTAssertNil(
+            calculator.estimate(
+                for: CalculatorScenario(monthlyRent: .infinity)
+            )
+        )
+        XCTAssertNil(
+            calculator.estimate(
+                for: CalculatorScenario(monthlyTransport: .nan)
+            )
+        )
+        XCTAssertNil(
+            calculator.estimate(
+                for: CalculatorScenario(monthlyCustomExpenses: .nan)
+            )
+        )
+    }
+
+    func testRejectsValuesOutsidePlanningLimits() {
+        XCTAssertNil(
+            calculator.estimate(
+                for: CalculatorScenario(grossAnnualSalary: 100_000_001)
+            )
+        )
+        XCTAssertNil(
+            calculator.estimate(
+                for: CalculatorScenario(monthlyRent: 10_000_001)
+            )
+        )
+    }
+
+    func testRejectsInvalidPlanningAssumptions() {
+        let invalidRates = [-0.1, 1.1, .nan, .infinity]
+        for rate in invalidRates {
+            let invalidAssumptions = CostOfLivingAssumptions(
+                estimatedIncomeReductionRate: rate,
+                monthlyUtilities: 1_800,
+                monthlyFoodPerAdult: 4_000,
+                monthlyFoodPerChild: 2_500,
+                version: "test"
+            )
+            XCTAssertNil(
+                CostOfLivingCalculator(assumptions: invalidAssumptions).estimate(
+                    for: CalculatorScenario(grossAnnualSalary: 600_000)
+                )
+            )
+        }
+
+        let invalidExpenses = CostOfLivingAssumptions(
+            estimatedIncomeReductionRate: 0.3,
+            monthlyUtilities: -1,
+            monthlyFoodPerAdult: 4_000,
+            monthlyFoodPerChild: 2_500,
+            version: "test"
+        )
+        XCTAssertNil(
+            CostOfLivingCalculator(assumptions: invalidExpenses).estimate(
+                for: CalculatorScenario(grossAnnualSalary: 600_000)
+            )
+        )
+    }
 }

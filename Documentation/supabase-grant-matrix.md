@@ -80,6 +80,8 @@ are not included in this product-facing matrix.
 | `public.community_notifications` | table | yes | SIUD | SIUD | SIUD |
 | `public.community_post_edit_history` | table | yes | SIUD | SIUD | SIUD |
 | `public.community_post_hashtags` | table | yes | SIUD | SIUD | SIUD |
+| `public.community_request_rate_limits` | table | yes | — | — | SIUD |
+| `public.community_storage_cleanup_outbox` | table | yes | — | — | SIUD |
 | `public.community_post_likes` | table | yes | S | S | SIUD |
 | `public.community_post_media` | table | yes | SIUD | SIUD | SIUD |
 | `public.community_posts` | table | yes | SIUD | SIUD | SIUD |
@@ -119,9 +121,11 @@ defined in one schema policy file. Representative examples are:
 - Private message preferences and member hides: `20260909123000_add_direct_message_privacy_and_member_hide.sql`
 - APNs device and preference tables: `20260909125000_add_private_apns_device_registration.sql`
 - Group-chat private tables: `20260909130000_add_safe_group_chat_foundation.sql` and later group-chat migrations
+- Push/cleanup transport retention: `20260913150000_add_transport_retention_purge.sql`
 - Public profile view and base-table boundary: `20260911210000_secure_public_profile_projection.sql`
 - Explicit profile column grants: `20260912130000_restore_community_profile_write_grants.sql`
 - Read-only projection grants: `20260912140000_secure_profile_projection_grants.sql`
+- Group-scoped content/storage visibility and invoker projections: `20260913180000_harden_group_scoped_content_visibility.sql`
 - Push delivery worker ledger: `20260912120000_async_push_delivery.sql`
 
 When adding a new table, the migration must explicitly document its intended

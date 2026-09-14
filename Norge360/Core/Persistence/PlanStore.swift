@@ -1,8 +1,24 @@
 import Foundation
 
+struct PlanPersistenceSnapshot: Codable, Sendable, Equatable {
+    let plan: RelocationPlan
+    let revision: Int64
+    let isDirty: Bool
+
+    init(plan: RelocationPlan, revision: Int64 = 0, isDirty: Bool = false) {
+        self.plan = plan
+        self.revision = max(0, revision)
+        self.isDirty = isDirty
+    }
+}
+
 protocol PlanStoring: Sendable {
     func loadPlan(scope: PlanStorageScope) async -> RelocationPlan?
-    func save(_ plan: RelocationPlan, scope: PlanStorageScope) async
+    func loadSnapshot(scope: PlanStorageScope) async -> PlanPersistenceSnapshot?
+    @discardableResult
+    func save(_ plan: RelocationPlan, scope: PlanStorageScope) async -> Bool
+    @discardableResult
+    func saveSnapshot(_ snapshot: PlanPersistenceSnapshot, scope: PlanStorageScope) async -> Bool
     func clearPlan(scope: PlanStorageScope) async
 }
 
@@ -12,11 +28,22 @@ enum PlanStorageScope: Sendable, Equatable {
 }
 
 extension PlanStoring {
+    func loadSnapshot(scope: PlanStorageScope) async -> PlanPersistenceSnapshot? {
+        guard let plan = await loadPlan(scope: scope) else { return nil }
+        return PlanPersistenceSnapshot(plan: plan)
+    }
+
+    @discardableResult
+    func saveSnapshot(_ snapshot: PlanPersistenceSnapshot, scope: PlanStorageScope) async -> Bool {
+        await save(snapshot.plan, scope: scope)
+    }
+
     func loadPlan() async -> RelocationPlan? {
         await loadPlan(scope: .anonymous)
     }
 
-    func save(_ plan: RelocationPlan) async {
+    @discardableResult
+    func save(_ plan: RelocationPlan) async -> Bool {
         await save(plan, scope: .anonymous)
     }
 
@@ -59,12 +86,44 @@ actor ProtectedFilePlanStore: PlanStoring {
     private struct StoredPlan: Codable, Sendable {
         let savedAt: Date
         let plan: RelocationPlan
+        let revision: Int64
+        let isDirty: Bool
+
+        init(savedAt: Date = .now, snapshot: PlanPersistenceSnapshot) {
+            self.savedAt = savedAt
+            self.plan = snapshot.plan
+            self.revision = snapshot.revision
+            self.isDirty = snapshot.isDirty
+        }
+
+        init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            savedAt = try container.decode(Date.self, forKey: .savedAt)
+            plan = try container.decode(RelocationPlan.self, forKey: .plan)
+            revision = max(0, try container.decodeIfPresent(Int64.self, forKey: .revision) ?? 0)
+            isDirty = try container.decodeIfPresent(Bool.self, forKey: .isDirty) ?? false
+        }
+
+        func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(savedAt, forKey: .savedAt)
+            try container.encode(plan, forKey: .plan)
+            try container.encode(revision, forKey: .revision)
+            try container.encode(isDirty, forKey: .isDirty)
+        }
+
+        private enum CodingKeys: String, CodingKey {
+            case savedAt
+            case plan
+            case revision
+            case isDirty
+        }
     }
 
     private let legacyKeyPrefix = "norge360.currentPlan"
     private let legacyAnonymousKey = "norge360.currentPlan"
     private let anonymousFileName = "anonymous.json"
-    private let retention: TimeInterval = 30 * 24 * 60 * 60
+    private let authenticatedRetention: TimeInterval = 30 * 24 * 60 * 60
     private let defaults: PlanDefaults
     private let fileManager: FileManager
     private let directory: URL
@@ -84,24 +143,34 @@ actor ProtectedFilePlanStore: PlanStoring {
         }
     }
 
-    func loadPlan(scope: PlanStorageScope) -> RelocationPlan? {
-        if let storedPlan = loadStoredPlan(scope: scope) {
+    func loadPlan(scope: PlanStorageScope) async -> RelocationPlan? {
+        await loadSnapshot(scope: scope)?.plan
+    }
+
+    func loadSnapshot(scope: PlanStorageScope) async -> PlanPersistenceSnapshot? {
+        if let storedSnapshot = loadStoredSnapshot(scope: scope) {
             removeLegacyData(scope: scope)
-            return storedPlan
+            return storedSnapshot
         }
 
-        guard let legacyPlan = loadLegacyPlan(scope: scope), write(legacyPlan, scope: scope) else {
+        guard let legacySnapshot = loadLegacySnapshot(scope: scope), write(legacySnapshot, scope: scope) else {
             return nil
         }
         removeLegacyData(scope: scope)
-        return legacyPlan
+        return legacySnapshot
     }
 
-    func save(_ plan: RelocationPlan, scope: PlanStorageScope) {
-        _ = write(plan, scope: scope)
+    @discardableResult
+    func save(_ plan: RelocationPlan, scope: PlanStorageScope) async -> Bool {
+        write(PlanPersistenceSnapshot(plan: plan), scope: scope)
     }
 
-    func clearPlan(scope: PlanStorageScope) {
+    @discardableResult
+    func saveSnapshot(_ snapshot: PlanPersistenceSnapshot, scope: PlanStorageScope) async -> Bool {
+        write(snapshot, scope: scope)
+    }
+
+    func clearPlan(scope: PlanStorageScope) async {
         try? fileManager.removeItem(at: fileURL(for: scope))
         removeLegacyData(scope: scope)
     }
@@ -119,33 +188,46 @@ actor ProtectedFilePlanStore: PlanStoring {
         removeLegacyAuthenticatedData()
     }
 
-    private func loadStoredPlan(scope: PlanStorageScope) -> RelocationPlan? {
+    private func loadStoredSnapshot(scope: PlanStorageScope) -> PlanPersistenceSnapshot? {
         let url = fileURL(for: scope)
         guard let data = try? Data(contentsOf: url),
             let storedPlan = try? JSONDecoder().decode(StoredPlan.self, from: data)
         else {
             return nil
         }
-        guard Date().timeIntervalSince(storedPlan.savedAt) <= retention else {
+        let shouldExpire: Bool
+        switch scope {
+        case .anonymous:
+            // Anonymous plans are user data, not disposable cache entries.
+            // They may be the only local copy before sign-in.
+            shouldExpire = false
+        case .authenticated:
+            shouldExpire = Date().timeIntervalSince(storedPlan.savedAt) > authenticatedRetention
+        }
+        guard !shouldExpire else {
             try? fileManager.removeItem(at: url)
             return nil
         }
-        return storedPlan.plan
+        return PlanPersistenceSnapshot(
+            plan: storedPlan.plan,
+            revision: storedPlan.revision,
+            isDirty: storedPlan.isDirty
+        )
     }
 
-    private func loadLegacyPlan(scope: PlanStorageScope) -> RelocationPlan? {
+    private func loadLegacySnapshot(scope: PlanStorageScope) -> PlanPersistenceSnapshot? {
         for key in legacyKeys(for: scope) {
             guard let data = defaults.data(forKey: key),
                 let plan = try? JSONDecoder().decode(RelocationPlan.self, from: data)
             else { continue }
-            return plan
+            return PlanPersistenceSnapshot(plan: plan)
         }
         return nil
     }
 
     @discardableResult
-    private func write(_ plan: RelocationPlan, scope: PlanStorageScope) -> Bool {
-        guard let data = try? JSONEncoder().encode(StoredPlan(savedAt: .now, plan: plan)) else {
+    private func write(_ snapshot: PlanPersistenceSnapshot, scope: PlanStorageScope) -> Bool {
+        guard let data = try? JSONEncoder().encode(StoredPlan(snapshot: snapshot)) else {
             return false
         }
         let destinationURL = fileURL(for: scope)
@@ -159,15 +241,15 @@ actor ProtectedFilePlanStore: PlanStoring {
             try data.write(to: temporaryURL, options: .atomic)
             try applyStorageAttributes(to: temporaryURL)
             if fileManager.fileExists(atPath: destinationURL.path) {
-                try fileManager.replaceItemAt(destinationURL, withItemAt: temporaryURL)
+                _ = try fileManager.replaceItemAt(destinationURL, withItemAt: temporaryURL)
             } else {
                 try fileManager.moveItem(at: temporaryURL, to: destinationURL)
             }
             return true
         } catch {
             try? fileManager.removeItem(at: temporaryURL)
-            // Local persistence is best effort; the remote plan remains the
-            // authoritative source when synchronization is configured.
+            // Local persistence is best effort. A dirty snapshot stays in
+            // memory and is retried by AppState when synchronization exists.
             return false
         }
     }

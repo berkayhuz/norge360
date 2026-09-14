@@ -15,6 +15,79 @@ enum CommunityMediaError: LocalizedError {
     }
 }
 
+enum CommunityImageNetworkLoader {
+    static let maximumDownloadedBytes = 12_000_000
+
+    static func data(
+        for request: URLRequest,
+        maximumBytes: Int = maximumDownloadedBytes,
+        using session: URLSession = .shared
+    ) async throws -> (Data, URLResponse) {
+        let (bytes, response) = try await session.bytes(for: request)
+        var data = Data()
+        data.reserveCapacity(min(maximumBytes, 256 * 1024))
+
+        for try await byte in bytes {
+            guard data.count < maximumBytes else {
+                throw CommunityMediaError.unsupportedImage
+            }
+            data.append(byte)
+        }
+        return (data, response)
+    }
+}
+
+enum CommunityImageDecoding {
+    static let maximumSourcePixelDimension: Int64 = 12_000
+    static let maximumSourcePixelCount: Int64 = 64_000_000
+
+    static func image(
+        from data: Data,
+        variant: CommunityImageVariant = .full
+    ) -> UIImage? {
+        guard data.count <= CommunityImageNetworkLoader.maximumDownloadedBytes,
+            let source = CGImageSourceCreateWithData(
+                data as CFData,
+                [
+                    kCGImageSourceShouldCache: false,
+                    kCGImageSourceShouldCacheImmediately: false,
+                ] as CFDictionary),
+            let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any],
+            let width = (properties[kCGImagePropertyPixelWidth] as? NSNumber)?.int64Value,
+            let height = (properties[kCGImagePropertyPixelHeight] as? NSNumber)?.int64Value,
+            width > 0,
+            height > 0,
+            width <= maximumSourcePixelDimension,
+            height <= maximumSourcePixelDimension,
+            width <= maximumSourcePixelCount / max(height, 1)
+        else { return nil }
+
+        let maximumPixelDimension: Int
+        switch variant {
+        case .thumbnail(let requestedDimension):
+            maximumPixelDimension = max(1, requestedDimension)
+        case .full:
+            maximumPixelDimension = 4_096
+        }
+
+        let thumbnailOptions: [CFString: Any] = [
+            kCGImageSourceCreateThumbnailFromImageAlways: true,
+            kCGImageSourceCreateThumbnailWithTransform: true,
+            kCGImageSourceThumbnailMaxPixelSize: maximumPixelDimension,
+            kCGImageSourceShouldCache: true,
+            kCGImageSourceShouldCacheImmediately: true,
+        ]
+        guard
+            let image = CGImageSourceCreateThumbnailAtIndex(
+                source,
+                0,
+                thumbnailOptions as CFDictionary
+            )
+        else { return nil }
+        return UIImage(cgImage: image)
+    }
+}
+
 enum CommunityImageProcessing {
     private static let maximumPixelDimension = 2_048
     private static let maximumDataBytes = 3_000_000
@@ -100,7 +173,7 @@ enum CommunityImageProcessing {
             height > 0,
             width <= maximumSourcePixelDimension,
             height <= maximumSourcePixelDimension,
-            width * height <= maximumSourcePixelCount
+            width <= maximumSourcePixelCount / max(height, 1)
         else {
             throw CommunityMediaError.unsupportedImage
         }

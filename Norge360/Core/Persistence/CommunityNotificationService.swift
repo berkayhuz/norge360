@@ -3,10 +3,20 @@ import Supabase
 
 protocol CommunityNotificationsProviding: Sendable {
     func loadNotifications() async throws -> [CommunityNotificationItem]
+    func loadNotificationsPage(cursor: String?, limit: Int) async throws -> CommunityPage<CommunityNotificationItem>
     func notificationEvents(for recipientID: UUID) async -> AsyncStream<Void>
     func markRead(id: UUID) async throws
     func markAllRead() async throws
     func delete(id: UUID) async throws
+}
+
+extension CommunityNotificationsProviding {
+    func loadNotificationsPage(
+        cursor: String?,
+        limit: Int
+    ) async throws -> CommunityPage<CommunityNotificationItem> {
+        CommunityPage(items: try await loadNotifications(), nextCursor: nil)
+    }
 }
 
 actor CommunityNotificationService: CommunityNotificationsProviding {
@@ -17,35 +27,52 @@ actor CommunityNotificationService: CommunityNotificationsProviding {
     }
 
     func loadNotifications() async throws -> [CommunityNotificationItem] {
-        let notifications: [CommunityNotification] =
-            try await client
+        try await loadNotificationsPage(cursor: nil, limit: 50).items
+    }
+
+    func loadNotificationsPage(
+        cursor: String?,
+        limit: Int
+    ) async throws -> CommunityPage<CommunityNotificationItem> {
+        let decodedCursor = try cursor.map(CommunityKeysetCursor.init(encoded:))
+        let pageLimit = min(max(limit, 1), 50)
+        var request =
+            client
             .from("community_notifications")
             .select(SupabaseSelectColumns.communityNotification)
             .neq("type", value: "direct_message")
             .neq("type", value: "message_request")
+        if let decodedCursor {
+            guard Self.cursorDateFormatter.date(from: decodedCursor.value) != nil else {
+                throw CommunityPaginationError.invalidCursor
+            }
+            let value = Self.postgrestLiteral(decodedCursor.value)
+            request = request.or(
+                "created_at.lt.\(value),and(created_at.eq.\(value),id.lt.\(decodedCursor.id.uuidString))"
+            )
+        }
+        let notifications: [CommunityNotification] =
+            try await request
             .order("created_at", ascending: false)
-            .limit(50)
+            .order("id", ascending: false)
+            .limit(pageLimit + 1)
             .execute()
             .value
 
-        let actorIDs = Array(Set(notifications.map(\.actorID)))
-        let profiles: [CommunityProfile]
-        if actorIDs.isEmpty {
-            profiles = []
+        let hasMore = notifications.count > pageLimit
+        let pageNotifications = Array(notifications.prefix(pageLimit))
+        let nextCursor: String?
+        if hasMore, let lastNotification = pageNotifications.last {
+            nextCursor = try CommunityKeysetCursor(
+                value: Self.cursorDateFormatter.string(from: lastNotification.createdAt),
+                id: lastNotification.id
+            ).encoded()
         } else {
-            profiles =
-                try await client
-                .from("community_public_profiles")
-                .select(SupabaseSelectColumns.communityPublicProfile)
-                .in("user_id", values: actorIDs.map(\.uuidString))
-                .execute()
-                .value
+            nextCursor = nil
         }
-        let signedProfiles = await profilesWithSignedAvatars(profiles)
-        let profilesByID = Dictionary(uniqueKeysWithValues: signedProfiles.map { ($0.userID, $0) })
-        return notifications.map {
-            CommunityNotificationItem(notification: $0, actor: profilesByID[$0.actorID])
-        }
+
+        let items = try await makeNotificationItems(pageNotifications)
+        return CommunityPage(items: items, nextCursor: nextCursor)
     }
 
     /// The database filter and RLS policy both constrain events to the signed-in
@@ -113,6 +140,43 @@ actor CommunityNotificationService: CommunityNotificationsProviding {
 
     private func profilesWithSignedAvatars(_ profiles: [CommunityProfile]) async -> [CommunityProfile] {
         await CommunityProfileMediaSigner.avatars(profiles, using: client)
+    }
+
+    private func makeNotificationItems(
+        _ notifications: [CommunityNotification]
+    ) async throws -> [CommunityNotificationItem] {
+        let actorIDs = Array(Set(notifications.map(\.actorID)))
+        let profiles: [CommunityProfile]
+        if actorIDs.isEmpty {
+            profiles = []
+        } else {
+            profiles =
+                try await client
+                .from("community_public_profiles")
+                .select(SupabaseSelectColumns.communityPublicProfile)
+                .in("user_id", values: actorIDs.map(\.uuidString))
+                .execute()
+                .value
+        }
+        let signedProfiles = await profilesWithSignedAvatars(profiles)
+        let profilesByID = Dictionary(uniqueKeysWithValues: signedProfiles.map { ($0.userID, $0) })
+        return notifications.map {
+            CommunityNotificationItem(notification: $0, actor: profilesByID[$0.actorID])
+        }
+    }
+
+    private static var cursorDateFormatter: ISO8601DateFormatter {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return formatter
+    }
+
+    private static func postgrestLiteral(_ value: String) -> String {
+        let escaped =
+            value
+            .replacingOccurrences(of: "\\", with: "\\\\")
+            .replacingOccurrences(of: "\"", with: "\\\"")
+        return "\"" + escaped + "\""
     }
 }
 

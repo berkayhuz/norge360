@@ -1,22 +1,53 @@
 import Foundation
 
+enum PlanSyncStatus: Equatable, Sendable {
+    case idle
+    case pending
+    case syncing
+    case failed
+}
+
+enum PlanPersistenceError: Error {
+    case writeFailed
+}
+
 @MainActor
 final class AppState: ObservableObject {
-    @Published private(set) var plan: RelocationPlan?
+    @Published var plan: RelocationPlan?
     @Published var isLoading = true
+    @Published var planSyncStatus: PlanSyncStatus = .idle
+    @Published var planLoadFailed = false
 
-    private let store: any PlanStoring
-    private let syncService: (any PlanSynchronizing)?
-    private var activeUserID: UUID?
+    struct PendingSave: Sendable {
+        let snapshot: PlanPersistenceSnapshot
+        let userID: UUID?
+        let scope: PlanStorageScope
+        let clearsAnonymousPlanOnSuccess: Bool
+    }
+
+    let store: any PlanStoring
+    let syncService: (any PlanSynchronizing)?
+    var activeUserID: UUID?
+    var accountGeneration = 0
     private var activationTask: Task<Void, Never>?
+    private var anonymousPlanLoadTask: Task<Void, Never>?
+    var synchronizationTask: Task<Void, Never>?
+    var pendingSave: PendingSave?
+    var planRevision: Int64 = 0
+
+    let maximumSaveAttempts = 3
+    let retryDelays: [UInt64] = [1_000_000_000, 2_000_000_000]
 
     init(store: any PlanStoring, syncService: (any PlanSynchronizing)? = nil) {
         self.store = store
         self.syncService = syncService
-        Task { await loadAnonymousPlan() }
+        anonymousPlanLoadTask = Task { [weak self] in
+            await self?.loadAnonymousPlan()
+        }
     }
 
     func createPlan(for profile: RelocationProfile) {
+        anonymousPlanLoadTask?.cancel()
         plan = RelocationPlan(profile: profile, tasks: RelocationRulesEngine().makeTasks(for: profile))
         persist()
     }
@@ -24,18 +55,14 @@ final class AppState: ObservableObject {
     /// Rebuild the task set when the questionnaire changes while preserving
     /// user progress for tasks that still apply to the new answers.
     func updateProfile(_ profile: RelocationProfile) {
-        let previousStatuses = Dictionary(uniqueKeysWithValues: (plan?.tasks ?? []).map { ($0.slug, $0.status) })
-        var updatedTasks = RelocationRulesEngine().makeTasks(for: profile)
-        for index in updatedTasks.indices {
-            if let previousStatus = previousStatuses[updatedTasks[index].slug] {
-                updatedTasks[index].setStatus(previousStatus)
-            }
-        }
+        anonymousPlanLoadTask?.cancel()
+        let updatedTasks = RelocationRulesEngine().makeTasks(for: profile, preserving: plan?.tasks ?? [])
         plan = RelocationPlan(profile: profile, tasks: updatedTasks)
         persist()
     }
 
     func updateStatus(_ status: TaskStatus, for taskID: UUID) {
+        anonymousPlanLoadTask?.cancel()
         guard var currentPlan = plan,
             let index = currentPlan.tasks.firstIndex(where: { $0.id == taskID })
         else { return }
@@ -46,13 +73,24 @@ final class AppState: ObservableObject {
 
     func updateAuthenticatedUser(_ user: AuthenticatedUser?) {
         guard activeUserID != user?.id else { return }
+        anonymousPlanLoadTask?.cancel()
+        anonymousPlanLoadTask = nil
         activationTask?.cancel()
         activationTask = nil
+        synchronizationTask?.cancel()
+        synchronizationTask = nil
+        pendingSave = nil
+        accountGeneration += 1
         activeUserID = user?.id
+        planRevision = 0
+        planSyncStatus = .idle
+        planLoadFailed = false
         plan = nil
         isLoading = user != nil
         if user == nil {
-            Task { await loadAnonymousPlan() }
+            anonymousPlanLoadTask = Task { [weak self] in
+                await self?.loadAnonymousPlan()
+            }
         }
     }
 
@@ -73,79 +111,18 @@ final class AppState: ObservableObject {
         await task.value
     }
 
-    private func loadAnonymousPlan() async {
-        let anonymousPlan = await store.loadPlan(scope: .anonymous)
-        guard activeUserID == nil else { return }
-        plan = anonymousPlan
-        isLoading = false
+    func retryPlanSynchronization() {
+        guard pendingSave != nil, synchronizationTask == nil else { return }
+        planSyncStatus = .pending
+        startSynchronizationIfNeeded()
     }
 
-    private func loadForCurrentUser(userID: UUID) async {
-        guard activeUserID == userID else { return }
-
-        let authenticatedScope = PlanStorageScope.authenticated(userID)
-        let cachedPlan = await store.loadPlan(scope: authenticatedScope)
-        guard activeUserID == userID else { return }
-
-        do {
-            if let remotePlan = try await syncService?.loadPlan() {
-                await adoptRemotePlan(remotePlan, userID: userID, scope: authenticatedScope)
-            } else {
-                await adoptLocalPlan(cachedPlan, userID: userID, scope: authenticatedScope)
-            }
-        } catch {
-            guard activeUserID == userID else { return }
-            // Local data remains available if the user is offline or the remote
-            // service is temporarily unavailable.
-            plan = cachedPlan
-        }
-        if activeUserID == userID {
-            isLoading = false
-        }
+    func retryPlanLoad() {
+        activationTask?.cancel()
+        activationTask = nil
+        planLoadFailed = false
+        isLoading = activeUserID != nil
+        Task { await activate() }
     }
 
-    private func adoptRemotePlan(_ remotePlan: RelocationPlan, userID: UUID, scope: PlanStorageScope) async {
-        guard activeUserID == userID else { return }
-        plan = remotePlan
-        await store.save(remotePlan, scope: scope)
-    }
-
-    private func adoptLocalPlan(
-        _ cachedPlan: RelocationPlan?,
-        userID: UUID,
-        scope: PlanStorageScope
-    ) async {
-        guard activeUserID == userID else { return }
-        if let cachedPlan {
-            plan = cachedPlan
-            try? await syncService?.save(cachedPlan)
-            return
-        }
-
-        guard let anonymousPlan = await store.loadPlan(scope: .anonymous) else {
-            guard activeUserID == userID else { return }
-            plan = nil
-            return
-        }
-        guard activeUserID == userID else { return }
-        plan = anonymousPlan
-        try? await syncService?.save(anonymousPlan)
-        await store.save(anonymousPlan, scope: scope)
-        await store.clearPlan(scope: .anonymous)
-    }
-
-    private func persist() {
-        guard let plan else { return }
-        let scope = storageScope
-        let syncService = syncService
-        let shouldSync = activeUserID != nil
-        Task {
-            await store.save(plan, scope: scope)
-            if shouldSync { try? await syncService?.save(plan) }
-        }
-    }
-
-    private var storageScope: PlanStorageScope {
-        activeUserID.map(PlanStorageScope.authenticated) ?? .anonymous
-    }
 }

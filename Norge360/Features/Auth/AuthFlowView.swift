@@ -134,7 +134,8 @@ private struct AuthEntryView: View {
                     if result == .confirmationRequired { navigate(.verification(normalizedEmail)) }
                 }
             } catch {
-                errorMessage = error.localizedDescription
+                errorMessage = UserFacingErrorMapper.message(
+                    for: error, fallbackKey: "auth.error", operation: "auth.submit")
             }
         }
     }
@@ -147,7 +148,8 @@ private struct AuthEntryView: View {
             do {
                 try await authenticationStore.continueWith(provider: provider)
             } catch {
-                errorMessage = error.localizedDescription
+                errorMessage = UserFacingErrorMapper.message(
+                    for: error, fallbackKey: "auth.error", operation: "auth.social_sign_in")
             }
         }
     }
@@ -388,7 +390,11 @@ private struct ForgotPasswordView: View {
                         try await authenticationStore.sendPasswordReset(email: normalizedEmail)
                         sendLink(normalizedEmail)
                     } catch {
-                        errorMessage = error.localizedDescription
+                        errorMessage = UserFacingErrorMapper.message(
+                            for: error,
+                            fallbackKey: "auth.error",
+                            operation: "auth.password_reset"
+                        )
                     }
                 }
             } label: {
@@ -436,7 +442,11 @@ private struct ResetLinkSentView: View {
                         try await authenticationStore.sendPasswordReset(email: email)
                         feedbackMessage = AppStrings.auth("reset_sent_body")
                     } catch {
-                        feedbackMessage = error.localizedDescription
+                        feedbackMessage = UserFacingErrorMapper.message(
+                            for: error,
+                            fallbackKey: "auth.error",
+                            operation: "auth.password_reset_resend"
+                        )
                     }
                 }
             }
@@ -489,7 +499,11 @@ struct ResetPasswordView: View {
                         try await authenticationStore.updatePassword(password)
                         dismiss()
                     } catch {
-                        feedbackMessage = error.localizedDescription
+                        feedbackMessage = UserFacingErrorMapper.message(
+                            for: error,
+                            fallbackKey: "auth.error",
+                            operation: "auth.password_update"
+                        )
                     }
                 }
             } label: {
@@ -532,7 +546,11 @@ struct AccountVerificationView: View {
                         try await authenticationStore.resendConfirmation(email: email)
                         feedbackMessage = AppStrings.auth("email_confirmation_sent")
                     } catch {
-                        feedbackMessage = error.localizedDescription
+                        feedbackMessage = UserFacingErrorMapper.message(
+                            for: error,
+                            fallbackKey: "auth.error",
+                            operation: "auth.confirmation_resend"
+                        )
                     }
                 }
             }

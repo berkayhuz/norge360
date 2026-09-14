@@ -1,9 +1,13 @@
 import SwiftUI
 import UIKit
 
-/// A root-level dismissal gesture for every SwiftUI form. It deliberately
-/// ignores controls, text inputs and the keyboard itself, so normal typing and
-/// button actions retain their native behavior.
+extension Notification.Name {
+    static let norgeNonInputInteraction = Notification.Name("norge.nonInputInteraction")
+}
+
+/// A root-level dismissal gesture for every SwiftUI form. Text inputs and the
+/// keyboard itself are excluded so changing focus keeps working, while taps on
+/// buttons, links, lists and other page content also dismiss the keyboard.
 struct KeyboardDismissBridge: UIViewRepresentable {
     func makeCoordinator() -> Coordinator { Coordinator() }
 
@@ -42,12 +46,13 @@ struct KeyboardDismissBridge: UIViewRepresentable {
 
         @objc @MainActor private func dismissKeyboard() {
             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+            NotificationCenter.default.post(name: .norgeNonInputInteraction, object: nil)
         }
 
         func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
             var view = touch.view
             while let current = view {
-                if current is UIControl || current is UITextView || current is UITextField { return false }
+                if current is UITextView || current is UITextField { return false }
                 if NSStringFromClass(type(of: current)).contains("Keyboard") { return false }
                 view = current.superview
             }

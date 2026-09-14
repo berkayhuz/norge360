@@ -44,7 +44,9 @@ struct Norge360App: App {
         _sessionCoordinator = StateObject(
             wrappedValue: SessionCoordinator(
                 authentication: authenticationStore,
-                deviceDeactivation: pushNotificationsStore
+                deviceDeactivation: pushNotificationsStore,
+                accountDeletion: AccountDeletionService(client: supabaseClient),
+                accountDataExport: AccountDataExportService(client: supabaseClient)
             ))
         _accountSetupStore = StateObject(
             wrappedValue: AccountSetupStore(
@@ -102,7 +104,6 @@ struct Norge360App: App {
     var body: some Scene {
         WindowGroup {
             RootView()
-                .norgeScreen()
                 .environmentObject(appState)
                 .environmentObject(languageSettings)
                 .environmentObject(appearanceSettings)
@@ -128,6 +129,7 @@ struct Norge360App: App {
                     languageSettings.language.isRightToLeft ? .rightToLeft : .leftToRight
                 )
                 .preferredColorScheme(appearanceSettings.appearance.preferredColorScheme)
+                .id(appearanceSettings.appearance)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .onOpenURL { url in
                     guard AuthCallbackURL.isValid(url) else { return }

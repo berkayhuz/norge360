@@ -5,6 +5,7 @@ import SwiftUI
 import UIKit
 
 struct CommunityConversationsView: View {  // swiftlint:disable:this type_body_length
+    @EnvironmentObject private var tabRouter: AppTabRouter
     @EnvironmentObject private var conversationsStore: CommunityConversationsStore
     @EnvironmentObject private var authenticationStore: AuthenticationStore
     @EnvironmentObject private var groupsStore: CommunityGroupsStore
@@ -39,57 +40,76 @@ struct CommunityConversationsView: View {  // swiftlint:disable:this type_body_l
                     }
                 }
                 if inboxMode == .direct {
-                    ScrollView {
-                        LazyVStack(alignment: .leading, spacing: 0) {
-                            if let error = actionError ?? conversationsStore.errorMessage {
-                                NorgeInlineFeedback(message: error).padding()
-                            }
-                            if conversationsStore.isLoading && conversationsStore.conversations.isEmpty {
-                                NorgeLoadingState(topPadding: 60)
-                            } else if matchingConversations.isEmpty {
-                                NorgeUnavailableState(
-                                    AppStrings.localized(query.isEmpty ? "messages.empty_title" : "chat.no_results"),
-                                    systemImage: query.isEmpty ? "bubble.left.and.bubble.right" : "magnifyingglass",
-                                    description: AppStrings.localized(
-                                        query.isEmpty ? "messages.empty_body" : "chat.try_another_search")
-                                ).padding(.top, 30)
-                            }
-                            if !incomingRequests.isEmpty {
-                                sectionTitle("messages.requests")
-                                ForEach(incomingRequests) { conversation in
-                                    MessageRequestRow(
-                                        conversation: conversation, isResponding: respondingID == conversation.id
-                                    ) { accept in
-                                        Task { await respond(to: conversation, accept: accept) }
-                                    }.padding(.horizontal, 16).padding(.vertical, 10)
+                    ScrollViewReader { proxy in
+                        ScrollView {
+                            VStack(alignment: .leading, spacing: 0) {
+                                Color.clear.frame(height: 0).id("messages-top")
+                                ScrollHeaderVisibilityObserver { visible in
+                                    tabRouter.setTabBarCompact(!visible, for: .messages)
                                 }
-                            }
-                            conversationLinks(activeConversations)
-                            if !restrictedConversations.isEmpty {
-                                sectionTitle("chat.restricted")
-                                conversationLinks(restrictedConversations)
-                            }
-                            if !outgoingRequests.isEmpty {
-                                sectionTitle("messages.pending")
-                                ForEach(outgoingRequests) { conversation in
-                                    ConversationRow(
-                                        conversation: conversation,
-                                        subtitle: AppStrings.localized("messages.request_sent")
-                                    )
-                                    .padding(.horizontal, 16).padding(.vertical, 13)
+                                .frame(height: 0)
+                                LazyVStack(alignment: .leading, spacing: 0) {
+                                    if let error = actionError ?? conversationsStore.errorMessage {
+                                        NorgeInlineFeedback(message: error).padding()
+                                    }
+                                    if conversationsStore.isLoading && conversationsStore.conversations.isEmpty {
+                                        NorgeLoadingState(topPadding: 60)
+                                    } else if matchingConversations.isEmpty {
+                                        NorgeUnavailableState(
+                                            AppStrings.localized(
+                                                query.isEmpty ? "messages.empty_title" : "chat.no_results"),
+                                            systemImage: query.isEmpty
+                                                ? "bubble.left.and.bubble.right" : "magnifyingglass",
+                                            description: AppStrings.localized(
+                                                query.isEmpty ? "messages.empty_body" : "chat.try_another_search")
+                                        ).padding(.top, 30)
+                                    }
+                                    if !incomingRequests.isEmpty {
+                                        sectionTitle("messages.requests")
+                                        ForEach(incomingRequests) { conversation in
+                                            MessageRequestRow(
+                                                conversation: conversation,
+                                                isResponding: respondingID == conversation.id
+                                            ) { accept in
+                                                Task { await respond(to: conversation, accept: accept) }
+                                            }.padding(.horizontal, 16).padding(.vertical, 10)
+                                        }
+                                    }
+                                    conversationLinks(activeConversations)
+                                    if !restrictedConversations.isEmpty {
+                                        sectionTitle("chat.restricted")
+                                        conversationLinks(restrictedConversations)
+                                    }
+                                    if !outgoingRequests.isEmpty {
+                                        sectionTitle("messages.pending")
+                                        ForEach(outgoingRequests) { conversation in
+                                            ConversationRow(
+                                                conversation: conversation,
+                                                subtitle: AppStrings.localized("messages.request_sent")
+                                            )
+                                            .padding(.horizontal, 16).padding(.vertical, 13)
+                                        }
+                                    }
+                                    if conversationsStore.hasMoreConversations {
+                                        NorgeSkeleton(width: 180, height: 14)
+                                            .frame(maxWidth: .infinity)
+                                            .padding(.vertical, 18)
+                                            .task { await conversationsStore.loadMore() }
+                                    }
                                 }
+                                .padding(.bottom, 6)
                             }
-                            if conversationsStore.hasMoreConversations {
-                                ProgressView()
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 18)
-                                    .task { await conversationsStore.loadMore() }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .scrollDismissesKeyboard(.interactively)
+                        .contentMargins(.top, 0, for: .scrollContent)
+                        .refreshable { await conversationsStore.reload() }
+                        .onChange(of: tabRouter.messagesScrollToTopToken) { _, _ in
+                            withAnimation(.easeOut(duration: 0.24)) {
+                                proxy.scrollTo("messages-top", anchor: .top)
                             }
                         }
-                        .padding(.vertical, 6)
                     }
-                    .scrollDismissesKeyboard(.interactively)
-                    .refreshable { await conversationsStore.reload() }
                 } else {
                     groupChats
                 }
@@ -132,50 +152,68 @@ struct CommunityConversationsView: View {  // swiftlint:disable:this type_body_l
                     || $0.description.localizedStandardContains(normalizedQuery)
                     || $0.slug.localizedStandardContains(normalizedQuery))
         }
-        return ScrollView {
-            LazyVStack(alignment: .leading, spacing: 0) {
-                if groups.isEmpty {
-                    NorgeUnavailableState(
-                        AppStrings.localized(
-                            normalizedQuery.isEmpty ? "chat.group_chats_empty_title" : "chat.no_results"
-                        ),
-                        systemImage: normalizedQuery.isEmpty ? "person.3" : "magnifyingglass",
-                        description: AppStrings.localized(
-                            normalizedQuery.isEmpty ? "chat.group_chats_empty_body" : "chat.try_another_search"
-                        )
-                    )
-                    .frame(maxWidth: .infinity)
-                    .padding(.top, 44)
-                } else {
-                    ForEach(groups) { group in
-                        NavigationLink {
-                            CommunityGroupChatView(group: group)
-                        } label: {
-                            HStack(spacing: 13) {
-                                CommunityGroupImageView(
-                                    photoURL: group.photoURL,
-                                    isCityGroup: group.cityOrRegion != nil,
-                                    width: 56,
-                                    height: 56
-                                )
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(group.name).font(.body.weight(.semibold))
-                                    Text(group.description).font(.subheadline).foregroundStyle(.secondary).lineLimit(1)
-                                }
-                                Spacer()
-                                Image(systemName: "chevron.right").font(.caption.weight(.semibold)).foregroundStyle(
-                                    .secondary)
-                            }
-                            .padding(.horizontal, 16).padding(.vertical, 11)
-                            .contentShape(Rectangle())
-                        }
-                        .buttonStyle(.plain)
+        return ScrollViewReader { proxy in
+            ScrollView {
+                VStack(alignment: .leading, spacing: 0) {
+                    Color.clear.frame(height: 0).id("group-chats-top")
+                    ScrollHeaderVisibilityObserver { visible in
+                        tabRouter.setTabBarCompact(!visible, for: .messages)
                     }
+                    .frame(height: 0)
+                    LazyVStack(alignment: .leading, spacing: 0) {
+                        if groups.isEmpty {
+                            NorgeUnavailableState(
+                                AppStrings.localized(
+                                    normalizedQuery.isEmpty ? "chat.group_chats_empty_title" : "chat.no_results"
+                                ),
+                                systemImage: normalizedQuery.isEmpty ? "person.3" : "magnifyingglass",
+                                description: AppStrings.localized(
+                                    normalizedQuery.isEmpty ? "chat.group_chats_empty_body" : "chat.try_another_search"
+                                )
+                            )
+                            .frame(maxWidth: .infinity)
+                            .padding(.top, 44)
+                        } else {
+                            ForEach(groups) { group in
+                                NavigationLink {
+                                    CommunityGroupChatView(group: group)
+                                } label: {
+                                    HStack(spacing: 13) {
+                                        CommunityGroupImageView(
+                                            photoURL: group.photoURL,
+                                            isCityGroup: group.cityOrRegion != nil,
+                                            width: 56,
+                                            height: 56
+                                        )
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            Text(group.name).font(.body.weight(.semibold))
+                                            Text(group.description).font(.subheadline).foregroundStyle(.secondary)
+                                                .lineLimit(1)
+                                        }
+                                        Spacer()
+                                        Image(systemName: "chevron.right").font(.caption.weight(.semibold))
+                                            .foregroundStyle(
+                                                .secondary)
+                                    }
+                                    .padding(.horizontal, 16).padding(.vertical, 11)
+                                    .contentShape(Rectangle())
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                    }
+                    .padding(.bottom, 6)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .contentMargins(.top, 0, for: .scrollContent)
+            .onChange(of: tabRouter.messagesScrollToTopToken) { _, _ in
+                withAnimation(.easeOut(duration: 0.24)) {
+                    proxy.scrollTo("group-chats-top", anchor: .top)
                 }
             }
-            .padding(.vertical, 6)
+            .refreshable { await groupsStore.reload() }
         }
-        .refreshable { await groupsStore.reload() }
     }
 
     private func conversationLinks(_ conversations: [CommunityConversationSummary]) -> some View {
@@ -321,6 +359,7 @@ private struct MessageRequestRow: View {
 
 struct CommunityConversationDetailView: View {  // swiftlint:disable:this type_body_length
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var tabRouter: AppTabRouter
     @EnvironmentObject private var conversationsStore: CommunityConversationsStore
     @EnvironmentObject private var authenticationStore: AuthenticationStore
     let conversation: CommunityConversationSummary
@@ -340,9 +379,11 @@ struct CommunityConversationDetailView: View {  // swiftlint:disable:this type_b
     @State private var photoPickerItem: PhotosPickerItem?
     @State private var pendingAttachmentID: UUID?
     @State private var pendingImage: UIImage?
+    @State private var isPendingImageScan = false
     @State private var isPreparingImage = false
     @State private var showsCamera = false
     @State private var hasLoadedDraft = false
+    @State private var draftSessionID: UUID?
     @State private var hasMoreOlderMessages = false
     @State private var isLoadingOlderMessages = false
     @StateObject private var realtimeDebouncer = NorgeTaskDebouncer()
@@ -371,9 +412,8 @@ struct CommunityConversationDetailView: View {  // swiftlint:disable:this type_b
                     .frame(maxWidth: .infinity, alignment: .leading).padding(.horizontal, 16).padding(.vertical, 8)
             }
             if isLoading && messages.isEmpty {
-                Spacer()
-                ProgressView()
-                Spacer()
+                NorgeSkeletonList(rowCount: 3, showsMedia: false)
+                    .padding(.horizontal, 16)
             } else {
                 messageList
             }
@@ -446,6 +486,7 @@ struct CommunityConversationDetailView: View {  // swiftlint:disable:this type_b
         }
         .task {
             guard let userID = authenticationStore.user?.id else { return }
+            draftSessionID = await CommunityMessageDraftStore.shared.beginSession(ownerID: userID)
             customBackgroundData = await CommunityChatBackgroundImageStore.shared.imageData(
                 for: conversation.id, userID: userID
             )
@@ -454,17 +495,20 @@ struct CommunityConversationDetailView: View {  // swiftlint:disable:this type_b
                     await CommunityMessageDraftStore.shared.load(
                         conversationID: conversation.id, ownerID: ownerID
                     ) ?? ""
+                await restorePendingImage(ownerID: ownerID)
             }
             hasLoadedDraft = true
             await reload()
         }
         .task(id: draft) {
-            guard hasLoadedDraft, let ownerID = authenticationStore.user?.id else { return }
+            guard hasLoadedDraft, let ownerID = authenticationStore.user?.id,
+                let draftSessionID
+            else { return }
             do {
                 try await Task.sleep(for: .milliseconds(250))
                 guard !Task.isCancelled else { return }
                 await CommunityMessageDraftStore.shared.save(
-                    draft, conversationID: conversation.id, ownerID: ownerID
+                    draft, conversationID: conversation.id, ownerID: ownerID, sessionID: draftSessionID
                 )
             } catch is CancellationError {
                 return
@@ -481,6 +525,7 @@ struct CommunityConversationDetailView: View {  // swiftlint:disable:this type_b
                 }
             }
         }
+        .task(id: pendingAttachmentID) { await pollPendingImageScan() }
         .onDisappear { realtimeDebouncer.cancel() }
         .task(id: messageQuery) {
             do {
@@ -515,45 +560,52 @@ struct CommunityConversationDetailView: View {  // swiftlint:disable:this type_b
     private var messageList: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                LazyVStack(alignment: .leading, spacing: 10) {
-                    if hasMoreOlderMessages {
-                        Group {
-                            if isLoadingOlderMessages {
-                                ProgressView()
-                            } else {
-                                Color.clear.frame(height: 1)
+                VStack(alignment: .leading, spacing: 0) {
+                    ScrollHeaderVisibilityObserver { visible in
+                        tabRouter.setTabBarCompact(!visible, for: .messages)
+                    }
+                    .frame(height: 0)
+                    LazyVStack(alignment: .leading, spacing: 10) {
+                        if hasMoreOlderMessages {
+                            Group {
+                                if isLoadingOlderMessages {
+                                    NorgeSkeleton(width: 180, height: 34, cornerRadius: 17)
+                                } else {
+                                    Color.clear.frame(height: 1)
+                                }
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 8)
+                            .onAppear {
+                                guard !isLoadingOlderMessages else { return }
+                                Task {
+                                    let anchorID = await loadOlderMessages()
+                                    if let anchorID { proxy.scrollTo(anchorID, anchor: .top) }
+                                }
                             }
                         }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 8)
-                        .onAppear {
-                            guard !isLoadingOlderMessages else { return }
-                            Task {
-                                let anchorID = await loadOlderMessages()
-                                if let anchorID { proxy.scrollTo(anchorID, anchor: .top) }
+                        if visibleMessages.isEmpty {
+                            NorgeUnavailableState(
+                                AppStrings.localized(
+                                    debouncedMessageQuery.isEmpty ? "chat.start_conversation" : "chat.no_results"),
+                                systemImage: debouncedMessageQuery.isEmpty
+                                    ? "bubble.left.and.bubble.right" : "magnifyingglass"
+                            ).frame(maxWidth: .infinity).padding(.top, 40)
+                        }
+                        ForEach(visibleMessages) { message in
+                            CommunityMessageBubble(
+                                message: message, isMine: message.senderID == authenticationStore.user?.id,
+                                showsReadReceipt: shouldShowReadReceipt(for: message), bubbleColor: settings.bubbleColor
+                            ) {
+                                reportTarget = message
+                            } hide: {
+                                hideTarget = message
                             }
+                            .id(message.id)
                         }
-                    }
-                    if visibleMessages.isEmpty {
-                        NorgeUnavailableState(
-                            AppStrings.localized(
-                                debouncedMessageQuery.isEmpty ? "chat.start_conversation" : "chat.no_results"),
-                            systemImage: debouncedMessageQuery.isEmpty
-                                ? "bubble.left.and.bubble.right" : "magnifyingglass"
-                        ).frame(maxWidth: .infinity).padding(.top, 40)
-                    }
-                    ForEach(visibleMessages) { message in
-                        CommunityMessageBubble(
-                            message: message, isMine: message.senderID == authenticationStore.user?.id,
-                            showsReadReceipt: shouldShowReadReceipt(for: message), bubbleColor: settings.bubbleColor
-                        ) {
-                            reportTarget = message
-                        } hide: {
-                            hideTarget = message
-                        }
-                        .id(message.id)
-                    }
-                }.padding(.horizontal, 16).padding(.vertical, 18)
+                    }.padding(.horizontal, 16).padding(.vertical, 18)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
             .defaultScrollAnchor(.bottom)
             .scrollDismissesKeyboard(.interactively)
@@ -574,13 +626,25 @@ struct CommunityConversationDetailView: View {  // swiftlint:disable:this type_b
                 HStack(spacing: 10) {
                     Image(uiImage: pendingImage).resizable().scaledToFill()
                         .frame(width: 48, height: 48).clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                    Text(AppStrings.localized("groups.chat_image_ready")).font(.footnote).foregroundStyle(.secondary)
+                    Text(
+                        AppStrings.localized(
+                            isPendingImageScan ? "groups.chat_image_checking" : "groups.chat_image_ready"
+                        )
+                    ).font(.footnote).foregroundStyle(.secondary)
                     Spacer()
                     Button {
                         guard let attachmentID = pendingAttachmentID else { return }
                         pendingAttachmentID = nil
                         self.pendingImage = nil
-                        Task { await discardImage(attachmentID) }
+                        isPendingImageScan = false
+                        Task {
+                            await discardImage(attachmentID)
+                            if let ownerID = authenticationStore.user?.id {
+                                await CommunityPendingImageStore.shared.remove(
+                                    ownerID: ownerID, scopeID: conversation.id, kind: .direct
+                                )
+                            }
+                        }
                     } label: {
                         Image(systemName: "xmark.circle.fill")
                     }
@@ -616,7 +680,7 @@ struct CommunityConversationDetailView: View {  // swiftlint:disable:this type_b
                     }
                 NorgeCircularSendButton(
                     isSending: isSending,
-                    isEnabled: !isSending && !isPreparingImage && !settings.isRestricted
+                    isEnabled: !isSending && !isPreparingImage && !isPendingImageScan && !settings.isRestricted
                         && (draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false
                             || pendingAttachmentID != nil),
                     accessibilityLabel: AppStrings.localized("chat.send")
@@ -699,7 +763,7 @@ struct CommunityConversationDetailView: View {  // swiftlint:disable:this type_b
         await reload(showSpinner: false)
     }
     private func send() async {
-        guard !isSending, !settings.isRestricted else { return }
+        guard !isSending, !isPendingImageScan, !settings.isRestricted else { return }
         let body = draft.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !body.isEmpty || pendingAttachmentID != nil else { return }
         isSending = true
@@ -719,6 +783,12 @@ struct CommunityConversationDetailView: View {  // swiftlint:disable:this type_b
             }
             pendingAttachmentID = nil
             pendingImage = nil
+            isPendingImageScan = false
+            if let ownerID = authenticationStore.user?.id {
+                await CommunityPendingImageStore.shared.remove(
+                    ownerID: ownerID, scopeID: conversation.id, kind: .direct
+                )
+            }
             await refreshFromRealtime()
         } catch { errorMessage = AppStrings.localized("messages.error") }
     }
@@ -743,13 +813,105 @@ struct CommunityConversationDetailView: View {  // swiftlint:disable:this type_b
         defer { if managesLoadingState { isPreparingImage = false } }
         do {
             let upload = try await CommunityImageProcessing.prepareJPEG(from: data)
-            let attachmentID = try await conversationsStore.stageImage(
-                conversationID: conversation.id, jpegData: upload.data)
-            guard let image = UIImage(data: upload.data) else { throw CommunityMediaError.unsupportedImage }
-            pendingAttachmentID = attachmentID
-            pendingImage = image
+            guard
+                let image = CommunityImageDecoding.image(
+                    from: upload.data, variant: .thumbnail(maxPixelDimension: 256)
+                )
+            else {
+                throw CommunityMediaError.unsupportedImage
+            }
+            do {
+                let attachmentID = try await conversationsStore.stageImage(
+                    conversationID: conversation.id, jpegData: upload.data
+                )
+                pendingAttachmentID = attachmentID
+                pendingImage = image
+                isPendingImageScan = false
+            } catch let error as CommunityDirectChatMediaError {
+                switch error {
+                case .pendingScan(let attachmentID):
+                    pendingAttachmentID = attachmentID
+                    pendingImage = image
+                    isPendingImageScan = true
+                    if let ownerID = authenticationStore.user?.id {
+                        await CommunityPendingImageStore.shared.save(
+                            attachmentID: attachmentID,
+                            ownerID: ownerID,
+                            scopeID: conversation.id,
+                            kind: .direct,
+                            jpegData: upload.data
+                        )
+                    }
+                case .rejected:
+                    errorMessage = AppStrings.localized("groups.chat_image_rejected")
+                case .needsReview, .unavailable:
+                    errorMessage = AppStrings.localized("groups.chat_image_error")
+                }
+            }
         } catch {
             errorMessage = AppStrings.localized("groups.chat_image_error")
+        }
+    }
+
+    private func restorePendingImage(ownerID: UUID) async {
+        guard
+            let pending = await CommunityPendingImageStore.shared.load(
+                ownerID: ownerID, scopeID: conversation.id, kind: .direct
+            ),
+            let image = CommunityImageDecoding.image(
+                from: pending.jpegData, variant: .thumbnail(maxPixelDimension: 256)
+            )
+        else { return }
+        pendingAttachmentID = pending.attachmentID
+        pendingImage = image
+        isPendingImageScan = true
+    }
+
+    private func pollPendingImageScan() async {
+        guard isPendingImageScan, let attachmentID = pendingAttachmentID else { return }
+        let delays: [Duration] = [.seconds(2), .seconds(4), .seconds(8), .seconds(15), .seconds(30), .seconds(30)]
+        for delay in delays {
+            do {
+                try await Task.sleep(for: delay)
+                guard !Task.isCancelled, pendingAttachmentID == attachmentID else { return }
+                let outcome = try await conversationsStore.scanStatus(attachmentID: attachmentID)
+                switch outcome {
+                case .passed:
+                    isPendingImageScan = false
+                    return
+                case .pendingScan:
+                    continue
+                case .rejected:
+                    await clearPendingImage(attachmentID: attachmentID)
+                    errorMessage = AppStrings.localized("groups.chat_image_rejected")
+                    return
+                case .needsReview:
+                    await clearPendingImage(attachmentID: attachmentID)
+                    errorMessage = AppStrings.localized("groups.chat_image_review")
+                    return
+                case .unavailable:
+                    await clearPendingImage(attachmentID: attachmentID)
+                    errorMessage = AppStrings.localized("groups.chat_image_error")
+                    return
+                }
+            } catch is CancellationError {
+                return
+            } catch {
+                continue
+            }
+        }
+        errorMessage = AppStrings.localized("groups.chat_image_error")
+    }
+
+    private func clearPendingImage(attachmentID: UUID) async {
+        pendingAttachmentID = nil
+        pendingImage = nil
+        isPendingImageScan = false
+        await discardImage(attachmentID)
+        if let ownerID = authenticationStore.user?.id {
+            await CommunityPendingImageStore.shared.remove(
+                ownerID: ownerID, scopeID: conversation.id, kind: .direct
+            )
         }
     }
     private func discardImage(_ attachmentID: UUID) async {

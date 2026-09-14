@@ -26,7 +26,24 @@ struct TranslationReviewRegistryTests {
                 #expect(record.status == .pendingEditorialReview)
                 #expect(!record.isReadyForRelease)
             }
+            #expect(!TranslationReviewRegistry.canDisplayLocalizedCopy(for: language, scope: .onboarding))
+            #expect(!TranslationReviewRegistry.canDisplayLocalizedCopy(for: language, scope: .plan))
+            #expect(!TranslationReviewRegistry.canDisplayLocalizedCopy(for: language, scope: .taskDescriptions))
+            #expect(!TranslationReviewRegistry.canDisplayLocalizedCopy(for: language, scope: .legalNotices))
+        }
+    }
+
+    @Test func generalUICanUseACompleteBundledResource() {
+        for language in AppLanguage.allCases {
             #expect(TranslationReviewRegistry.canDisplayLocalizedCopy(for: language))
         }
+    }
+
+    @Test func proceduralKeyNamespacesRequireTheMatchingReviewScope() {
+        #expect(TranslationReviewRegistry.scope(for: "task.tax_card.title") == .taskDescriptions)
+        #expect(TranslationReviewRegistry.scope(for: "plan.progress") == .plan)
+        #expect(TranslationReviewRegistry.scope(for: "legal.privacy.title") == .legalNotices)
+        #expect(TranslationReviewRegistry.scope(for: "onboarding.city.question") == .onboarding)
+        #expect(TranslationReviewRegistry.scope(for: "feed.error") == nil)
     }
 }

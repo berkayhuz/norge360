@@ -206,16 +206,26 @@ private struct QAAuth: AuthProviding {
         }
     }
 }
-
 private struct QAFeed: CommunityFeedProviding {
     func loadFeedPage(cursor: String?, limit: Int) async throws -> CommunityPage<CommunityFeedItem> {
         CommunityPage(items: QAFixture.posts, nextCursor: nil)
     }
     func loadMemberProfile(userID: UUID) async throws -> CommunityProfile? { QAFixture.member }
     func loadMemberPosts(userID: UUID) async throws -> [CommunityFeedItem] { QAFixture.posts }
+    func loadMemberPostsPage(
+        userID: UUID, cursor: String?, limit: Int
+    ) async throws -> CommunityPage<CommunityFeedItem> {
+        CommunityPage(items: QAFixture.posts, nextCursor: nil)
+    }
     func loadMemberReplies(userID: UUID) async throws -> [CommunityFeedItem] { QAFixture.posts }
+    func loadMemberRepliesPage(
+        userID: UUID, cursor: String?, limit: Int
+    ) async throws -> CommunityPage<CommunityFeedItem> {
+        CommunityPage(items: QAFixture.posts, nextCursor: nil)
+    }
     func loadMemberMedia(userID: UUID) async throws -> [CommunityFeedItem] { QAFixture.posts }
     func loadLikedPosts(userID: UUID) async throws -> [CommunityFeedItem] { QAFixture.posts }
+    func loadSavedPostIDs() async throws -> [UUID] { [] }
     func loadMemberStats(userID: UUID) async throws -> CommunityMemberProfileStats? {
         CommunityMemberProfileStats(userID: QAFixture.memberID, postsCount: 12, likesCount: 184, commentsCount: 36)
     }
@@ -223,7 +233,9 @@ private struct QAFeed: CommunityFeedProviding {
     func loadPost(id: UUID) async throws -> CommunityFeedItem? { QAFixture.posts.first { $0.id == id } }
     func searchHashtags(prefix: String) async throws -> [CommunityHashtagSuggestion] { [] }
     func loadHashtagPosts(tag: String) async throws -> [CommunityFeedItem] { [] }
-    func loadGroupPosts(groupID: UUID) async throws -> [CommunityFeedItem] { [] }
+    func loadGroupPosts(groupID: UUID, cursor: String?, limit: Int) async throws -> CommunityPage<CommunityFeedItem> {
+        CommunityPage(items: [], nextCursor: nil)
+    }
     func createPost(title: String, body: String, kind: CommunityPostKind, groupID: UUID?, media: [CommunityImageUpload])
         async throws
     { throw QAError.unexpectedMutation }
@@ -231,7 +243,10 @@ private struct QAFeed: CommunityFeedProviding {
     func deletePost(id: UUID) async throws { throw QAError.unexpectedMutation }
     func removeGroupPost(id: UUID, groupID: UUID) async throws { throw QAError.unexpectedMutation }
     func toggleLike(postID: UUID) async throws -> Bool { false }
-    func loadComments(postID: UUID) async throws -> [CommunityCommentItem] { QAFixture.comments }
+    func toggleSave(postID: UUID) async throws -> Bool { throw QAError.unexpectedMutation }
+    func loadComments(postID: UUID, cursor: String?, limit: Int) async throws -> CommunityPage<CommunityCommentItem> {
+        CommunityPage(items: QAFixture.comments, nextCursor: nil)
+    }
     func createComment(postID: UUID, body: String) async throws { throw QAError.unexpectedMutation }
     func updateComment(id: UUID, body: String) async throws { throw QAError.unexpectedMutation }
     func deleteComment(id: UUID) async throws { throw QAError.unexpectedMutation }
@@ -306,6 +321,9 @@ private struct QAConversations: CommunityConversationsProviding {
         throw QAError.unexpectedMutation
     }
     func stageImage(conversationID: UUID, jpegData: Data) async throws -> UUID { throw QAError.unexpectedMutation }
+    func scanStatus(attachmentID: UUID) async throws -> CommunityPrivateImageScanOutcome {
+        throw QAError.unexpectedMutation
+    }
     func imageURL(attachmentID: UUID) async throws -> URL { throw QAError.unexpectedMutation }
     func cancelImage(attachmentID: UUID) async throws { throw QAError.unexpectedMutation }
     func markRead(conversationID: UUID) async throws { () }

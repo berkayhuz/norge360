@@ -6,6 +6,7 @@ import SwiftUI
 // swiftlint:disable file_length
 
 struct CommunityMemberProfileView: View {
+    @EnvironmentObject private var tabRouter: AppTabRouter
     @EnvironmentObject private var feedStore: CommunityFeedStore
     @EnvironmentObject private var communityProfileStore: CommunityProfileStore
     @EnvironmentObject private var followStore: CommunityFollowStore
@@ -17,13 +18,18 @@ struct CommunityMemberProfileView: View {
     var usesRootTopBar = false
     @State private var profile: CommunityProfile?
     @State private var posts: [CommunityFeedItem] = []
+    @State private var nextPostsCursor: String?
     @State private var stats: CommunityMemberProfileStats?
     @State private var replies: [CommunityFeedItem] = []
+    @State private var nextRepliesCursor: String?
     @State private var mediaPosts: [CommunityFeedItem] = []
+    @State private var nextMediaCursor: String?
     @State private var likedPosts: [CommunityFeedItem] = []
+    @State private var savedPosts: [CommunityFeedItem] = []
     @State private var selectedPostTab: ProfilePostTab = .posts
     @State private var loadedPostTabs: Set<ProfilePostTab> = []
     @State private var isLoadingPostTab = false
+    @State private var isLoadingMorePostItems = false
     @State private var isLoading = true
     @State private var errorMessage: String?
     @State private var noticeMessage: String?
@@ -31,6 +37,7 @@ struct CommunityMemberProfileView: View {
     @State private var coverPickerItem: PhotosPickerItem?
     @State private var imageSourceDestination: ProfileImageDestination?
     @State private var isPresentingCamera = false
+    @State private var cameraDestination: ProfileImageDestination?
     @State private var imageDraft: CommunityImageDraft?
     @State private var imageDestination: ProfileImageDestination = .avatar
     @State private var expandedImage: ExpandedProfileImage?
@@ -39,29 +46,95 @@ struct CommunityMemberProfileView: View {
     @State private var isUploadingCover = false
     @State private var isPresentingComposer = false
     @State private var isPresentingProfileEditor = false
+    @State private var isPresentingSettings = false
     @State private var isPresentingProfileReport = false
     @State private var isPresentingProfileBlock = false
     @State private var hasLoaded = false
     @State private var isRequestingConversation = false
+    @State private var isProfileCompletionHidden = false
 
     // A profile reached from a post or conversation is still owned by the
     // authenticated member, regardless of which tab created the destination.
     private var isOwnProfile: Bool { authenticationStore.user?.id == userID }
     private var usesProfileTabChrome: Bool { usesRootTopBar || isOwnProfile }
 
+    // Main rendering is kept in the feature extension below so the state
+    // declaration remains small and easy to audit.
+}
+
+private enum ProfilePostTab: String, CaseIterable, Hashable, Identifiable {
+    case posts
+    case replies
+    case media
+    case liked
+    case saved
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .posts: AppStrings.localized("member.recent_posts")
+        case .replies: AppStrings.localized("member.replies")
+        case .media: AppStrings.localized("member.media")
+        case .liked: AppStrings.localized("member.liked_posts")
+        case .saved: AppStrings.localized("member.saved_posts")
+        }
+    }
+
+    var emptyTitle: String {
+        switch self {
+        case .posts: AppStrings.localized("member.no_posts_title")
+        case .replies: AppStrings.localized("member.no_replies_title")
+        case .media: AppStrings.localized("member.no_media_title")
+        case .liked: AppStrings.localized("member.no_liked_posts_title")
+        case .saved: AppStrings.localized("member.no_saved_posts_title")
+        }
+    }
+
+    var emptyBody: String {
+        switch self {
+        case .posts: AppStrings.localized("member.no_posts_body")
+        case .replies: AppStrings.localized("member.no_replies_body")
+        case .media: AppStrings.localized("member.no_media_body")
+        case .liked: AppStrings.localized("member.no_liked_posts_body")
+        case .saved: AppStrings.localized("member.no_saved_posts_body")
+        }
+    }
+}
+
+extension CommunityMemberProfileView {
     var body: some View {
         Group {
             if isLoading {
                 NorgeLoadingState(fillsAvailableSpace: true)
             } else if let profile {
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 28) {
-                        profileHeader(profile)
-                        profilePosts
+                ScrollViewReader { proxy in
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 0) {
+                            Color.clear.frame(height: 0).id("profile-top")
+                            ScrollHeaderVisibilityObserver { visible in
+                                tabRouter.setTabBarCompact(!visible, for: .profile)
+                            }
+                            .frame(height: 0)
+                            VStack(alignment: .leading, spacing: 28) {
+                                profileHeader(profile)
+                                if isOwnProfile {
+                                    profileCompletionSection(profile)
+                                }
+                                profilePosts
+                            }
+                            .padding(.bottom, 68)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     }
-                    .padding(.bottom, 28)
+                    .contentMargins(.top, 0, for: .scrollContent)
+                    .refreshable { await loadProfile() }
+                    .onChange(of: tabRouter.profileScrollToTopToken) { _, _ in
+                        withAnimation(.easeOut(duration: 0.24)) {
+                            proxy.scrollTo("profile-top", anchor: .top)
+                        }
+                    }
                 }
-                .refreshable { await loadProfile() }
             } else if errorMessage != nil {
                 ContentUnavailableView {
                     Label(AppStrings.localized("profile.ui.load_error_title"), systemImage: "wifi.exclamationmark")
@@ -106,8 +179,8 @@ struct CommunityMemberProfileView: View {
                                 profileActions
                             }
 
-                            NavigationLink {
-                                ProfileSettingsView()
+                            Button {
+                                isPresentingSettings = true
                             } label: {
                                 NorgeTopBarActionLabel(systemName: "gearshape")
                             }
@@ -133,9 +206,13 @@ struct CommunityMemberProfileView: View {
                 }
             }
         }
+        .navigationDestination(isPresented: $isPresentingSettings) {
+            ProfileSettingsView()
+        }
         .task {
             guard !hasLoaded else { return }
             hasLoaded = true
+            loadProfileCompletionVisibility()
             if isOwnProfile, let currentProfile = communityProfileStore.profile {
                 profile = currentProfile
                 isLoading = false
@@ -152,38 +229,49 @@ struct CommunityMemberProfileView: View {
         .onChange(of: selectedPostTab) { _, tab in
             Task { await loadPostTab(tab) }
         }
+        .onChange(of: isPresentingSettings) { _, isPresented in
+            tabRouter.isProfileSettingsFlowActive = isPresented
+            tabRouter.isTabBarHidden = isPresented
+        }
+        .onChange(of: isPresentingComposer) { _, isPresented in
+            tabRouter.isTabBarHidden = isPresented || isPresentingSettings
+        }
         .onChange(of: avatarPickerItem) { _, item in
             guard let item else { return }
+            imageSourceDestination = nil
             Task { await prepareImage(from: item, destination: .avatar) }
         }
         .onChange(of: coverPickerItem) { _, item in
             guard let item else { return }
+            imageSourceDestination = nil
             Task { await prepareImage(from: item, destination: .cover) }
         }
-        .confirmationDialog(
-            AppStrings.localized("media.choose_source"),
-            isPresented: Binding(
-                get: { imageSourceDestination != nil }, set: { if !$0 { imageSourceDestination = nil } })
-        ) {
-            if let destination = imageSourceDestination {
-                PhotosPicker(
-                    selection: destination == .avatar ? $avatarPickerItem : $coverPickerItem, matching: .images
-                ) {
-                    Text(AppStrings.localized("media.photo_library"))
-                }
-                if UIImagePickerController.isSourceTypeAvailable(.camera) {
-                    Button(AppStrings.localized("media.camera")) { isPresentingCamera = true }
+        .sheet(item: $imageSourceDestination) { destination in
+            ProfileImageSourceSheet(
+                destination: destination,
+                avatarPickerItem: $avatarPickerItem,
+                coverPickerItem: $coverPickerItem
+            ) {
+                cameraDestination = destination
+                imageSourceDestination = nil
+                Task { @MainActor in
+                    try? await Task.sleep(for: .milliseconds(250))
+                    guard cameraDestination == destination else { return }
+                    isPresentingCamera = true
                 }
             }
-            Button(AppStrings.localized("common.cancel"), role: .cancel) { imageSourceDestination = nil }
         }
         .sheet(isPresented: $isPresentingCamera) {
             CameraImagePicker { data in
-                guard let destination = imageSourceDestination else { return }
-                imageSourceDestination = nil
-                Task { await prepareImage(data: data, destination: destination) }
+                guard let destination = cameraDestination else { return }
+                cameraDestination = nil
+                Task { @MainActor in
+                    try? await Task.sleep(for: .milliseconds(250))
+                    await prepareImage(data: data, destination: destination)
+                }
             }
             .ignoresSafeArea()
+            .onDisappear { cameraDestination = nil }
         }
         .sheet(item: $imageDraft) { source in
             let destination = imageDestination
@@ -207,17 +295,23 @@ struct CommunityMemberProfileView: View {
                 EditCommunityProfileDetailsView(profile: profile)
             }
         }
-        .sheet(
-            isPresented: $isPresentingComposer,
-            onDismiss: {
-                Task { await loadProfile() }
-            },
-            content: {
+        .overlay {
+            if isPresentingComposer {
                 CreateCommunityPostView(
-                    joinedGroups: groupsStore.groups.filter { groupsStore.joinedGroupIDs.contains($0.id) }
+                    joinedGroups: groupsStore.groups.filter { groupsStore.joinedGroupIDs.contains($0.id) },
+                    onDismiss: {
+                        isPresentingComposer = false
+                        Task { await loadProfile() }
+                    }
                 )
+                .background(Color.norgeAppBackground.ignoresSafeArea())
+                .ignoresSafeArea()
+                .zIndex(10)
+                .transaction { transaction in
+                    transaction.animation = nil
+                }
             }
-        )
+        }
         .confirmationDialog(
             AppStrings.localized("member.report_title"),
             isPresented: $isPresentingProfileReport,
@@ -264,45 +358,6 @@ struct CommunityMemberProfileView: View {
         }
     }
 
-}
-
-private enum ProfilePostTab: String, CaseIterable, Hashable, Identifiable {
-    case posts
-    case replies
-    case media
-    case liked
-
-    var id: String { rawValue }
-
-    var title: String {
-        switch self {
-        case .posts: AppStrings.localized("member.recent_posts")
-        case .replies: AppStrings.localized("member.replies")
-        case .media: AppStrings.localized("member.media")
-        case .liked: AppStrings.localized("member.liked_posts")
-        }
-    }
-
-    var emptyTitle: String {
-        switch self {
-        case .posts: AppStrings.localized("member.no_posts_title")
-        case .replies: AppStrings.localized("member.no_replies_title")
-        case .media: AppStrings.localized("member.no_media_title")
-        case .liked: AppStrings.localized("member.no_liked_posts_title")
-        }
-    }
-
-    var emptyBody: String {
-        switch self {
-        case .posts: AppStrings.localized("member.no_posts_body")
-        case .replies: AppStrings.localized("member.no_replies_body")
-        case .media: AppStrings.localized("member.no_media_body")
-        case .liked: AppStrings.localized("member.no_liked_posts_body")
-        }
-    }
-}
-
-extension CommunityMemberProfileView {
     private func profileHeader(_ profile: CommunityProfile) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             Button {
@@ -341,21 +396,16 @@ extension CommunityMemberProfileView {
 
     private func profileIdentity(_ profile: CommunityProfile) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            VStack(alignment: .leading, spacing: 3) {
-                Text(profile.displayName)
-                    .font(.title2.weight(.bold))
-                    .fixedSize(horizontal: false, vertical: true)
-                Text("@\(profile.username)")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .textSelection(.enabled)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-
-            if !isOwnProfile {
-                HStack {
+            if isOwnProfile {
+                profileIdentitySummary(profile)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            } else {
+                HStack(alignment: .top, spacing: 10) {
+                    profileIdentitySummary(profile)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .layoutPriority(1)
                     relationshipActions
-                    Spacer()
+                        .fixedSize(horizontal: true, vertical: false)
                 }
             }
 
@@ -370,6 +420,21 @@ extension CommunityMemberProfileView {
         }
         .padding(.horizontal, 20)
         .padding(.top, 12)
+    }
+
+    private func profileIdentitySummary(_ profile: CommunityProfile) -> some View {
+        VStack(alignment: .leading, spacing: 3) {
+            Text(profile.displayName)
+                .font(.title2.weight(.bold))
+                .lineLimit(1)
+                .truncationMode(.tail)
+            Text("@\(profile.username)")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .truncationMode(.tail)
+                .textSelection(.enabled)
+        }
     }
 
     private func profileMetadata(_ profile: CommunityProfile) -> some View {
@@ -394,6 +459,66 @@ extension CommunityMemberProfileView {
             .foregroundStyle(.secondary)
 
         }
+    }
+
+    @ViewBuilder
+    private func profileCompletionSection(_ profile: CommunityProfile) -> some View {
+        ProfileCompletionSection(
+            profile: profile,
+            posts: posts,
+            joinedGroupIDs: groupsStore.joinedGroupIDs,
+            isHidden: isProfileCompletionHidden,
+            onHide: hideProfileCompletion,
+            onAction: handleProfileCompletionAction
+        )
+    }
+
+    private func isProfileCompletionTaskComplete(
+        _ task: ProfileCompletionTask,
+        profile: CommunityProfile,
+        posts: [CommunityFeedItem],
+        joinedGroupIDs: Set<UUID>
+    ) -> Bool {
+        task.isComplete(profile: profile, posts: posts, joinedGroupIDs: joinedGroupIDs)
+    }
+
+    private func handleProfileCompletionAction(_ task: ProfileCompletionTask) {
+        guard let currentProfile = profile ?? communityProfileStore.profile else { return }
+        guard
+            !isProfileCompletionTaskComplete(
+                task,
+                profile: currentProfile,
+                posts: posts,
+                joinedGroupIDs: groupsStore.joinedGroupIDs
+            )
+        else { return }
+
+        switch task {
+        case .avatar:
+            imageSourceDestination = .avatar
+        case .cover:
+            imageSourceDestination = .cover
+        case .biography, .location, .interests:
+            isPresentingProfileEditor = true
+        case .group:
+            tabRouter.selectTab(.community)
+        case .post:
+            isPresentingComposer = true
+        }
+    }
+
+    private func loadProfileCompletionVisibility() {
+        guard isOwnProfile else { return }
+        isProfileCompletionHidden = UserDefaults.standard.bool(forKey: profileCompletionHiddenKey)
+    }
+
+    private func hideProfileCompletion() {
+        isProfileCompletionHidden = true
+        UserDefaults.standard.set(true, forKey: profileCompletionHiddenKey)
+    }
+
+    private var profileCompletionHiddenKey: String {
+        "profile.completion.hidden.\(userID.uuidString.lowercased())"
     }
 
     @ViewBuilder
@@ -458,11 +583,7 @@ extension CommunityMemberProfileView {
         VStack(alignment: .leading, spacing: 14) {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 20) {
-                    ForEach(
-                        ProfilePostTab.allCases.filter {
-                            $0 != .liked || isOwnProfile || followState?.canViewLikedPosts == true
-                        }
-                    ) { tab in
+                    ForEach(visiblePostTabs) { tab in
                         Button {
                             selectedPostTab = tab
                         } label: {
@@ -486,24 +607,14 @@ extension CommunityMemberProfileView {
             postTabContent
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .contentShape(Rectangle())
-        .simultaneousGesture(
-            DragGesture(minimumDistance: 24)
-                .onEnded { value in
-                    guard abs(value.translation.width) > abs(value.translation.height),
-                        abs(value.translation.width) > 45
-                    else { return }
-                    selectAdjacentPostTab(direction: value.translation.width < 0 ? 1 : -1)
-                }
-        )
     }
 
     @ViewBuilder
     private var postTabContent: some View {
         if isLoadingPostTab {
-            ProgressView()
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 32)
+            NorgeSkeletonList(rowCount: 2)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 16)
         } else if selectedPostItems.isEmpty {
             ContentUnavailableView(
                 selectedPostTab.emptyTitle,
@@ -516,21 +627,26 @@ extension CommunityMemberProfileView {
                 ForEach(selectedPostItems) { item in
                     CommunityFeedPostView(item: item, showsAuthorFollowAction: false)
                         .frame(maxWidth: .infinity, alignment: .leading)
+                        .onAppear {
+                            guard item.id == selectedPostItems.last?.id else { return }
+                            Task { await loadMorePostItems() }
+                        }
                 }
             }
             .padding(.horizontal, 16)
         }
     }
 
-    private func selectAdjacentPostTab(direction: Int) {
-        let visibleTabs = ProfilePostTab.allCases.filter {
-            $0 != .liked || isOwnProfile || followState?.canViewLikedPosts == true
-        }
-        guard let currentIndex = visibleTabs.firstIndex(of: selectedPostTab) else { return }
-        let nextIndex = currentIndex + direction
-        guard visibleTabs.indices.contains(nextIndex) else { return }
-        withAnimation(.interactiveSpring(response: 0.28, dampingFraction: 0.86)) {
-            selectedPostTab = visibleTabs[nextIndex]
+    private var visiblePostTabs: [ProfilePostTab] {
+        ProfilePostTab.allCases.filter {
+            switch $0 {
+            case .liked:
+                isOwnProfile || followState?.canViewLikedPosts == true
+            case .saved:
+                isOwnProfile
+            default:
+                true
+            }
         }
     }
 
@@ -540,6 +656,7 @@ extension CommunityMemberProfileView {
         case .replies: replies
         case .media: mediaPosts
         case .liked: likedPosts
+        case .saved: savedPosts
         }
     }
 
@@ -563,7 +680,7 @@ extension CommunityMemberProfileView {
                 Label(AppStrings.localized("member.share_profile"), systemImage: "square.and.arrow.up")
             }
         } label: {
-            NorgeTopBarActionLabel(systemName: "ellipsis")
+            profileOverflowMenuLabel
         }
         .accessibilityLabel(AppStrings.localized("member.profile_actions"))
     }
@@ -580,7 +697,7 @@ extension CommunityMemberProfileView {
                 isPresentingProfileBlock = true
             }
         } label: {
-            NorgeTopBarActionLabel(systemName: "ellipsis")
+            profileOverflowMenuLabel
         }
         .accessibilityLabel(AppStrings.localized("member.profile_actions"))
     }
@@ -636,21 +753,35 @@ extension CommunityMemberProfileView {
         .buttonStyle(.plain)
     }
 
+    private var profileOverflowMenuLabel: some View {
+        Image(systemName: "ellipsis")
+            .font(.system(size: 16, weight: .semibold))
+            .foregroundStyle(.primary)
+            .frame(width: 36, height: 36)
+            .contentShape(Circle())
+    }
+
     private func loadProfile() async {
         isLoading = profile == nil
         errorMessage = nil
         defer { isLoading = false }
         do {
+            feedStore.invalidateMemberContent(for: userID)
             if isOwnProfile {
                 await communityProfileStore.refreshProfile()
                 profile = communityProfileStore.profile
+                await groupsStore.activate()
             } else {
                 profile = try await feedStore.memberProfile(for: userID)
             }
             guard profile != nil else { return }
-            async let postsRequest = feedStore.memberPosts(for: userID)
+            await feedStore.refreshSavedPostIDs()
+            async let postsRequest = feedStore.memberPostsPage(for: userID)
             async let statsRequest = feedStore.memberStats(for: userID)
-            (posts, stats) = try await (postsRequest, statsRequest)
+            let (postsPage, loadedStats) = try await (postsRequest, statsRequest)
+            posts = postsPage.items
+            nextPostsCursor = postsPage.nextCursor
+            stats = loadedStats
             loadedPostTabs.insert(.posts)
             try await followStore.loadState(for: userID)
         } catch is CancellationError {
@@ -669,13 +800,86 @@ extension CommunityMemberProfileView {
             case .posts:
                 break
             case .replies:
-                replies = try await feedStore.memberReplies(for: userID)
+                let page = try await feedStore.memberRepliesPage(for: userID)
+                replies = page.items
+                nextRepliesCursor = page.nextCursor
             case .media:
-                mediaPosts = try await feedStore.memberMedia(for: userID)
+                let page = try await feedStore.memberMediaPage(for: userID)
+                mediaPosts = page.items
+                nextMediaCursor = page.nextCursor
             case .liked:
                 likedPosts = try await feedStore.likedPosts(for: userID)
+            case .saved:
+                savedPosts = try await feedStore.savedPosts()
             }
             loadedPostTabs.insert(tab)
+        } catch is CancellationError {
+            return
+        } catch {
+            errorMessage = AppStrings.localized("profile.ui.load_error_body")
+        }
+    }
+
+    private func loadMorePostItems() async {
+        switch selectedPostTab {
+        case .posts:
+            await loadMorePosts()
+        case .replies:
+            await loadMoreReplies()
+        case .media:
+            await loadMoreMedia()
+        case .liked, .saved:
+            return
+        }
+    }
+
+    private func loadMorePosts() async {
+        guard !isLoadingMorePostItems, let nextPostsCursor else { return }
+        await loadMoreProfilePage(tab: .posts, cursor: nextPostsCursor) { page in
+            let existingIDs = Set(posts.map(\.id))
+            posts.append(contentsOf: page.items.filter { !existingIDs.contains($0.id) })
+            self.nextPostsCursor = page.nextCursor
+        }
+    }
+
+    private func loadMoreReplies() async {
+        guard !isLoadingMorePostItems, let nextRepliesCursor else { return }
+        await loadMoreProfilePage(tab: .replies, cursor: nextRepliesCursor) { page in
+            let existingIDs = Set(replies.map(\.id))
+            replies.append(contentsOf: page.items.filter { !existingIDs.contains($0.id) })
+            self.nextRepliesCursor = page.nextCursor
+        }
+    }
+
+    private func loadMoreMedia() async {
+        guard !isLoadingMorePostItems, let nextMediaCursor else { return }
+        await loadMoreProfilePage(tab: .media, cursor: nextMediaCursor) { page in
+            let existingIDs = Set(mediaPosts.map(\.id))
+            mediaPosts.append(contentsOf: page.items.filter { !existingIDs.contains($0.id) })
+            self.nextMediaCursor = page.nextCursor
+        }
+    }
+
+    private func loadMoreProfilePage(
+        tab: ProfilePostTab,
+        cursor: String,
+        update: @escaping (CommunityPage<CommunityFeedItem>) -> Void
+    ) async {
+        isLoadingMorePostItems = true
+        defer { isLoadingMorePostItems = false }
+        do {
+            let page: CommunityPage<CommunityFeedItem>
+            switch tab {
+            case .posts:
+                page = try await feedStore.memberPostsPage(for: userID, cursor: cursor)
+            case .replies:
+                page = try await feedStore.memberRepliesPage(for: userID, cursor: cursor)
+            case .media:
+                page = try await feedStore.memberMediaPage(for: userID, cursor: cursor)
+            case .liked, .saved:
+                return
+            }
+            update(page)
         } catch is CancellationError {
             return
         } catch {
@@ -783,6 +987,205 @@ extension CommunityMemberProfileView {
 
 }
 
+private enum ProfileCompletionTask: String, CaseIterable, Identifiable {
+    case avatar
+    case cover
+    case biography
+    case location
+    case interests
+    case group
+    case post
+
+    var id: Self { self }
+
+    var icon: String {
+        switch self {
+        case .avatar: "person.crop.circle"
+        case .cover: "photo"
+        case .biography: "pencil"
+        case .location: "mappin.and.ellipse"
+        case .interests: "sparkles"
+        case .group: "person.3"
+        case .post: "text.bubble"
+        }
+    }
+
+    var title: String {
+        AppStrings.localized("profile.completion.\(rawValue)_title")
+    }
+
+    var taskDescription: String {
+        AppStrings.localized("profile.completion.\(rawValue)_body")
+    }
+
+    func isComplete(
+        profile: CommunityProfile,
+        posts: [CommunityFeedItem],
+        joinedGroupIDs: Set<UUID>
+    ) -> Bool {
+        switch self {
+        case .avatar:
+            profile.avatarPath != nil || profile.avatarURL != nil
+        case .cover:
+            profile.coverPath != nil || profile.coverURL != nil
+        case .biography:
+            !(profile.biography?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true)
+        case .location:
+            !(profile.cityOrRegion?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true)
+        case .interests:
+            !profile.interests.isEmpty
+        case .group:
+            !joinedGroupIDs.isEmpty
+        case .post:
+            !posts.isEmpty
+        }
+    }
+}
+
+private struct ProfileCompletionCard: View {
+    let task: ProfileCompletionTask
+    let isComplete: Bool
+    let action: () -> Void
+
+    var body: some View {
+        VStack(spacing: 8) {
+            Image(systemName: isComplete ? "checkmark" : task.icon)
+                .font(.system(size: 24, weight: .medium))
+                .foregroundStyle(.primary)
+                .frame(width: 62, height: 62)
+                .background(Color.norgeAppBackground, in: Circle())
+                .overlay(Circle().stroke(Color.primary.opacity(0.16), lineWidth: 1))
+
+            Text(task.title)
+                .font(.headline.weight(.semibold))
+                .multilineTextAlignment(.center)
+                .lineLimit(2)
+
+            Text(task.taskDescription)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .lineLimit(2)
+                .frame(maxWidth: .infinity, minHeight: 32, maxHeight: 32)
+
+            Button(action: action) {
+                HStack(spacing: 6) {
+                    if isComplete {
+                        Image(systemName: "checkmark")
+                    }
+                    Text(
+                        AppStrings.localized(
+                            isComplete ? "profile.completion.done" : "profile.completion.add"
+                        )
+                    )
+                }
+                .font(.subheadline.weight(.semibold))
+                .frame(maxWidth: .infinity, minHeight: 38)
+                .foregroundStyle(isComplete ? Color.secondary : Color.norgeAppBackground)
+                .background(
+                    isComplete ? Color.clear : Color.primary,
+                    in: RoundedRectangle(cornerRadius: 12, style: .continuous)
+                )
+                .overlay {
+                    if isComplete {
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .stroke(Color.primary.opacity(0.28), lineWidth: 1)
+                    }
+                }
+            }
+            .buttonStyle(.plain)
+            .disabled(isComplete)
+            .accessibilityLabel(task.title)
+            .accessibilityValue(
+                AppStrings.localized(
+                    isComplete ? "profile.completion.done" : "profile.completion.add"
+                )
+            )
+        }
+        .padding(12)
+        .frame(width: 220, height: 224)
+        .background(Color.norgeInputSurface, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+    }
+}
+
+private struct ProfileCompletionSection: View {
+    let profile: CommunityProfile
+    let posts: [CommunityFeedItem]
+    let joinedGroupIDs: Set<UUID>
+    let isHidden: Bool
+    let onHide: () -> Void
+    let onAction: (ProfileCompletionTask) -> Void
+
+    private var remainingCount: Int {
+        ProfileCompletionTask.allCases.count(where: { !isComplete($0) })
+    }
+
+    private var tasks: [ProfileCompletionTask] {
+        ProfileCompletionTask.allCases.sorted { left, right in
+            let leftIsComplete = isComplete(left)
+            let rightIsComplete = isComplete(right)
+            if leftIsComplete != rightIsComplete { return !leftIsComplete }
+            return left.rawValue < right.rawValue
+        }
+    }
+
+    var body: some View {
+        if !isHidden, remainingCount > 0 {
+            VStack(alignment: .leading, spacing: 14) {
+                HStack(alignment: .center, spacing: 12) {
+                    Text(AppStrings.localized("profile.completion.title"))
+                        .font(.title3.weight(.bold))
+
+                    Spacer(minLength: 0)
+
+                    Text(
+                        String(
+                            format: AppStrings.localized("profile.completion.remaining"),
+                            remainingCount
+                        )
+                    )
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.secondary)
+
+                    Menu {
+                        Button(
+                            AppStrings.localized("profile.completion.hide"),
+                            systemImage: "eye.slash",
+                            action: onHide
+                        )
+                    } label: {
+                        Image(systemName: "ellipsis.circle")
+                            .font(.title3.weight(.semibold))
+                            .frame(width: 44, height: 44)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(AppStrings.localized("profile.completion.hide"))
+                    .accessibilityHint(AppStrings.localized("profile.completion.hide_hint"))
+                }
+                .padding(.horizontal, 20)
+
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(alignment: .top, spacing: 12) {
+                        ForEach(tasks) { task in
+                            ProfileCompletionCard(
+                                task: task,
+                                isComplete: isComplete(task),
+                                action: { onAction(task) }
+                            )
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                }
+            }
+        }
+    }
+
+    private func isComplete(_ task: ProfileCompletionTask) -> Bool {
+        task.isComplete(profile: profile, posts: posts, joinedGroupIDs: joinedGroupIDs)
+    }
+}
+
 private struct ProfileImageEditControl: View {
     let isUploading: Bool
 
@@ -808,7 +1211,101 @@ private struct ProfileImageEditControl: View {
 
 }
 
-private enum ProfileImageDestination: Equatable { case avatar, cover }
+private struct ProfileImageSourceSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    let destination: ProfileImageDestination
+    @Binding var avatarPickerItem: PhotosPickerItem?
+    @Binding var coverPickerItem: PhotosPickerItem?
+    let onCamera: () -> Void
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 18) {
+                VStack(spacing: 8) {
+                    Image(systemName: destination == .avatar ? "person.crop.circle" : "rectangle.inset.filled")
+                        .font(.system(size: 32, weight: .medium))
+                        .foregroundStyle(Color.norgePrimary)
+                        .frame(width: 64, height: 64)
+                        .background(Color.norgeInputSurface, in: Circle())
+                    Text(AppStrings.localized("media.photo_source_note"))
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                }
+
+                VStack(spacing: 10) {
+                    PhotosPicker(
+                        selection: destination == .avatar ? $avatarPickerItem : $coverPickerItem,
+                        matching: .images
+                    ) {
+                        ProfileImageSourceOption(
+                            title: AppStrings.localized("media.photo_library"),
+                            systemImage: "photo.on.rectangle.angled"
+                        )
+                    }
+                    .buttonStyle(.plain)
+
+                    if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                        Button(action: onCamera) {
+                            ProfileImageSourceOption(
+                                title: AppStrings.localized("media.camera"),
+                                systemImage: "camera"
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+
+                Spacer(minLength: 0)
+            }
+            .padding(20)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .background(Color.norgeAppBackground)
+            .navigationTitle(AppStrings.localized("media.choose_source"))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(AppStrings.localized("common.cancel")) { dismiss() }
+                }
+            }
+        }
+        .presentationDetents([.height(320)])
+        .presentationDragIndicator(.visible)
+        .presentationBackground(Color.norgeAppBackground)
+    }
+}
+
+private struct ProfileImageSourceOption: View {
+    let title: String
+    let systemImage: String
+
+    var body: some View {
+        HStack(spacing: 14) {
+            Image(systemName: systemImage)
+                .font(.system(size: 19, weight: .semibold))
+                .foregroundStyle(Color.norgePrimary)
+                .frame(width: 42, height: 42)
+                .background(Color.norgeInputSurface, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+            Text(title)
+                .font(.body.weight(.semibold))
+                .foregroundStyle(.primary)
+            Spacer(minLength: 0)
+            Image(systemName: "chevron.right")
+                .font(.caption.weight(.bold))
+                .foregroundStyle(.secondary)
+        }
+        .padding(.horizontal, 14)
+        .frame(maxWidth: .infinity, minHeight: 58)
+        .background(Color.norgeInputSurface.opacity(0.72), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .contentShape(Rectangle())
+    }
+}
+
+private enum ProfileImageDestination: String, Identifiable, Equatable {
+    case avatar, cover
+
+    var id: String { rawValue }
+}
 
 private struct ExpandedProfileImage: Identifiable {
     let url: URL

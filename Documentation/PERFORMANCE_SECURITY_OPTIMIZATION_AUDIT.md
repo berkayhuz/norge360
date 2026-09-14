@@ -681,6 +681,8 @@ Worker’daki bounded APNs token ve Cloudflare key cache’leri request’e öze
   - ✅ RESOLVED — Authenticated client write grants are now least-privilege: event RSVP, event/group lifecycle, join-request, and moderation mutations are RPC/server-only; report moderation fields cannot be client-inserted; notification actor/target/type fields and post/comment authorship, associations, moderation state, and timestamps cannot be client-updated. Existing RLS checks remain authoritative for caller identity, with `supabase/tests/client_write_boundaries.sql` regression coverage.
 - [x] Block iki yönde discovery/read/send sınırında test edilsin.
   - ✅ RESOLVED — `can_view_community_user` ve direct-message erişim sınırının viewer→target ve target→viewer block yönlerinde profil/post discovery, profile search, conversation discovery, message read ve message send davranışları `supabase/tests/block_visibility_and_messaging.sql` ile regression olarak doğrulanıyor. Discovery RPC’sinin column-level grant’lerle kırılmaması için `20260912170000_fix_block_aware_profile_search.sql` aramayı block-aware public profile projection’ına taşıyor.
+- [x] Approval/private grup içeriği yalnızca kabul edilmiş üyelere açık olsun.
+  - ✅ RESOLVED — `20260913180000_harden_group_scoped_content_visibility.sql` grup post/comment/media/like/edit-history/hashtag RLS’ini ve Storage okuma politikalarını üyelik sınırına bağlıyor. Feed, comment, member-media ve enriched/hashtag search projection’ları `SECURITY INVOKER` olarak RLS’ye bırakıldı; `supabase/tests/group_content_visibility.sql` stranger/member ayrımını regression olarak tanımlıyor.
 
 ### Veri minimizasyonu
 
@@ -690,8 +692,10 @@ Worker’daki bounded APNs token ve Cloudflare key cache’leri request’e öze
   - ✅ RESOLVED — Exact doğum tarihi önceki veri minimizasyonu değişikliğiyle tamamen kaldırıldı. Yaş aralığı veya 18+ bilgisi gerektiren doğrulanmış bir ürün ihtiyacı bulunmadığından yeni bir hassas alan eklenmedi; mevcut account-profile regression testi alanın saklanmadığını doğruluyor.
 - [x] Relocation answers, exact location, private message ve contact data analytics’e gönderilmesin.
   - ✅ RESOLVED — iOS target’ında ürün analytics SDK’sı, `track`/`logEvent` çağrısı veya analytics endpoint’i bulunmuyor. Relocation cevapları plan storage/sync akışında, private message ve contact bilgileri ise yalnızca Auth/Supabase ürün akışlarında kullanılıyor; Cloudflare Worker’da da analytics write çağrısı yok.
-- [ ] Hesap silme; profil, plan, device, draft, cache, public content ve retention istisnelerini kapsasın.
-- [ ] Veri export/delete ve moderation retention süreleri privacy policy ile eşleşsin.
+- [x] Hesap silme; profil, plan, device, draft, cache, public content ve retention istisnelerini kapsasın.
+  - ✅ RESOLVED — Hesap silme artık doğrulanmış oturumla Worker üzerinden yürütülüyor: grup sahipliği transfer edilmeden silme engelleniyor, retention kayıtlarındaki kullanıcı/profil kimlik referansları ayrıştırılıyor, account-owned profil/plan/device/public content mevcut cascade’lerle siliniyor, kullanıcıya ait Storage ve Cloudflare medya varlıkları temizleniyor ve ardından Auth hesabı siliniyor. iOS Account Security akışı yerel plan/cache durumunu temizliyor; SQL, Worker ve SessionCoordinator regression testleri eklendi.
+- [x] Veri export/delete ve moderation retention süreleri privacy policy ile eşleşsin.
+  - ✅ RESOLVED — Account Security üzerinden server-authorized JSON export eklendi; account deletion akışı ile uyumlu çalışıyor. Closed/dismissed moderation report ve bağımlı audit kayıtları review tarihinden 12 ay sonra temizleniyor; açık report ve aktif ban kayıtları korunuyor. Privacy policy, SQL/Worker retention davranışıyla hizalandı; SQL, Worker ve iOS regression kontrolleri eklendi.
 
 ### Dosya ve medya
 
@@ -705,7 +709,7 @@ Worker’daki bounded APNs token ve Cloudflare key cache’leri request’e öze
 
 ### API ve abuse prevention
 
-- [ ] Search, username availability, message send, request create, report, upload ve view-url için server-side rate limits.
+- [x] Search, username availability, hashtag search, export, scan-status, upload, view-url, message send, conversation request ve report için server-side rate limits; export için bounded section pagination ve Worker streaming eklendi. Çok büyük hesaplar için background job/short-lived download token ve production ölçümü ayrı operasyonel kapsamdır.
 - [ ] Mutating endpoint’lerde idempotency key.
 - [ ] Request body ve response body üst sınırları.
 - [ ] Provider çağrılarında timeout/circuit-breaker/dead-letter stratejisi.

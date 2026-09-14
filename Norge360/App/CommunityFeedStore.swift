@@ -16,6 +16,8 @@ final class CommunityFeedStore: ObservableObject {
     @Published private(set) var canLoadMore = true
     @Published private(set) var isPublishing = false
     @Published private(set) var likingPostIDs: Set<UUID> = []
+    @Published private(set) var savedPostIDs: Set<UUID> = []
+    @Published private(set) var savingPostIDs: Set<UUID> = []
     @Published private(set) var errorMessage: String?
     @Published private(set) var noticeMessage: String?
     @Published private(set) var hashtagSuggestions: [CommunityHashtagSuggestion] = []
@@ -85,6 +87,8 @@ extension CommunityFeedStore {
         hashtagSuggestions = []
         hashtagItems = []
         blockedMembers = []
+        savedPostIDs = []
+        savingPostIDs = []
         memberProfileCache = [:]
         memberPostsCache = [:]
         memberRepliesCache = [:]
@@ -111,6 +115,7 @@ extension CommunityFeedStore {
 
         let task = Task { [weak self] in
             guard let self else { return }
+            await refreshSavedPostIDs()
             let cacheResult = await restoreCachedFeed(for: userID)
             guard activeUserID == userID else { return }
             switch cacheResult {
@@ -170,7 +175,8 @@ extension CommunityFeedStore {
             // Pagination can be cancelled by a tab change or a new reload.
         } catch {
             guard loadGeneration == generation, !Task.isCancelled else { return }
-            errorMessage = error.localizedDescription
+            errorMessage = UserFacingErrorMapper.message(
+                for: error, fallbackKey: "feed.error", operation: "feed.load_more")
         }
     }
 
@@ -234,45 +240,78 @@ extension CommunityFeedStore {
     }
 
     func memberPosts(for userID: UUID) async throws -> [CommunityFeedItem] {
+        try await memberPostsPage(for: userID).items
+    }
+
+    func memberPostsPage(
+        for userID: UUID,
+        cursor: String? = nil,
+        limit: Int = 30
+    ) async throws -> CommunityPage<CommunityFeedItem> {
         await restoreMemberContentIfNeeded(for: userID)
-        if let cached = memberPostsCache[userID],
+        if cursor == nil,
+            let cached = memberPostsCache[userID],
             let value = cached.valueIfFresh(maximumAge: Self.memberContentCacheFreshness)
         {
-            return value
+            return CommunityPage(items: value, nextCursor: nil)
         }
-        let value = try await service.loadMemberPosts(userID: userID)
-        memberPostsCache[userID] = TimedValue(value: value)
-        updateMemberContentSnapshot(for: userID, posts: value)
-        await persistMemberContent(for: userID)
-        return value
+        let page = try await service.loadMemberPostsPage(userID: userID, cursor: cursor, limit: limit)
+        if cursor == nil {
+            memberPostsCache[userID] = TimedValue(value: page.items)
+            updateMemberContentSnapshot(for: userID, posts: page.items)
+            await persistMemberContent(for: userID)
+        }
+        return page
     }
 
     func memberReplies(for userID: UUID) async throws -> [CommunityFeedItem] {
+        try await memberRepliesPage(for: userID).items
+    }
+
+    func memberRepliesPage(
+        for userID: UUID,
+        cursor: String? = nil,
+        limit: Int = 30
+    ) async throws -> CommunityPage<CommunityFeedItem> {
         await restoreMemberContentIfNeeded(for: userID)
-        if let cached = memberRepliesCache[userID],
+        if cursor == nil,
+            let cached = memberRepliesCache[userID],
             let value = cached.valueIfFresh(maximumAge: Self.memberContentCacheFreshness)
         {
-            return value
+            return CommunityPage(items: value, nextCursor: nil)
         }
-        let value = try await service.loadMemberReplies(userID: userID)
-        memberRepliesCache[userID] = TimedValue(value: value)
-        updateMemberContentSnapshot(for: userID, replies: value)
-        await persistMemberContent(for: userID)
-        return value
+        let page = try await service.loadMemberRepliesPage(userID: userID, cursor: cursor, limit: limit)
+        if cursor == nil {
+            memberRepliesCache[userID] = TimedValue(value: page.items)
+            updateMemberContentSnapshot(for: userID, replies: page.items)
+            await persistMemberContent(for: userID)
+        }
+        return page
     }
 
     func memberMedia(for userID: UUID) async throws -> [CommunityFeedItem] {
+        try await memberMediaPage(for: userID).items
+    }
+
+    func memberMediaPage(
+        for userID: UUID,
+        cursor: String? = nil,
+        limit: Int = 30
+    ) async throws -> CommunityPage<CommunityFeedItem> {
         await restoreMemberContentIfNeeded(for: userID)
-        if let cached = memberMediaCache[userID],
+        if cursor == nil,
+            let cached = memberMediaCache[userID],
             let value = cached.valueIfFresh(maximumAge: Self.memberContentCacheFreshness)
         {
-            return value
+            return CommunityPage(items: value, nextCursor: nil)
         }
-        let value = try await service.loadMemberMedia(userID: userID)
-        memberMediaCache[userID] = TimedValue(value: value)
-        updateMemberContentSnapshot(for: userID, media: value)
-        await persistMemberContent(for: userID)
-        return value
+        let page = try await service.loadMemberMediaPage(userID: userID, cursor: cursor, limit: limit)
+        if cursor == nil {
+            memberMediaCache[userID] = TimedValue(value: page.items)
+            updateMemberContentSnapshot(for: userID, media: page.items)
+            await persistMemberContent(for: userID)
+        }
+        return page
     }
 
     func likedPosts(for userID: UUID) async throws -> [CommunityFeedItem] {
@@ -287,6 +326,12 @@ extension CommunityFeedStore {
         updateMemberContentSnapshot(for: userID, liked: value)
         await persistMemberContent(for: userID)
         return value
+    }
+
+    func savedPosts() async throws -> [CommunityFeedItem] {
+        let postIDs = try await service.loadSavedPostIDs()
+        savedPostIDs = Set(postIDs)
+        return try await service.loadPosts(ids: postIDs)
     }
 
     func memberStats(for userID: UUID) async throws -> CommunityMemberProfileStats? {
@@ -308,8 +353,12 @@ extension CommunityFeedStore {
         try await service.loadPost(id: id)
     }
 
-    func groupPosts(for groupID: UUID) async throws -> [CommunityFeedItem] {
-        try await service.loadGroupPosts(groupID: groupID)
+    func groupPosts(
+        for groupID: UUID,
+        cursor: String? = nil,
+        limit: Int = 20
+    ) async throws -> CommunityPage<CommunityFeedItem> {
+        try await service.loadGroupPosts(groupID: groupID, cursor: cursor, limit: limit)
     }
 
     func updateHashtagSuggestions(for text: String) async {
@@ -357,7 +406,8 @@ extension CommunityFeedStore {
             await reload()
             return true
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = UserFacingErrorMapper.message(
+                for: error, fallbackKey: "feed.error", operation: "feed.publish")
             return false
         }
     }
@@ -376,7 +426,39 @@ extension CommunityFeedStore {
             items[index].likesCount += isLiked ? 1 : -1
             await persistFirstFeedPage()
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = UserFacingErrorMapper.message(
+                for: error, fallbackKey: "feed.error", operation: "feed.toggle_like")
+        }
+    }
+
+    func toggleSave(postID: UUID) async {
+        guard !savingPostIDs.contains(postID) else { return }
+        savingPostIDs.insert(postID)
+        errorMessage = nil
+        defer { savingPostIDs.remove(postID) }
+
+        do {
+            let isSaved = try await service.toggleSave(postID: postID)
+            if isSaved {
+                savedPostIDs.insert(postID)
+            } else {
+                savedPostIDs.remove(postID)
+            }
+        } catch {
+            errorMessage = UserFacingErrorMapper.message(
+                for: error, fallbackKey: "feed.error", operation: "feed.toggle_save")
+        }
+    }
+
+    func refreshSavedPostIDs() async {
+        guard let userID = activeUserID else { return }
+        do {
+            let postIDs = try await service.loadSavedPostIDs()
+            guard activeUserID == userID else { return }
+            savedPostIDs = Set(postIDs)
+        } catch {
+            guard activeUserID == userID else { return }
+            savedPostIDs = []
         }
     }
 
@@ -394,7 +476,8 @@ extension CommunityFeedStore {
             items.removeAll { $0.post.id == id }
             await persistFirstFeedPage()
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = UserFacingErrorMapper.message(
+                for: error, fallbackKey: "feed.error", operation: "feed.delete_post")
         }
     }
 
@@ -405,8 +488,12 @@ extension CommunityFeedStore {
         await persistFirstFeedPage()
     }
 
-    func comments(for postID: UUID) async throws -> [CommunityCommentItem] {
-        try await service.loadComments(postID: postID)
+    func comments(
+        for postID: UUID,
+        cursor: String? = nil,
+        limit: Int = 50
+    ) async throws -> CommunityPage<CommunityCommentItem> {
+        try await service.loadComments(postID: postID, cursor: cursor, limit: limit)
     }
 
     func addComment(to postID: UUID, body: String) async throws {
@@ -442,7 +529,8 @@ extension CommunityFeedStore {
             try await service.reportPost(id: postID, reason: reason)
             noticeMessage = AppStrings.localized("feed.report_sent")
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = UserFacingErrorMapper.message(
+                for: error, fallbackKey: "feed.report_error", operation: "feed.report_post")
         }
     }
 
@@ -453,7 +541,8 @@ extension CommunityFeedStore {
             try await service.reportComment(id: commentID, reason: reason)
             noticeMessage = AppStrings.localized("feed.report_sent")
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = UserFacingErrorMapper.message(
+                for: error, fallbackKey: "feed.report_error", operation: "feed.report_comment")
         }
     }
 
@@ -499,7 +588,8 @@ extension CommunityFeedStore {
             NorgeToastCenter.shared.show(AppStrings.localized("feed.blocked"), kind: .success)
             return true
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = UserFacingErrorMapper.message(
+                for: error, fallbackKey: "feed.block_error", operation: "feed.block_member")
             return false
         }
     }
@@ -552,7 +642,8 @@ extension CommunityFeedStore {
             // user-facing failure and must not replace the existing feed.
         } catch {
             guard activeUserID == userID, loadGeneration == generation, !Task.isCancelled else { return }
-            errorMessage = error.localizedDescription
+            errorMessage = UserFacingErrorMapper.message(
+                for: error, fallbackKey: "feed.error", operation: "feed.reload")
         }
     }
 

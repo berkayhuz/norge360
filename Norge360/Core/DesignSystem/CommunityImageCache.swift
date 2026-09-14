@@ -27,17 +27,26 @@ actor CommunityImageCache {
 
     typealias DataLoader = @Sendable (URLRequest) async throws -> (Data, URLResponse)
 
+    private struct CacheFile {
+        let url: URL
+        let modifiedAt: Date
+        let fileSize: Int
+    }
+
     private let fileManager: FileManager
     private let directory: URL
     private let retention: TimeInterval
     private let maintenanceInterval: TimeInterval
     private let maxItemCount: Int
     private let maxTotalBytes: Int
+    private let maxDecodedItemCount: Int
     private let decodedImageCache: NSCache<NSString, UIImage>
     private let dataLoader: DataLoader
     private var lastMaintenanceAt = Date.distantPast
     private var inFlightLoads: [String: Task<(Data, URLResponse), Error>] = [:]
     private var decodedKeysByFileKey: [String: Set<String>] = [:]
+    private var decodedFileKeyByKey: [String: String] = [:]
+    private var decodedKeyOrder: [String] = []
 
     init(
         fileManager: FileManager = .default,
@@ -49,7 +58,7 @@ actor CommunityImageCache {
         maxDecodedItemCount: Int = 100,
         maxDecodedTotalCost: Int = 32 * 1024 * 1024,
         dataLoader: @escaping DataLoader = { request in
-            try await URLSession.shared.data(for: request)
+            try await CommunityImageNetworkLoader.data(for: request)
         }
     ) {
         self.fileManager = fileManager
@@ -61,10 +70,11 @@ actor CommunityImageCache {
         self.maintenanceInterval = max(maintenanceInterval, 0)
         self.maxItemCount = max(maxItemCount, 1)
         self.maxTotalBytes = max(maxTotalBytes, 1)
+        self.maxDecodedItemCount = max(maxDecodedItemCount, 1)
         self.dataLoader = dataLoader
 
         let decodedImageCache = NSCache<NSString, UIImage>()
-        decodedImageCache.countLimit = max(maxDecodedItemCount, 1)
+        decodedImageCache.countLimit = self.maxDecodedItemCount
         decodedImageCache.totalCostLimit = max(maxDecodedTotalCost, 1)
         self.decodedImageCache = decodedImageCache
     }
@@ -72,14 +82,16 @@ actor CommunityImageCache {
     func load(for url: URL) -> Data? {
         performMaintenanceIfNeeded()
         let fileURL = fileURL(for: url)
+        guard fileSize(for: fileURL).map({ $0 <= maxTotalBytes }) ?? false else {
+            try? fileManager.removeItem(at: fileURL)
+            return nil
+        }
         guard
             let modifiedAt = modificationDate(for: fileURL),
             Date().timeIntervalSince(modifiedAt) <= retention,
             let data = try? Data(contentsOf: fileURL)
         else {
-            if let modifiedAt = modificationDate(for: fileURL),
-                Date().timeIntervalSince(modifiedAt) > retention
-            {
+            if let modifiedAt = modificationDate(for: fileURL), Date().timeIntervalSince(modifiedAt) > retention {
                 try? fileManager.removeItem(at: fileURL)
             }
             return nil
@@ -127,6 +139,7 @@ actor CommunityImageCache {
             let (data, response) = try await loadFromNetwork(for: url)
             guard !Task.isCancelled,
                 (response as? HTTPURLResponse)?.statusCode == 200,
+                data.count <= CommunityImageNetworkLoader.maximumDownloadedBytes,
                 let image = decode(data, variant: variant)
             else { return nil }
             save(data, for: url)
@@ -169,29 +182,31 @@ actor CommunityImageCache {
         else { return }
 
         let now = Date()
-        let cacheFiles = files.filter { $0.pathExtension == "img" }
-        let validFiles = cacheFiles.filter { fileURL in
-            guard let modifiedAt = modificationDate(for: fileURL) else {
+        let cacheFiles = files.compactMap { fileURL -> CacheFile? in
+            guard fileURL.pathExtension == "img",
+                let values = try? fileURL.resourceValues(forKeys: [.contentModificationDateKey, .fileSizeKey]),
+                let modifiedAt = values.contentModificationDate,
+                let fileSize = values.fileSize
+            else {
                 try? fileManager.removeItem(at: fileURL)
-                return false
+                return nil
             }
             if now.timeIntervalSince(modifiedAt) > retention {
                 try? fileManager.removeItem(at: fileURL)
-                return false
+                return nil
             }
-            return true
+            return CacheFile(url: fileURL, modifiedAt: modifiedAt, fileSize: fileSize)
         }
 
-        let newestFirst = validFiles.sorted {
-            let left = modificationDate(for: $0)
-            let right = modificationDate(for: $1)
-            if left == right { return $0.path < $1.path }
-            return (left ?? .distantPast) > (right ?? .distantPast)
+        let newestFirst = cacheFiles.sorted {
+            if $0.modifiedAt == $1.modifiedAt { return $0.url.path < $1.url.path }
+            return $0.modifiedAt > $1.modifiedAt
         }
 
         var totalBytes = 0
-        for (index, fileURL) in newestFirst.enumerated() {
-            let fileSize = (try? fileURL.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? 0
+        for (index, cachedFile) in newestFirst.enumerated() {
+            let fileURL = cachedFile.url
+            let fileSize = cachedFile.fileSize
             let exceedsItemLimit = index >= maxItemCount
             let exceedsByteLimit = totalBytes + fileSize > maxTotalBytes
             if exceedsItemLimit || exceedsByteLimit {
@@ -205,6 +220,11 @@ actor CommunityImageCache {
     private func modificationDate(for url: URL) -> Date? {
         guard let attributes = try? fileManager.attributesOfItem(atPath: url.path) else { return nil }
         return attributes[.modificationDate] as? Date
+    }
+
+    private func fileSize(for url: URL) -> Int? {
+        guard let attributes = try? fileManager.attributesOfItem(atPath: url.path) else { return nil }
+        return attributes[.size] as? Int
     }
 
     private func fileURL(for url: URL) -> URL {
@@ -230,45 +250,71 @@ actor CommunityImageCache {
             ?? max(Int(image.size.width * image.scale * image.size.height * image.scale * 4), 1)
         decodedImageCache.setObject(image, forKey: key as NSString, cost: cost)
         decodedKeysByFileKey[fileKey, default: []].insert(key)
+        decodedFileKeyByKey[key] = fileKey
+        decodedKeyOrder.removeAll { $0 == key }
+        decodedKeyOrder.append(key)
+        pruneDecodedMetadataIfNeeded()
     }
 
     private func removeDecodedImages(for fileKey: String) {
-        for key in decodedKeysByFileKey.removeValue(forKey: fileKey) ?? [] {
+        let keys = decodedKeysByFileKey.removeValue(forKey: fileKey) ?? []
+        for key in keys {
             decodedImageCache.removeObject(forKey: key as NSString)
+            decodedFileKeyByKey.removeValue(forKey: key)
+        }
+        decodedKeyOrder.removeAll { keys.contains($0) }
+    }
+
+    private func pruneDecodedMetadataIfNeeded() {
+        for (fileKey, keys) in decodedKeysByFileKey {
+            let liveKeys = keys.filter {
+                decodedImageCache.object(forKey: $0 as NSString) != nil
+            }
+            if liveKeys.isEmpty {
+                decodedKeysByFileKey.removeValue(forKey: fileKey)
+            } else if liveKeys.count != keys.count {
+                decodedKeysByFileKey[fileKey] = Set(liveKeys)
+            }
+        }
+
+        decodedFileKeyByKey = decodedFileKeyByKey.filter { key, fileKey in
+            decodedKeysByFileKey[fileKey]?.contains(key) == true
+        }
+        decodedKeyOrder.removeAll { decodedFileKeyByKey[$0] == nil }
+
+        while decodedFileKeyByKey.count > maxDecodedItemCount {
+            guard let oldestKey = decodedKeyOrder.first ?? decodedFileKeyByKey.keys.first,
+                let fileKey = decodedFileKeyByKey[oldestKey]
+            else { break }
+            decodedKeyOrder.removeAll { $0 == oldestKey }
+            decodedFileKeyByKey.removeValue(forKey: oldestKey)
+            decodedKeysByFileKey[fileKey]?.remove(oldestKey)
+            if decodedKeysByFileKey[fileKey]?.isEmpty == true {
+                decodedKeysByFileKey.removeValue(forKey: fileKey)
+            }
+            decodedImageCache.removeObject(forKey: oldestKey as NSString)
         }
     }
 
     private func decode(_ data: Data, variant: CommunityImageVariant) -> UIImage? {
-        switch variant {
-        case .full:
-            return UIImage(data: data)
-        case .thumbnail(let maxPixelDimension):
-            let sourceOptions: [CFString: Any] = [
-                kCGImageSourceShouldCache: false,
-                kCGImageSourceShouldCacheImmediately: false,
-            ]
-            let thumbnailOptions: [CFString: Any] = [
-                kCGImageSourceCreateThumbnailFromImageAlways: true,
-                kCGImageSourceCreateThumbnailWithTransform: true,
-                kCGImageSourceThumbnailMaxPixelSize: max(1, maxPixelDimension),
-                kCGImageSourceShouldCache: true,
-                kCGImageSourceShouldCacheImmediately: true,
-            ]
-            guard let source = CGImageSourceCreateWithData(data as CFData, sourceOptions as CFDictionary),
-                let image = CGImageSourceCreateThumbnailAtIndex(source, 0, thumbnailOptions as CFDictionary)
-            else { return nil }
-            return UIImage(cgImage: image)
-        }
+        CommunityImageDecoding.image(from: data, variant: variant)
     }
 
-    #if DEBUG
+}
+
+#if DEBUG
+    extension CommunityImageCache {
         func hasDecodedImage(for url: URL, variant: CommunityImageVariant) -> Bool {
             decodedImageCache.object(
                 forKey: decodedKey(for: fileKey(for: url), variant: variant) as NSString
             ) != nil
         }
-    #endif
-}
+
+        func decodedMetadataCount() -> Int {
+            decodedFileKeyByKey.count
+        }
+    }
+#endif
 
 /// AsyncImage-compatible presentation backed by an app-owned disk cache.
 struct CommunityCachedImage<Content: View, Placeholder: View>: View {

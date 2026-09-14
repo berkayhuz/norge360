@@ -60,7 +60,7 @@ actor CommunityChatBackgroundImageStore {
             try data.write(to: temporaryURL, options: .atomic)
             try applyStorageAttributes(to: temporaryURL)
             if fileManager.fileExists(atPath: destinationURL.path) {
-                try fileManager.replaceItemAt(destinationURL, withItemAt: temporaryURL)
+                _ = try fileManager.replaceItemAt(destinationURL, withItemAt: temporaryURL)
             } else {
                 try fileManager.moveItem(at: temporaryURL, to: destinationURL)
             }

@@ -5,7 +5,12 @@ import SwiftUI
 // so their cancellation and upload state transitions remain local.
 // swiftlint:disable file_length
 
+enum UpcomingEventsHomePreference {
+    static let hiddenKey = "home.upcoming_events.hidden"
+}
+
 struct CommunityFeedView: View {
+    @EnvironmentObject private var tabRouter: AppTabRouter
     @EnvironmentObject private var feedStore: CommunityFeedStore
     @EnvironmentObject private var groupsStore: CommunityGroupsStore
     @EnvironmentObject private var followStore: CommunityFollowStore
@@ -15,6 +20,7 @@ struct CommunityFeedView: View {
     @EnvironmentObject private var communityProfileStore: CommunityProfileStore
 
     @State private var isPresentingComposer = false
+    @State private var isNotificationsPresented = false
     @State private var isHeaderVisible = true
     @State private var feedFilter: FeedFilter = .forYou
     @State private var followedMemberIDs: Set<UUID> = []
@@ -22,59 +28,75 @@ struct CommunityFeedView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                ScrollHeaderVisibilityObserver { visible in
-                    guard isHeaderVisible != visible else { return }
-                    withAnimation(.easeOut(duration: 0.2)) {
-                        isHeaderVisible = visible
-                    }
-                }
-                .frame(height: 0)
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 0) {
+                        Color.clear.frame(height: 0).id("home-top")
 
-                LazyVStack(alignment: .leading, spacing: NorgeLayoutMetrics.feedItemSpacing) {
-                    if let errorMessage = feedStore.errorMessage {
-                        NorgeInlineFeedback(message: errorMessage)
-                    }
-                    if let noticeMessage = feedStore.noticeMessage {
-                        NorgeInlineFeedback(message: noticeMessage, kind: .notice)
-                    }
-
-                    if feedStore.isLoading && feedStore.items.isEmpty {
-                        NorgeLoadingState(minimumHeight: 240)
-                    } else if feedStore.items.isEmpty {
-                        NorgeUnavailableState(
-                            AppStrings.localized("feed.empty_title"),
-                            systemImage: "rectangle.stack",
-                            description: AppStrings.localized("feed.empty_body")
-                        )
-                    } else {
-                        CommunityEventFeedRail(
-                            items: eventsStore.prioritizedItems(for: communityProfileStore.profile?.cityOrRegion))
-                        ForEach(displayedItems) { item in
-                            CommunityFeedPostView(item: item)
-                                .onAppear {
-                                    loadMoreIfNeeded(afterDisplaying: item, in: displayedItems)
+                        ScrollHeaderVisibilityObserver { visible in
+                            if isHeaderVisible != visible {
+                                withAnimation(.easeOut(duration: 0.2)) {
+                                    isHeaderVisible = visible
                                 }
+                            }
+                            tabRouter.setTabBarCompact(!visible, for: .home)
                         }
+                        .frame(height: 0)
 
-                        if feedStore.isLoadingMore {
-                            ProgressView()
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 8)
-                        } else if !feedStore.canLoadMore && feedFilter != .follows {
-                            Label(AppStrings.localized("feed.end"), systemImage: "checkmark.circle")
-                                .font(.footnote)
-                                .foregroundStyle(.secondary)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 20)
+                        LazyVStack(alignment: .leading, spacing: NorgeLayoutMetrics.feedItemSpacing) {
+                            composerPrompt
+
+                            if let errorMessage = feedStore.errorMessage {
+                                NorgeInlineFeedback(message: errorMessage)
+                            }
+                            if let noticeMessage = feedStore.noticeMessage {
+                                NorgeInlineFeedback(message: noticeMessage, kind: .notice)
+                            }
+
+                            if feedStore.isLoading && feedStore.items.isEmpty {
+                                NorgeLoadingState(minimumHeight: 240)
+                            } else if feedStore.items.isEmpty {
+                                NorgeUnavailableState(
+                                    AppStrings.localized("feed.empty_title"),
+                                    systemImage: "rectangle.stack",
+                                    description: AppStrings.localized("feed.empty_body")
+                                )
+                            } else {
+                                CommunityEventFeedRail(
+                                    items: eventsStore.prioritizedItems(
+                                        for: communityProfileStore.profile?.cityOrRegion))
+                                ForEach(displayedItems) { item in
+                                    CommunityFeedPostView(item: item)
+                                        .onAppear {
+                                            loadMoreIfNeeded(afterDisplaying: item, in: displayedItems)
+                                        }
+                                }
+
+                                if feedStore.isLoadingMore {
+                                    NorgeSkeletonList(rowCount: 1)
+                                        .padding(.vertical, 8)
+                                } else if !feedStore.canLoadMore && feedFilter != .follows {
+                                    Label(AppStrings.localized("feed.end"), systemImage: "checkmark.circle")
+                                        .font(.footnote)
+                                        .foregroundStyle(.secondary)
+                                        .frame(maxWidth: .infinity)
+                                        .padding(.vertical, 20)
+                                }
+                            }
                         }
+                        .padding(.horizontal, NorgeSpacing.medium)
+                        .padding(.bottom, NorgeSpacing.large)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .background(Color.norgeAppBackground)
+                .contentMargins(.top, 0, for: .scrollContent)
+                .onChange(of: tabRouter.homeScrollToTopToken) { _, _ in
+                    withAnimation(.easeOut(duration: 0.24)) {
+                        proxy.scrollTo("home-top", anchor: .top)
                     }
                 }
-                .padding(.horizontal, NorgeSpacing.medium)
-                .padding(.top, NorgeSpacing.medium)
-                .padding(.bottom, NorgeSpacing.large)
             }
-            .background(Color.norgeAppBackground)
             .toolbar(.hidden, for: .navigationBar)
             .safeAreaInset(edge: .top, spacing: 0) {
                 if isHeaderVisible {
@@ -91,8 +113,8 @@ struct CommunityFeedView: View {
 
                                 Spacer()
 
-                                NavigationLink {
-                                    CommunityNotificationsView()
+                                Button {
+                                    isNotificationsPresented = true
                                 } label: {
                                     NorgeTopBarActionLabel(
                                         systemName: "bell",
@@ -116,7 +138,7 @@ struct CommunityFeedView: View {
                                     Image(systemName: "chevron.down")
                                         .font(.caption.weight(.semibold))
                                 }
-                                .font(.body.weight(.semibold))
+                                .font(.headline)
                                 .foregroundStyle(.primary)
                                 .frame(minHeight: 44)
                                 .contentShape(Rectangle())
@@ -130,6 +152,9 @@ struct CommunityFeedView: View {
                 }
             }
             .animation(.easeOut(duration: 0.2), value: isHeaderVisible)
+            .navigationDestination(isPresented: $isNotificationsPresented) {
+                CommunityNotificationsView()
+            }
             .refreshable {
                 forYouRefreshToken &+= 1
                 await feedStore.refreshIfNeeded()
@@ -152,10 +177,26 @@ struct CommunityFeedView: View {
                     followedMemberIDs = []
                 }
             }
-            .sheet(isPresented: $isPresentingComposer) {
-                CreateCommunityPostView(
-                    joinedGroups: groupsStore.groups.filter { groupsStore.joinedGroupIDs.contains($0.id) }
-                )
+            .overlay {
+                if isPresentingComposer {
+                    CreateCommunityPostView(
+                        joinedGroups: groupsStore.groups.filter { groupsStore.joinedGroupIDs.contains($0.id) },
+                        onDismiss: { isPresentingComposer = false }
+                    )
+                    .background(Color.norgeAppBackground.ignoresSafeArea())
+                    .ignoresSafeArea()
+                    .zIndex(10)
+                    .transaction { transaction in
+                        transaction.animation = nil
+                    }
+                }
+            }
+            .onChange(of: isNotificationsPresented) { _, isPresented in
+                tabRouter.isHomeNotificationsFlowActive = isPresented
+                tabRouter.isTabBarHidden = isPresented
+            }
+            .onChange(of: isPresentingComposer) { _, isPresented in
+                tabRouter.isTabBarHidden = isPresented || isNotificationsPresented
             }
         }
     }
@@ -210,14 +251,76 @@ struct CommunityFeedView: View {
     }
 }
 
+extension CommunityFeedView {
+    private var composerPrompt: some View {
+        Button {
+            isPresentingComposer = true
+        } label: {
+            HStack(alignment: .center, spacing: 8) {
+                CommunityAvatarView(url: communityProfileStore.profile?.avatarURL, size: 44)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(communityProfileStore.profile?.displayName ?? AppStrings.localized("feed.member"))
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.primary)
+                        .lineLimit(1)
+                    Text(AppStrings.localized("feed.compose_prompt"))
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
+
+                Spacer(minLength: 0)
+            }
+            .padding(.bottom, 12)
+            .contentShape(Rectangle())
+            .overlay(alignment: .bottom) {
+                Rectangle()
+                    .fill(Color.primary.opacity(0.12))
+                    .frame(height: 0.5)
+            }
+        }
+        .buttonStyle(ComposerPromptButtonStyle())
+        .hoverEffectDisabled(true)
+        .accessibilityLabel(AppStrings.localized("feed.compose"))
+        .accessibilityHint(AppStrings.localized("feed.compose_hint"))
+    }
+
+    private struct ComposerPromptButtonStyle: ButtonStyle {
+        func makeBody(configuration: Configuration) -> some View {
+            configuration.label
+        }
+    }
+}
+
 struct CommunityEventFeedRail: View {
     let items: [CommunityEventItem]
+    @AppStorage(UpcomingEventsHomePreference.hiddenKey) private var isHidden = false
+    @State private var isShowingAllEvents = false
 
     var body: some View {
-        if !items.isEmpty {
+        if !items.isEmpty && !isHidden {
             VStack(alignment: .leading, spacing: 10) {
-                Label(AppStrings.localized("feed.upcoming_events"), systemImage: "calendar")
-                    .font(.headline)
+                HStack(alignment: .center, spacing: 8) {
+                    Label(AppStrings.localized("feed.upcoming_events"), systemImage: "calendar")
+                        .font(.headline)
+                    Spacer(minLength: 0)
+                    Menu {
+                        Button(AppStrings.localized("events.view_all"), systemImage: "calendar") {
+                            isShowingAllEvents = true
+                        }
+                        Button(AppStrings.localized("feed.hide_upcoming_events"), systemImage: "eye.slash") {
+                            isHidden = true
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis")
+                            .font(.title3.weight(.semibold))
+                            .frame(width: 44, height: 44)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(AppStrings.localized("feed.upcoming_events_actions"))
+                }
                 ForEach(items.prefix(2)) { item in
                     NavigationLink {
                         CommunityEventsView()
@@ -240,6 +343,9 @@ struct CommunityEventFeedRail: View {
                 }
             }
             .padding(.bottom, 4)
+            .navigationDestination(isPresented: $isShowingAllEvents) {
+                CommunityEventsView()
+            }
         }
     }
 }
@@ -280,9 +386,9 @@ struct CommunityFeedPostView: View {
     @State private var isBlocking = false
     @State private var isDeleting = false
     @State private var isWorking = false
+    @State private var isSaving = false
     @State private var feedbackMessage: String?
     @State private var hasError = false
-    @State private var isPresentingShare = false
 
     init(item: CommunityFeedItem, isDetail: Bool = false, showsAuthorFollowAction: Bool = true) {
         self.item = item
@@ -322,12 +428,6 @@ struct CommunityFeedPostView: View {
         }
         .sheet(isPresented: $isShowingHistory) {
             CommunityPostEditHistoryView(postID: currentItem.id)
-        }
-        .sheet(isPresented: $isPresentingShare) {
-            CommunityPostShareSheet(item: currentItem)
-                .presentationDetents([.medium, .large])
-                .presentationDragIndicator(.visible)
-                .presentationBackground(Color.norgeAppBackground)
         }
         .confirmationDialog(
             AppStrings.localized("feed.report_title"),
@@ -385,7 +485,7 @@ struct CommunityFeedPostView: View {
             if isDetail { await refreshPost() }
         }
         .task(id: currentItem.post.authorID) {
-            if showsAuthorFollowAction { await loadAuthorFollowState() }
+            await loadAuthorFollowState()
         }
         .onChange(of: item) { _, updatedItem in currentItem = updatedItem }
         .onChange(of: feedStore.items) { _, items in
@@ -402,6 +502,8 @@ struct CommunityFeedPostView: View {
             isDetail: isDetail,
             isCurrentUser: currentItem.post.authorID == authenticationStore.user?.id,
             isLiking: isWorking || feedStore.likingPostIDs.contains(currentItem.id),
+            isSaved: feedStore.savedPostIDs.contains(currentItem.id),
+            isSaving: isSaving || feedStore.savingPostIDs.contains(currentItem.id),
             showsAuthorFollowAction: showsAuthorFollowAction,
             isAuthorFollowed: followStore.states[currentItem.post.authorID]?.isFollowing == true,
             isAuthorFollowStateLoaded: followStore.loadedUserIDs.contains(currentItem.post.authorID),
@@ -409,12 +511,12 @@ struct CommunityFeedPostView: View {
             onToggleLike: { Task { await toggleLike() } },
             onFollowAuthor: { Task { await followAuthor() } },
             onOpenComments: { isShowingComments = true },
+            onToggleSave: { Task { await toggleSave() } },
             onEdit: { isEditing = true },
             onDelete: { isDeleting = true },
             onShowEditHistory: { isShowingHistory = true },
             onReport: { isReporting = true },
-            onBlock: { isBlocking = true },
-            onShare: { isPresentingShare = true }
+            onBlock: { isBlocking = true }
         )
     }
 
@@ -428,6 +530,20 @@ struct CommunityFeedPostView: View {
         } else {
             feedbackMessage = nil
             await refreshPost()
+        }
+    }
+
+    private func toggleSave() async {
+        guard !isSaving else { return }
+        isSaving = true
+        defer { isSaving = false }
+        await feedStore.toggleSave(postID: currentItem.id)
+        if let error = feedStore.errorMessage {
+            feedbackMessage = error
+            hasError = true
+        } else {
+            feedbackMessage = nil
+            hasError = false
         }
     }
 
@@ -445,7 +561,11 @@ struct CommunityFeedPostView: View {
         } catch is CancellationError {
             return
         } catch {
-            feedbackMessage = error.localizedDescription
+            feedbackMessage = UserFacingErrorMapper.message(
+                for: error,
+                fallbackKey: "feed.error",
+                operation: "post.refresh"
+            )
             hasError = true
         }
     }
@@ -514,11 +634,14 @@ typealias CommunityCommentsView = CommunityPostDetailView
 
 private struct CommunityPostRow: View {  // swiftlint:disable:this type_body_length
     @EnvironmentObject private var tabRouter: AppTabRouter
+    @Environment(\.colorScheme) private var colorScheme
     let item: CommunityFeedItem
     let group: CommunityGroup?
     let isDetail: Bool
     let isCurrentUser: Bool
     let isLiking: Bool
+    let isSaved: Bool
+    let isSaving: Bool
     let showsAuthorFollowAction: Bool
     let isAuthorFollowed: Bool
     let isAuthorFollowStateLoaded: Bool
@@ -526,199 +649,211 @@ private struct CommunityPostRow: View {  // swiftlint:disable:this type_body_len
     let onToggleLike: () -> Void
     let onFollowAuthor: () -> Void
     let onOpenComments: () -> Void
+    let onToggleSave: () -> Void
     let onEdit: () -> Void
     let onDelete: () -> Void
     let onShowEditHistory: () -> Void
     let onReport: () -> Void
     let onBlock: () -> Void
-    let onShare: () -> Void
     @State private var isShowingWhyThisPost = false
     @State private var isPostExpanded = false
     @State private var previewProfile: CommunityProfile?
     @State private var suppressProfileOpen = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack(alignment: .center, spacing: 10) {
-                Group {
-                    if isCurrentUser {
-                        Button(action: openAuthorProfile) {
-                            authorProfileLabel
-                        }
-                    } else {
-                        NavigationLink {
-                            CommunityMemberProfileView(userID: item.post.authorID)
-                        } label: {
-                            authorProfileLabel
-                        }
-                    }
-                }
-                .buttonStyle(.plain)
-                .accessibilityHint(AppStrings.localized("member.open_profile"))
-                .highPriorityGesture(
-                    LongPressGesture(minimumDuration: 0.35)
-                        .onEnded { _ in
-                            suppressProfileOpen = true
-                            previewProfile = item.author
-                            Task {
-                                try? await Task.sleep(for: .milliseconds(450))
-                                suppressProfileOpen = false
-                            }
-                        }
-                )
-                .popover(item: $previewProfile, attachmentAnchor: .rect(.bounds), arrowEdge: .bottom) { profile in
+        ZStack(alignment: .topLeading) {
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(alignment: .center, spacing: 8) {
                     Group {
                         if isCurrentUser {
-                            Button {
-                                previewProfile = nil
-                                open(profile.userID)
-                            } label: {
-                                CommunityProfileQuickPreview(profile: profile)
+                            Button(action: openAuthorProfile) {
+                                authorProfileLabel
                             }
                         } else {
                             NavigationLink {
-                                CommunityMemberProfileView(userID: profile.userID)
+                                CommunityMemberProfileView(userID: item.post.authorID)
                             } label: {
-                                CommunityProfileQuickPreview(profile: profile)
+                                authorProfileLabel
                             }
                         }
                     }
                     .buttonStyle(.plain)
-                    .presentationCompactAdaptation(.popover)
-                }
+                    .accessibilityHint(AppStrings.localized("member.open_profile"))
+                    .highPriorityGesture(
+                        LongPressGesture(minimumDuration: 0.35)
+                            .onEnded { _ in
+                                suppressProfileOpen = true
+                                previewProfile = item.author
+                                Task {
+                                    try? await Task.sleep(for: .milliseconds(450))
+                                    suppressProfileOpen = false
+                                }
+                            }
+                    )
 
-                if showsAuthorFollowAction && !isCurrentUser && isAuthorFollowStateLoaded && !isAuthorFollowed {
-                    Button(action: onFollowAuthor) {
-                        if isFollowingAuthor {
-                            ProgressView()
-                                .tint(.white)
+                    if showsAuthorFollowAction && !isCurrentUser && isAuthorFollowStateLoaded && !isAuthorFollowed {
+                        Button(action: onFollowAuthor) {
+                            if isFollowingAuthor {
+                                ProgressView()
+                                    .tint(.white)
+                            } else {
+                                Label(
+                                    AppStrings.localized("follow.follow"),
+                                    systemImage: "person.badge.plus"
+                                )
+                            }
+                        }
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 10)
+                        .frame(minHeight: 32)
+                        .background(Color.norgePrimary, in: Capsule())
+                        .disabled(isFollowingAuthor)
+                        .accessibilityLabel(AppStrings.localized("follow.follow"))
+                    }
+
+                    Menu {
+                        if !isCurrentUser {
+                            Button(AppStrings.localized("feed.why_this_post"), systemImage: "sparkles") {
+                                isShowingWhyThisPost = true
+                            }
+                        }
+                        if isCurrentUser {
+                            Button(AppStrings.localized("post.edit"), systemImage: "pencil", action: onEdit)
+                            Button(
+                                AppStrings.localized("post.delete"), systemImage: "trash", role: .destructive,
+                                action: onDelete)
                         } else {
-                            Label(
-                                AppStrings.localized("follow.follow"),
-                                systemImage: "person.badge.plus"
+                            Button(
+                                AppStrings.localized("feed.report"), systemImage: "exclamationmark.bubble",
+                                action: onReport
                             )
+                            Button(
+                                AppStrings.localized("feed.block"), systemImage: "hand.raised", role: .destructive,
+                                action: onBlock)
                         }
+                    } label: {
+                        NorgeOverflowMenuLabel(font: .title3.weight(.semibold))
                     }
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 10)
-                    .frame(minHeight: 32)
-                    .background(Color.norgePrimary, in: Capsule())
-                    .disabled(isFollowingAuthor)
-                    .accessibilityLabel(AppStrings.localized("follow.follow"))
-                }
-
-                Menu {
-                    if !isCurrentUser {
-                        Button(AppStrings.localized("feed.why_this_post"), systemImage: "sparkles") {
-                            isShowingWhyThisPost = true
-                        }
-                    }
-                    if isCurrentUser {
-                        Button(AppStrings.localized("post.edit"), systemImage: "pencil", action: onEdit)
-                        Button(
-                            AppStrings.localized("post.delete"), systemImage: "trash", role: .destructive,
-                            action: onDelete)
-                    } else {
-                        Button(
-                            AppStrings.localized("feed.report"), systemImage: "exclamationmark.bubble", action: onReport
-                        )
-                        Button(
-                            AppStrings.localized("feed.block"), systemImage: "hand.raised", role: .destructive,
-                            action: onBlock)
-                    }
-                } label: {
-                    NorgeOverflowMenuLabel(font: .title3.weight(.semibold))
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel(AppStrings.localized("feed.post_actions"))
-            }
-
-            if isDetail {
-                postText
-                    .textSelection(.enabled)
-                postMedia
-            } else {
-                NavigationLink {
-                    CommunityPostDetailView(item: item, showsAuthorFollowAction: showsAuthorFollowAction)
-                } label: {
-                    postText
-                        .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-                .accessibilityHint(AppStrings.localized("post_detail.open"))
-                postMedia
-            }
-
-            ViewThatFits(in: .horizontal) {
-                HStack(spacing: 10) { postContext }
-                VStack(alignment: .leading, spacing: 5) { postContext }
-            }
-            .font(.caption)
-            .foregroundStyle(.secondary)
-            .accessibilityElement(children: .combine)
-
-            if item.editHistoryCount > 0 {
-                Button(AppStrings.localized("post.edited"), action: onShowEditHistory)
                     .buttonStyle(.plain)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .frame(minHeight: 32)
-                    .accessibilityHint(AppStrings.localized("post.edit_history_hint"))
+                    .accessibilityLabel(AppStrings.localized("feed.post_actions"))
+                }
+
+                if isDetail {
+                    postText
+                        .textSelection(.enabled)
+                    postMedia
+                } else {
+                    NavigationLink {
+                        CommunityPostDetailView(item: item, showsAuthorFollowAction: showsAuthorFollowAction)
+                    } label: {
+                        postText
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityHint(AppStrings.localized("post_detail.open"))
+                    postMedia
+                }
+
+                if item.editHistoryCount > 0 {
+                    Button(AppStrings.localized("post.edited"), action: onShowEditHistory)
+                        .buttonStyle(.plain)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .frame(minHeight: 32)
+                        .accessibilityHint(AppStrings.localized("post.edit_history_hint"))
+                }
+
+                HStack(spacing: 2) {
+                    Button(action: onToggleLike) {
+                        postActionLabel(
+                            item.likesCount > 0 ? "\(item.likesCount)" : nil,
+                            symbol: item.isLikedByCurrentUser ? "heart.fill" : "heart"
+                        )
+                        .foregroundStyle(item.isLikedByCurrentUser ? Color.red : actionForeground)
+                        .frame(minWidth: 46, minHeight: 46)
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(isLiking)
+                    .accessibilityLabel(
+                        item.isLikedByCurrentUser
+                            ? AppStrings.localized("likes.remove") : AppStrings.localized("likes.add")
+                    )
+                    .accessibilityValue(String(format: AppStrings.localized("likes.count"), item.likesCount))
+
+                    Button(action: onOpenComments) {
+                        postActionLabel(
+                            item.commentsCount > 0 ? "\(item.commentsCount)" : nil,
+                            symbol: "bubble.right"
+                        )
+                        .frame(minWidth: 46, minHeight: 46)
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .foregroundStyle(actionForeground)
+                    .accessibilityLabel(AppStrings.localized("comments.open"))
+                    .accessibilityValue(String(format: AppStrings.localized("comments.count"), item.commentsCount))
+
+                    ShareLink(item: postShareURL) {
+                        postActionLabel(nil, symbol: "paperplane")
+                            .frame(minWidth: 46, minHeight: 46)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .foregroundStyle(actionForeground)
+                    .accessibilityLabel(AppStrings.localized("feed.share_post"))
+
+                    Spacer(minLength: 0)
+
+                    Button(action: onToggleSave) {
+                        postActionLabel(nil, symbol: isSaved ? "bookmark.fill" : "bookmark")
+                            .frame(minWidth: 46, minHeight: 46)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .foregroundStyle(isSaved ? Color.norgePrimary : actionForeground)
+                    .disabled(isSaving)
+                    .accessibilityLabel(
+                        AppStrings.localized(isSaved ? "feed.unsave_post" : "feed.save_post")
+                    )
+                }
+                .font(.subheadline.weight(.medium))
+                .buttonStyle(.plain)
+                .padding(.top, -4)
+
+                if isDetail {
+                    Text(item.post.createdAt, format: .dateTime.day().month(.wide).year().hour().minute())
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Text(AppStrings.localized("post_detail.community_note"))
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.vertical, 2)
 
-            HStack(spacing: 0) {
-                Button(action: onToggleLike) {
-                    compactLabel("\(item.likesCount)", symbol: item.isLikedByCurrentUser ? "heart.fill" : "heart")
-                        .foregroundStyle(item.isLikedByCurrentUser ? Color.red : Color.secondary)
-                        .frame(minWidth: 44, minHeight: 44, alignment: .leading)
-                        .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-                .disabled(isLiking)
-                .accessibilityLabel(
-                    item.isLikedByCurrentUser ? AppStrings.localized("likes.remove") : AppStrings.localized("likes.add")
-                )
-                .accessibilityValue(String(format: AppStrings.localized("likes.count"), item.likesCount))
+            if let profile = previewProfile {
+                Color.clear
+                    .contentShape(Rectangle())
+                    .onTapGesture { dismissProfilePreview() }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .zIndex(10)
 
-                Button(action: onOpenComments) {
-                    compactLabel("\(item.commentsCount)", symbol: "bubble.right")
-                        .frame(minWidth: 44, minHeight: 44, alignment: .leading)
-                        .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-                .foregroundStyle(.secondary)
-                .accessibilityLabel(AppStrings.localized("comments.open"))
-                .accessibilityValue(String(format: AppStrings.localized("comments.count"), item.commentsCount))
-
-                Button(action: onShare) {
-                    Image(systemName: "paperplane")
-                        .frame(width: 44, height: 44, alignment: .leading)
-                        .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-                .foregroundStyle(.secondary)
-                .accessibilityLabel(AppStrings.localized("feed.share_post"))
-                Spacer(minLength: 0)
-            }
-            .font(.subheadline)
-            .padding(.top, -12)
-
-            if isDetail {
-                Text(item.post.createdAt, format: .dateTime.day().month(.wide).year().hour().minute())
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                Text(AppStrings.localized("post_detail.community_note"))
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
+                profilePreviewCard(profile)
+                    .offset(y: 52)
+                    .zIndex(11)
             }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.vertical, 2)
         .alert(AppStrings.localized("feed.why_this_post"), isPresented: $isShowingWhyThisPost) {
             Button(AppStrings.localized("common.cancel"), role: .cancel) {}
         } message: {
             Text(whyThisPostMessage)
+        }
+        .animation(.easeOut(duration: 0.16), value: previewProfile?.userID)
+        .onReceive(NotificationCenter.default.publisher(for: .norgeNonInputInteraction)) { _ in
+            dismissProfilePreview()
         }
     }
 
@@ -729,6 +864,10 @@ private struct CommunityPostRow: View {  // swiftlint:disable:this type_body_len
 
     private func open(_ userID: UUID) {
         tabRouter.openProfile(userID)
+    }
+
+    private func dismissProfilePreview() {
+        previewProfile = nil
     }
 
     private var authorProfileLabel: some View {
@@ -752,6 +891,55 @@ private struct CommunityPostRow: View {  // swiftlint:disable:this type_body_len
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .contentShape(Rectangle())
+    }
+
+    @ViewBuilder
+    private func profilePreviewCard(_ profile: CommunityProfile) -> some View {
+        Group {
+            if isCurrentUser {
+                Button {
+                    dismissProfilePreview()
+                    open(profile.userID)
+                } label: {
+                    CommunityProfileQuickPreview(profile: profile)
+                }
+            } else {
+                NavigationLink {
+                    CommunityMemberProfileView(userID: profile.userID)
+                } label: {
+                    CommunityProfileQuickPreview(profile: profile)
+                }
+                .simultaneousGesture(
+                    TapGesture().onEnded {
+                        dismissProfilePreview()
+                    }
+                )
+            }
+        }
+        .buttonStyle(.plain)
+        .frame(width: 232, alignment: .leading)
+        .fixedSize(horizontal: false, vertical: true)
+        .background(
+            Color.norgeAppBackground,
+            in: RoundedRectangle(cornerRadius: NorgeCornerRadius.card, style: .continuous)
+        )
+        .overlay(alignment: .topTrailing) {
+            Button(action: dismissProfilePreview) {
+                Image(systemName: "xmark")
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundStyle(.secondary)
+                    .frame(width: 30, height: 30)
+                    .background(Color.norgeInputSurface, in: Circle())
+            }
+            .buttonStyle(.plain)
+            .padding(8)
+            .accessibilityLabel(AppStrings.localized("common.cancel"))
+        }
+        .overlay {
+            RoundedRectangle(cornerRadius: NorgeCornerRadius.card, style: .continuous)
+                .stroke(Color.primary.opacity(0.08), lineWidth: 1)
+        }
+        .shadow(color: .black.opacity(0.22), radius: 18, y: 8)
     }
 
     private var postText: some View {
@@ -779,37 +967,53 @@ private struct CommunityPostRow: View {  // swiftlint:disable:this type_body_len
 
     @ViewBuilder private var postMedia: some View {
         if !item.media.isEmpty {
-            CommunityPostMediaCarousel(media: item.media)
+            CommunityPostMediaCarousel(media: item.media, postContext: fullscreenPostContext)
         }
     }
 
-    @ViewBuilder
-    private var postContext: some View {
-        compactLabel(AppStrings.localized("feed.kind.\(item.post.kind.rawValue)"), symbol: kindSymbol(item.post.kind))
-        if let group {
-            compactLabel(group.name, symbol: "person.3")
-        } else {
-            compactLabel(AppStrings.localized("feed.general"), symbol: "globe.europe.africa")
-        }
+    private var fullscreenPostContext: CommunityFullscreenPostContext {
+        CommunityFullscreenPostContext(
+            item: item,
+            isCurrentUser: isCurrentUser,
+            showsAuthorFollowAction: true,
+            isLiking: isLiking,
+            isSaved: isSaved,
+            isSaving: isSaving,
+            isAuthorFollowed: isAuthorFollowed,
+            isAuthorFollowStateLoaded: isAuthorFollowStateLoaded,
+            isFollowingAuthor: isFollowingAuthor,
+            postURL: postShareURL,
+            onToggleLike: onToggleLike,
+            onOpenComments: onOpenComments,
+            onToggleSave: onToggleSave,
+            onFollowAuthor: onFollowAuthor,
+            onReport: onReport
+        )
+    }
+
+    private var postShareURL: URL {
+        URL(string: "https://norge360.com/posts/\(item.id.uuidString)")
+            ?? URL(fileURLWithPath: "/")
     }
 
     private func timestamp(for date: Date) -> String {
         Self.relativeDateFormatter.localizedString(for: date, relativeTo: .now)
     }
 
-    private func kindSymbol(_ kind: CommunityPostKind) -> String {
-        switch kind {
-        case .update: "text.bubble"
-        case .question: "questionmark.bubble"
-        case .recommendation: "hand.thumbsup"
+    private func postActionLabel(_ title: String?, symbol: String) -> some View {
+        HStack(spacing: title == nil ? 0 : 3) {
+            Image(systemName: symbol)
+                .font(.system(size: 19, weight: .semibold))
+            if let title {
+                Text(title)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
         }
     }
 
-    private func compactLabel(_ title: String, symbol: String) -> some View {
-        HStack(spacing: 6) {
-            Image(systemName: symbol)
-            Text(title)
-        }
+    private var actionForeground: Color {
+        colorScheme == .dark ? .white : .secondary
     }
 
     private var whyThisPostMessage: String {
@@ -847,8 +1051,10 @@ struct CreateCommunityPostView: View {
 
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var feedStore: CommunityFeedStore
+    @EnvironmentObject private var communityProfileStore: CommunityProfileStore
 
     let joinedGroups: [CommunityGroup]
+    private let onDismiss: (() -> Void)?
     @State private var draftBody = ""
     @State private var draftTitle = ""
     @State private var kind: CommunityPostKind = .update
@@ -863,181 +1069,97 @@ struct CreateCommunityPostView: View {
     @State private var mediaErrorMessage: String?
     @StateObject private var hashtagSearchDebouncer = NorgeTaskDebouncer()
 
-    init(joinedGroups: [CommunityGroup], initialDestination: Destination = .general) {
+    init(
+        joinedGroups: [CommunityGroup],
+        initialDestination: Destination = .general,
+        onDismiss: (() -> Void)? = nil
+    ) {
         self.joinedGroups = joinedGroups
+        self.onDismiss = onDismiss
         _destination = State(initialValue: initialDestination)
     }
 
     var body: some View {
         NavigationStack {
-            Form {
-                Section(AppStrings.localized("feed.audience")) {
-                    Picker(AppStrings.localized("feed.share_to"), selection: $destination) {
-                        Text(AppStrings.localized("feed.general"))
-                            .tag(Destination.general)
-                        ForEach(joinedGroups) { group in
-                            Text(group.name)
-                                .tag(Destination.group(group.id))
-                        }
-                    }
+            VStack(spacing: 0) {
+                composerHeader
 
-                    if joinedGroups.isEmpty {
-                        Text(AppStrings.localized("feed.join_group_note"))
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                    }
-                }
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 0) {
+                        HStack(alignment: .top, spacing: NorgeSpacing.small) {
+                            CommunityAvatarView(url: communityProfileStore.profile?.avatarURL, size: 42)
+                                .padding(.top, 3)
 
-                Section(AppStrings.localized("feed.post_type")) {
-                    Picker(AppStrings.localized("feed.post_type"), selection: $kind) {
-                        ForEach(CommunityPostKind.allCases) { kind in
-                            Text(kindTitle(kind))
-                                .tag(kind)
-                        }
-                    }
-                    .pickerStyle(.segmented)
-                }
-
-                Section(AppStrings.localized("feed.your_post")) {
-                    TextField(AppStrings.localized("feed.post_title"), text: $draftTitle)
-                        .lineLimit(1)
-                        .onChange(of: draftTitle) { _, value in
-                            if value.count > CommunityContentRules.maximumPostTitleLength {
-                                draftTitle = String(value.prefix(CommunityContentRules.maximumPostTitleLength))
-                            }
-                        }
-                    ZStack(alignment: .topLeading) {
-                        if draftBody.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                            Text(AppStrings.localized("feed.post_description_optional"))
-                                .foregroundStyle(.secondary)
-                                .padding(.horizontal, 5)
-                                .padding(.vertical, 8)
-                        }
-                        TextEditor(text: $draftBody)
-                            .frame(minHeight: 180)
-                            .scrollContentBackground(.hidden)
-                            .accessibilityLabel(AppStrings.localized("feed.post_description_optional"))
-                            .onChange(of: draftBody) { _, value in
-                                if value.count > CommunityContentRules.maximumPostLength {
-                                    draftBody = String(value.prefix(CommunityContentRules.maximumPostLength))
-                                    return
-                                }
-                                hashtagSearchDebouncer.schedule { await feedStore.updateHashtagSuggestions(for: value) }
-                            }
-                    }
-                    if !feedStore.hashtagSuggestions.isEmpty {
-                        CommunityHashtagSuggestionList(suggestions: feedStore.hashtagSuggestions) { tag in
-                            draftBody = CommunityHashtagRules.replacingActiveHashtag(in: draftBody, with: tag)
-                            feedStore.clearHashtagSuggestions()
-                        }
-                    }
-                    Text(
-                        String(
-                            format: AppStrings.localized("feed.character_count"), draftBody.count,
-                            CommunityContentRules.maximumPostLength)
-                    )
-                    .font(.caption)
-                    .foregroundStyle(draftBody.count > CommunityContentRules.maximumPostLength ? .red : .secondary)
-                }
-
-                Section(AppStrings.localized("media.photos")) {
-                    PhotosPicker(
-                        selection: $selectedPhotos,
-                        maxSelectionCount: max(1, CommunityContentRules.maximumPostImageCount - preparedImages.count),
-                        matching: .images
-                    ) {
-                        Label(AppStrings.localized("media.add_photos"), systemImage: "photo.on.rectangle.angled")
-                    }
-                    .accessibilityHint(AppStrings.localized("media.max_six"))
-                    .disabled(isLoadingPhotos || preparedImages.count >= CommunityContentRules.maximumPostImageCount)
-
-                    if isLoadingPhotos {
-                        ProgressView()
-                    }
-                    if !preparedImages.isEmpty {
-                        ScrollView(.horizontal) {
-                            HStack(spacing: 10) {
-                                ForEach(Array(preparedImages.enumerated()), id: \.offset) { index, image in
-                                    NorgeEditableImagePreview(
-                                        data: image.data,
-                                        editAccessibilityLabel: AppStrings.localized("post_photo.edit"),
-                                        removeAccessibilityLabel: AppStrings.localized("media.remove_photo"),
-                                        onEdit: {
-                                            editingImageIndex = index
-                                            imageEditorDraft = CommunityImageDraft(data: image.data, aspect: .free)
-                                        },
-                                        onRemove: {
-                                            preparedImages.remove(at: index)
-                                        })
-                                }
-                            }
-                        }
-                        .scrollIndicators(.hidden)
-                    }
-
-                    Text(
-                        String(
-                            format: AppStrings.localized("media.photo_count"), preparedImages.count,
-                            CommunityContentRules.maximumPostImageCount)
-                    )
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-
-                    if let mediaErrorMessage {
-                        NorgeInlineFeedback(message: mediaErrorMessage)
-                    }
-                }
-
-                Section {
-                    Text(AppStrings.localized("feed.compose_notice"))
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                }
-
-                if let errorMessage = feedStore.errorMessage {
-                    Section {
-                        NorgeInlineFeedback(message: errorMessage)
-                    }
-                }
-            }
-            .scrollContentBackground(.hidden)
-            .background(Color.norgeAppBackground)
-            .navigationTitle(AppStrings.localized("feed.new_post"))
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(AppStrings.localized("feed.cancel")) { dismiss() }
-                }
-                .norgePlainToolbar()
-                ToolbarItem(placement: .confirmationAction) {
-                    if feedStore.isPublishing {
-                        ProgressView()
-                            .accessibilityLabel(AppStrings.localized("media.publishing"))
-                    } else {
-                        Button(AppStrings.localized("feed.publish")) {
-                            Task {
-                                let groupID: UUID? =
-                                    switch destination {
-                                    case .general: nil
-                                    case .group(let id): id
+                            VStack(alignment: .leading, spacing: 0) {
+                                TextField(AppStrings.localized("feed.post_title"), text: $draftTitle)
+                                    .font(.title3.weight(.semibold))
+                                    .textFieldStyle(.plain)
+                                    .lineLimit(1)
+                                    .onChange(of: draftTitle) { _, value in
+                                        if value.count > CommunityContentRules.maximumPostTitleLength {
+                                            draftTitle = String(
+                                                value.prefix(CommunityContentRules.maximumPostTitleLength)
+                                            )
+                                        }
                                     }
-                                if await feedStore.publish(
-                                    title: draftTitle, body: draftBody, kind: kind, groupID: groupID,
-                                    media: preparedImages)
-                                {
-                                    dismiss()
+
+                                TextField(
+                                    AppStrings.localized("feed.post_description_optional"),
+                                    text: $draftBody,
+                                    axis: .vertical
+                                )
+                                .font(.body)
+                                .lineLimit(1...10)
+                                .textFieldStyle(.plain)
+                                .padding(.vertical, 5)
+                                .accessibilityLabel(AppStrings.localized("feed.post_description_optional"))
+                                .onChange(of: draftBody) { _, value in
+                                    if value.count > CommunityContentRules.maximumPostLength {
+                                        draftBody = String(value.prefix(CommunityContentRules.maximumPostLength))
+                                        return
+                                    }
+                                    hashtagSearchDebouncer.schedule {
+                                        await feedStore.updateHashtagSuggestions(for: value)
+                                    }
+                                }
+
+                                if !feedStore.hashtagSuggestions.isEmpty {
+                                    CommunityHashtagSuggestionList(suggestions: feedStore.hashtagSuggestions) { tag in
+                                        draftBody = CommunityHashtagRules.replacingActiveHashtag(
+                                            in: draftBody, with: tag
+                                        )
+                                        feedStore.clearHashtagSuggestions()
+                                    }
                                 }
                             }
                         }
-                        .disabled(
-                            isLoadingPhotos || imageEditorDraft != nil
-                                || draftTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                                || draftTitle.count > CommunityContentRules.maximumPostTitleLength
-                                || draftBody.count > CommunityContentRules.maximumPostLength)
+
+                        if !preparedImages.isEmpty {
+                            preparedImagesPreview
+                                .padding(.horizontal, -NorgeSpacing.medium)
+                                .padding(.horizontal, NorgeSpacing.small)
+                                .padding(.top, NorgeSpacing.small)
+                        }
+
+                        if let mediaErrorMessage {
+                            NorgeInlineFeedback(message: mediaErrorMessage)
+                                .padding(.top, NorgeSpacing.small)
+                        }
+
+                        if let errorMessage = feedStore.errorMessage {
+                            NorgeInlineFeedback(message: errorMessage)
+                                .padding(.top, NorgeSpacing.small)
+                        }
                     }
+                    .padding(.horizontal, NorgeSpacing.medium)
+                    .padding(.top, NorgeSpacing.small)
+                    .padding(.bottom, NorgeSpacing.large)
                 }
-                .norgePlainToolbar()
+                .scrollDismissesKeyboard(.interactively)
+                composerAttachmentBar
             }
+            .background(Color.norgeAppBackground.ignoresSafeArea())
+            .toolbar(.hidden, for: .navigationBar)
             .onChange(of: selectedPhotos) { _, items in
                 guard !items.isEmpty else { return }
                 photoLoadingTask?.cancel()
@@ -1093,6 +1215,246 @@ struct CreateCommunityPostView: View {
                 hashtagSearchDebouncer.cancel()
                 feedStore.clearHashtagSuggestions()
             }
+        }
+    }
+
+    private var composerHeader: some View {
+        HStack(spacing: NorgeSpacing.small) {
+            Button(AppStrings.localized("feed.cancel")) { closeComposer() }
+                .font(.body)
+                .foregroundStyle(.primary)
+                .frame(minWidth: 60, alignment: .leading)
+
+            Spacer(minLength: 0)
+
+            Text(AppStrings.localized("feed.new_post"))
+                .font(.headline.weight(.semibold))
+                .lineLimit(1)
+
+            Spacer(minLength: 0)
+
+            if feedStore.isPublishing {
+                ProgressView()
+                    .frame(width: 72, height: 38)
+                    .accessibilityLabel(AppStrings.localized("media.publishing"))
+            } else {
+                Button(AppStrings.localized("feed.publish")) {
+                    Task { await publishPost() }
+                }
+                .font(.subheadline.weight(.bold))
+                .foregroundStyle(canPublish ? .white : .secondary)
+                .padding(.horizontal, 16)
+                .frame(minHeight: 38)
+                .background(canPublish ? Color.norgePrimary : Color.norgeInputSurface, in: Capsule())
+                .disabled(!canPublish)
+            }
+        }
+        .padding(.horizontal, NorgeSpacing.medium)
+        .frame(minHeight: NorgeTopBarMetrics.height)
+        .overlay(alignment: .bottom) {
+            Rectangle()
+                .fill(Color.primary.opacity(0.12))
+                .frame(height: 0.5)
+        }
+    }
+
+    private var preparedImagesPreview: some View {
+        GeometryReader { proxy in
+            let previewHeight: CGFloat = preparedImages.count == 1 ? 300 : 220
+            let maximumWidth = preparedImages.count == 1 ? proxy.size.width : proxy.size.width * 0.78
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(alignment: .top, spacing: NorgeSpacing.small) {
+                    ForEach(Array(preparedImages.enumerated()), id: \.offset) { index, image in
+                        preparedImagePreview(
+                            image,
+                            index: index,
+                            width: preparedImages.count == 1
+                                ? proxy.size.width
+                                : previewWidth(
+                                    for: image,
+                                    height: previewHeight,
+                                    maximumWidth: maximumWidth
+                                ),
+                            height: previewHeight
+                        )
+                    }
+                }
+            }
+        }
+        .frame(height: preparedImages.count == 1 ? 300 : 220)
+    }
+
+    private func preparedImagePreview(
+        _ image: CommunityImageUpload,
+        index: Int,
+        width: CGFloat,
+        height: CGFloat
+    ) -> some View {
+        NorgeEditableImagePreview(
+            data: image.data,
+            editAccessibilityLabel: AppStrings.localized("post_photo.edit"),
+            removeAccessibilityLabel: AppStrings.localized("media.remove_photo"),
+            onEdit: {
+                editingImageIndex = index
+                imageEditorDraft = CommunityImageDraft(data: image.data, aspect: .free)
+            },
+            onRemove: {
+                preparedImages.remove(at: index)
+            },
+            size: 112,
+            width: width,
+            height: height
+        )
+    }
+
+    private func previewWidth(
+        for image: CommunityImageUpload,
+        height: CGFloat,
+        maximumWidth: CGFloat
+    ) -> CGFloat {
+        let aspectRatio = CGFloat(image.width) / CGFloat(max(1, image.height))
+        return min(maximumWidth, max(144, height * aspectRatio))
+    }
+
+    private func composerOptionLabel(systemImage: String, title: String) -> some View {
+        HStack(spacing: NorgeSpacing.xxs) {
+            Image(systemName: systemImage)
+            Text(title)
+                .lineLimit(1)
+            Image(systemName: "chevron.down")
+                .font(.caption.weight(.bold))
+        }
+        .font(.subheadline.weight(.semibold))
+        .foregroundStyle(Color.norgePrimary)
+        .frame(minHeight: NorgeControlSize.tapTarget)
+        .contentShape(Rectangle())
+    }
+
+    private var composerAttachmentBar: some View {
+        HStack(spacing: NorgeSpacing.small) {
+            PhotosPicker(
+                selection: $selectedPhotos,
+                maxSelectionCount: max(1, CommunityContentRules.maximumPostImageCount - preparedImages.count),
+                matching: .images
+            ) {
+                Image(systemName: "photo.on.rectangle.angled")
+                    .font(.system(size: 22, weight: .semibold))
+                    .foregroundStyle(Color.norgePrimary)
+                    .frame(width: NorgeControlSize.tapTarget, height: NorgeControlSize.tapTarget)
+                    .contentShape(Rectangle())
+            }
+            .accessibilityLabel(AppStrings.localized("media.add_photos"))
+            .accessibilityHint(AppStrings.localized("media.max_six"))
+            .disabled(isLoadingPhotos || preparedImages.count >= CommunityContentRules.maximumPostImageCount)
+
+            Menu {
+                Button {
+                    destination = .general
+                } label: {
+                    Label(
+                        AppStrings.localized("feed.general"),
+                        systemImage: destination == .general ? "checkmark" : "globe"
+                    )
+                }
+
+                ForEach(joinedGroups) { group in
+                    Button {
+                        destination = .group(group.id)
+                    } label: {
+                        Label(
+                            group.name,
+                            systemImage: destination == .group(group.id) ? "checkmark" : "person.3"
+                        )
+                    }
+                }
+            } label: {
+                composerOptionLabel(
+                    systemImage: destination == .general ? "globe" : "person.3",
+                    title: destinationTitle
+                )
+            }
+            .accessibilityLabel(AppStrings.localized("feed.share_to"))
+            .accessibilityValue(destinationTitle)
+
+            Menu {
+                ForEach(CommunityPostKind.allCases) { candidate in
+                    Button {
+                        kind = candidate
+                    } label: {
+                        Label(
+                            kindTitle(candidate),
+                            systemImage: kind == candidate ? "checkmark" : "text.bubble"
+                        )
+                    }
+                }
+            } label: {
+                composerOptionLabel(
+                    systemImage: "square.and.pencil",
+                    title: kindTitle(kind)
+                )
+            }
+            .accessibilityLabel(AppStrings.localized("feed.post_type"))
+            .accessibilityValue(kindTitle(kind))
+
+            if isLoadingPhotos {
+                ProgressView()
+                    .padding(.leading, NorgeSpacing.xxs)
+            }
+
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, NorgeSpacing.medium)
+        .padding(.top, NorgeSpacing.xxs)
+        .padding(.bottom, NorgeSpacing.small)
+        .background(Color.norgeTopBarBackground)
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(Color.primary.opacity(0.12))
+                .frame(height: 0.5)
+        }
+    }
+
+    private var destinationTitle: String {
+        switch destination {
+        case .general:
+            return AppStrings.localized("feed.general")
+        case .group(let id):
+            return joinedGroups.first(where: { $0.id == id })?.name ?? AppStrings.localized("feed.general")
+        }
+    }
+
+    private var canPublish: Bool {
+        !isLoadingPhotos
+            && imageEditorDraft == nil
+            && !draftTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            && draftTitle.count <= CommunityContentRules.maximumPostTitleLength
+            && draftBody.count <= CommunityContentRules.maximumPostLength
+    }
+
+    private func publishPost() async {
+        let groupID: UUID? =
+            switch destination {
+            case .general: nil
+            case .group(let id): id
+            }
+
+        if await feedStore.publish(
+            title: draftTitle,
+            body: draftBody,
+            kind: kind,
+            groupID: groupID,
+            media: preparedImages
+        ) {
+            closeComposer()
+        }
+    }
+
+    private func closeComposer() {
+        if let onDismiss {
+            onDismiss()
+        } else {
+            dismiss()
         }
     }
 

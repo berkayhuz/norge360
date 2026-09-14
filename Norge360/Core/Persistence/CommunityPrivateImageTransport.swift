@@ -6,6 +6,14 @@ enum CommunityPrivateImageTransportError: Error, Sendable {
     case httpStatus(Int)
 }
 
+enum CommunityPrivateImageScanOutcome: String, Sendable {
+    case pendingScan = "pending_scan"
+    case passed
+    case needsReview = "needs_review"
+    case rejected
+    case unavailable
+}
+
 /// Shared authenticated transport for private chat-image endpoints. Feature
 /// services decide their own authorization scope and outcome presentation.
 actor CommunityPrivateImageTransport {
@@ -22,7 +30,9 @@ actor CommunityPrivateImageTransport {
         self.urlSession = urlSession
     }
 
-    func stageJPEG(_ data: Data, scopeID: UUID, scopeKey: String, endpoint: String) async throws -> (UUID, String) {
+    func stageJPEG(
+        _ data: Data, scopeID: UUID, scopeKey: String, endpoint: String
+    ) async throws -> (UUID, CommunityPrivateImageScanOutcome) {
         let uploadResponse: PrivateImageUploadResponse = try await request(
             path: "/media/\(endpoint)/upload-url", method: "POST",
             body: PrivateImageUploadRequest(scopeID: scopeID, scopeKey: scopeKey, byteSize: data.count)
@@ -32,14 +42,30 @@ actor CommunityPrivateImageTransport {
             path: "/media/\(endpoint)/\(uploadResponse.attachmentID.uuidString)/upload-complete", method: "POST",
             body: EmptyPrivateImageRequest()
         )
-        let outcome = completion.outcome == "pending_scan"
+        let rawOutcome =
+            completion.outcome == "pending_scan"
             ? try await waitForScanStatus(attachmentID: uploadResponse.attachmentID, endpoint: endpoint)
             : completion.outcome
+        let outcome = CommunityPrivateImageScanOutcome(rawValue: rawOutcome) ?? .unavailable
         return (uploadResponse.attachmentID, outcome)
     }
 
+    func scanStatus(
+        attachmentID: UUID, endpoint: String
+    ) async throws -> CommunityPrivateImageScanOutcome {
+        let response: PrivateImageScanStatusResponse = try await request(
+            path: "/media/\(endpoint)/\(attachmentID.uuidString)/scan-status",
+            method: "GET",
+            body: Optional<EmptyPrivateImageRequest>.none,
+            retryOnUnauthorized: true
+        )
+        return CommunityPrivateImageScanOutcome(rawValue: response.outcome) ?? .unavailable
+    }
+
     private func waitForScanStatus(attachmentID: UUID, endpoint: String) async throws -> String {
-        let pollDelays: [UInt64] = [500_000_000, 1_000_000_000, 2_000_000_000, 3_000_000_000, 4_000_000_000, 5_000_000_000]
+        let pollDelays: [UInt64] = [
+            500_000_000, 1_000_000_000, 2_000_000_000, 3_000_000_000, 4_000_000_000, 5_000_000_000,
+        ]
         for delay in pollDelays {
             try await Task.sleep(nanoseconds: delay)
             let response: PrivateImageScanStatusResponse = try await request(

@@ -5,7 +5,7 @@ extension UIColor {
         traits.userInterfaceStyle == .dark ? UIColor(white: 37.0 / 255.0, alpha: 1) : .systemBackground
     }
     static let norgeTopBarBackground = UIColor { traits in
-        traits.userInterfaceStyle == .dark ? UIColor(white: 30.0 / 255.0, alpha: 1) : .systemBackground
+        traits.userInterfaceStyle == .dark ? UIColor(white: 37.0 / 255.0, alpha: 1) : .systemBackground
     }
 }
 
@@ -35,11 +35,9 @@ enum NorgeAppearance {
         UITableView.appearance().backgroundColor = .norgeAppBackground
         UITableViewCell.appearance().backgroundColor = .norgeAppBackground
         UICollectionView.appearance().backgroundColor = .norgeAppBackground
-        UIWindow.appearance().backgroundColor = .norgeAppBackground
         let tabs = UITabBarAppearance()
         tabs.configureWithOpaqueBackground()
         tabs.backgroundColor = .norgeAppBackground
-        tabs.shadowColor = .clear
         UITabBar.appearance().standardAppearance = tabs
         UITabBar.appearance().scrollEdgeAppearance = tabs
     }

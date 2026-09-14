@@ -3,6 +3,20 @@ import XCTest
 @testable import Norge360
 
 final class CommunityContentCacheTests: XCTestCase {
+    func testCacheEnforcesItemLimit() async throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("Norge360ContentCache.\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let cache = CommunityContentCache(directory: directory, maxItemCount: 2, maxTotalBytes: 1_000_000)
+
+        for _ in 0..<3 {
+            await cache.saveGroups(.init(groups: []), for: UUID())
+        }
+
+        let cachedFileCount = await cache.cachedFileCount()
+        XCTAssertEqual(cachedFileCount, 2)
+    }
+
     func testProfileCacheDoesNotPersistPrivateRelocationFields() async {
         let cache = CommunityContentCache()
         let viewerID = UUID()

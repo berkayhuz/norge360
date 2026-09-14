@@ -69,8 +69,8 @@ final class LanguageSettings: ObservableObject {
     }
 
     nonisolated static func detectedInitialLanguage(for locale: Locale = .current) -> AppLanguage {
-        let region = locale.regionCode?.uppercased()
-        let language = locale.languageCode?.lowercased()
+        let region = locale.region?.identifier.uppercased()
+        let language = locale.language.languageCode?.identifier.lowercased()
 
         // Prefer the App Store/device region. This keeps a supported country
         // deterministic even when the device language contains a different

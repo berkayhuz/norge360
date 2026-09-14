@@ -557,6 +557,26 @@ enum EventRSVPStatus: String, Codable, CaseIterable, Sendable, Identifiable {
     var id: String { rawValue }
 }
 
+struct CommunityEventMedia: Codable, Sendable, Equatable, Identifiable {
+    let id: UUID
+    let eventID: UUID
+    let storagePath: String
+    let sortOrder: Int
+    let width: Int
+    let height: Int
+    let createdAt: Date
+    var signedURL: URL?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case eventID = "event_id"
+        case storagePath = "storage_path"
+        case sortOrder = "sort_order"
+        case width, height
+        case createdAt = "created_at"
+    }
+}
+
 struct CommunityEvent: Codable, Sendable, Equatable, Identifiable {
     let id: UUID
     let hostID: UUID
@@ -565,6 +585,24 @@ struct CommunityEvent: Codable, Sendable, Equatable, Identifiable {
     let details: String
     let areaLabel: String
     let venueName: String?
+    let countyCode: String?
+    let municipalityCode: String?
+    let districtName: String?
+    let neighborhoodName: String?
+    let streetName: String?
+    let category: String?
+    let theme: String?
+    let format: String?
+    let ageRange: String?
+    let alcoholPolicy: String?
+    let priceType: String?
+    let language: String?
+    let isIndoor: Bool?
+    let isFamilyFriendly: Bool?
+    let isPetFriendly: Bool?
+    let isAccessible: Bool?
+    let foodProvided: Bool?
+    let registrationRequired: Bool?
     let startsAt: Date
     let capacity: Int?
     let createdAt: Date
@@ -578,6 +616,24 @@ struct CommunityEvent: Codable, Sendable, Equatable, Identifiable {
         case details = "description"
         case areaLabel = "area_label"
         case venueName = "venue_name"
+        case countyCode = "county_code"
+        case municipalityCode = "municipality_code"
+        case districtName = "district_name"
+        case neighborhoodName = "neighborhood_name"
+        case streetName = "street_name"
+        case category
+        case theme
+        case format
+        case ageRange = "age_range"
+        case alcoholPolicy = "alcohol_policy"
+        case priceType = "price_type"
+        case language
+        case isIndoor = "is_indoor"
+        case isFamilyFriendly = "is_family_friendly"
+        case isPetFriendly = "is_pet_friendly"
+        case isAccessible = "is_accessible"
+        case foodProvided = "food_provided"
+        case registrationRequired = "registration_required"
         case startsAt = "starts_at"
         case capacity
         case createdAt = "created_at"

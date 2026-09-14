@@ -142,7 +142,8 @@ final class CommunityGroupsStore: ObservableObject {
             // Pagination can be cancelled when the user leaves the screen.
         } catch {
             guard loadGeneration == generation, activeSearchQuery == normalizedQuery, !Task.isCancelled else { return }
-            errorMessage = error.localizedDescription
+            errorMessage = UserFacingErrorMapper.message(
+                for: error, fallbackKey: "groups.error", operation: "groups.load_more")
         }
     }
 
@@ -168,7 +169,8 @@ final class CommunityGroupsStore: ObservableObject {
                 await persistCachedGroups()
             }
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = UserFacingErrorMapper.message(
+                for: error, fallbackKey: "groups.error", operation: "groups.toggle_membership")
         }
     }
 
@@ -183,7 +185,8 @@ final class CommunityGroupsStore: ObservableObject {
             pendingJoinGroupIDs.remove(groupID)
             await persistCachedGroups()
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = UserFacingErrorMapper.message(
+                for: error, fallbackKey: "groups.error", operation: "groups.cancel_join_request")
         }
     }
 
@@ -290,7 +293,8 @@ final class CommunityGroupsStore: ObservableObject {
             guard activeUserID == userID, loadGeneration == generation, activeSearchQuery == searchQuery,
                 !Task.isCancelled
             else { return }
-            errorMessage = error.localizedDescription
+            errorMessage = UserFacingErrorMapper.message(
+                for: error, fallbackKey: "groups.error", operation: "groups.reload")
         }
     }
 

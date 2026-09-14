@@ -13,7 +13,7 @@ struct CommunityAvatarView: View {
                 CommunityCachedImage(url: url) { image in
                     image.resizable().scaledToFill()
                 } placeholder: {
-                    placeholder
+                    NorgeSkeleton(width: size, height: size, cornerRadius: size / 2)
                 }
             } else {
                 placeholder

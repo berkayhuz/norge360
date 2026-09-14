@@ -143,7 +143,8 @@ final class CommunityEventsStore: ObservableObject {
                 host: current.host,
                 currentRSVP: current.currentRSVP,
                 isLiked: isLiked,
-                likeCount: max(0, current.likeCount + (isLiked ? 1 : -1))
+                likeCount: max(0, current.likeCount + (isLiked ? 1 : -1)),
+                media: current.media
             )
         } catch { errorMessage = AppStrings.localized("events.like_error") }
     }

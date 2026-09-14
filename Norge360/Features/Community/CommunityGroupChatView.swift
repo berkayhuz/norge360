@@ -20,6 +20,7 @@ struct CommunityGroupChatView: View {  // swiftlint:disable:this type_body_lengt
     @State private var photoPickerItem: PhotosPickerItem?
     @State private var pendingAttachmentID: UUID?
     @State private var pendingImage: UIImage?
+    @State private var isPendingImageScan = false
     @State private var latestOwnMessageID: UUID?
     @State private var readReceipt: CommunityGroupChatReadReceipt?
     @State private var isMuted = false
@@ -33,9 +34,8 @@ struct CommunityGroupChatView: View {  // swiftlint:disable:this type_body_lengt
     var body: some View {
         VStack(spacing: 0) {
             if isLoading {
-                Spacer()
-                ProgressView()
-                Spacer()
+                NorgeSkeletonList(rowCount: 3, showsMedia: false)
+                    .padding(.horizontal, 16)
             } else {
                 ScrollViewReader { proxy in
                     ScrollView {
@@ -43,7 +43,7 @@ struct CommunityGroupChatView: View {  // swiftlint:disable:this type_body_lengt
                             if hasMoreOlderMessages {
                                 Group {
                                     if isLoadingOlderMessages {
-                                        ProgressView()
+                                        NorgeSkeleton(width: 180, height: 34, cornerRadius: 17)
                                     } else {
                                         Color.clear.frame(height: 1)
                                     }
@@ -99,7 +99,12 @@ struct CommunityGroupChatView: View {  // swiftlint:disable:this type_body_lengt
                 .accessibilityLabel(AppStrings.localized(isMuted ? "chat.unmute" : "chat.mute"))
             }
         }
-        .task { await reload() }
+        .task {
+            if let ownerID = authenticationStore.user?.id {
+                await restorePendingImage(ownerID: ownerID)
+            }
+            await reload()
+        }
         .task {
             let events = await groupChatStore.messageEvents(groupID: group.id)
             for await _ in events {
@@ -109,6 +114,7 @@ struct CommunityGroupChatView: View {  // swiftlint:disable:this type_body_lengt
                 }
             }
         }
+        .task(id: pendingAttachmentID) { await pollPendingImageScan() }
         .onDisappear { realtimeDebouncer.cancel() }
         .refreshable { await reload(showSpinner: false) }
         .confirmationDialog(
@@ -192,14 +198,26 @@ struct CommunityGroupChatView: View {  // swiftlint:disable:this type_body_lengt
                     Image(uiImage: pendingImage)
                         .resizable().scaledToFill().frame(width: 54, height: 54).clipShape(
                             RoundedRectangle(cornerRadius: 12, style: .continuous))
-                    Text(AppStrings.localized("groups.chat_image_ready"))
-                        .font(.footnote).foregroundStyle(.secondary)
+                    Text(
+                        AppStrings.localized(
+                            isPendingImageScan ? "groups.chat_image_checking" : "groups.chat_image_ready"
+                        )
+                    )
+                    .font(.footnote).foregroundStyle(.secondary)
                     Spacer()
                     Button {
                         guard let attachmentID = pendingAttachmentID else { return }
                         pendingAttachmentID = nil
                         self.pendingImage = nil
-                        Task { try? await groupChatStore.cancelImage(attachmentID: attachmentID) }
+                        isPendingImageScan = false
+                        Task {
+                            try? await groupChatStore.cancelImage(attachmentID: attachmentID)
+                            if let ownerID = authenticationStore.user?.id {
+                                await CommunityPendingImageStore.shared.remove(
+                                    ownerID: ownerID, scopeID: group.id, kind: .group
+                                )
+                            }
+                        }
                     } label: {
                         Image(systemName: "xmark.circle.fill")
                     }
@@ -229,7 +247,7 @@ struct CommunityGroupChatView: View {  // swiftlint:disable:this type_body_lengt
                     }
                 NorgeCircularSendButton(
                     isSending: isSending,
-                    isEnabled: !isSending && !isCheckingImage
+                    isEnabled: !isSending && !isCheckingImage && !isPendingImageScan
                         && (draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false
                             || pendingAttachmentID != nil),
                     accessibilityLabel: AppStrings.localized("chat.send")
@@ -317,6 +335,7 @@ struct CommunityGroupChatView: View {  // swiftlint:disable:this type_body_lengt
     }
 
     private func send() async {
+        guard !isPendingImageScan else { return }
         isSending = true
         defer { isSending = false }
         do {
@@ -331,6 +350,12 @@ struct CommunityGroupChatView: View {  // swiftlint:disable:this type_body_lengt
             draft = ""
             pendingAttachmentID = nil
             pendingImage = nil
+            isPendingImageScan = false
+            if let ownerID = authenticationStore.user?.id {
+                await CommunityPendingImageStore.shared.remove(
+                    ownerID: ownerID, scopeID: group.id, kind: .group
+                )
+            }
             await refreshFromRealtime()
         } catch { errorMessage = AppStrings.localized("groups.chat_error") }
     }
@@ -368,22 +393,134 @@ struct CommunityGroupChatView: View {  // swiftlint:disable:this type_body_lengt
         defer { isCheckingImage = false }
         do {
             let upload = try await CommunityImageProcessing.prepareJPEG(from: data)
-            let attachmentID = try await groupChatStore.stageImage(groupID: group.id, jpegData: upload.data)
-            guard let image = UIImage(data: upload.data) else { throw CommunityMediaError.unsupportedImage }
-            pendingAttachmentID = attachmentID
-            pendingImage = image
-        } catch let error as CommunityGroupChatMediaError {
-            if case .unavailable = error {
-                isPhotoSharingUnavailable = true
-                errorMessage = AppStrings.localized("groups.chat_photo_temporarily_unavailable")
-            } else if case .configurationMissing = error {
-                isPhotoSharingUnavailable = true
-                errorMessage = AppStrings.localized("groups.chat_photo_temporarily_unavailable")
-            } else {
-                errorMessage = error.errorDescription ?? AppStrings.localized("groups.chat_image_error")
+            guard
+                let image = CommunityImageDecoding.image(
+                    from: upload.data, variant: .thumbnail(maxPixelDimension: 256)
+                )
+            else {
+                throw CommunityMediaError.unsupportedImage
             }
+            await stagePreparedImage(upload, image: image)
+        } catch let error as CommunityGroupChatMediaError {
+            handleImageError(error)
         } catch {
             errorMessage = AppStrings.localized("groups.chat_image_error")
+        }
+    }
+
+    private func stagePreparedImage(_ upload: CommunityImageUpload, image: UIImage) async {
+        do {
+            let attachmentID = try await groupChatStore.stageImage(groupID: group.id, jpegData: upload.data)
+            pendingAttachmentID = attachmentID
+            pendingImage = image
+            isPendingImageScan = false
+        } catch let error as CommunityGroupChatMediaError {
+            await handleStagedImageError(error, upload: upload, image: image)
+        } catch {
+            errorMessage = AppStrings.localized("groups.chat_image_error")
+        }
+    }
+
+    private func handleStagedImageError(
+        _ error: CommunityGroupChatMediaError,
+        upload: CommunityImageUpload,
+        image: UIImage
+    ) async {
+        switch error {
+        case .pendingScan(let attachmentID):
+            pendingAttachmentID = attachmentID
+            pendingImage = image
+            isPendingImageScan = true
+            if let ownerID = authenticationStore.user?.id {
+                await CommunityPendingImageStore.shared.save(
+                    attachmentID: attachmentID,
+                    ownerID: ownerID,
+                    scopeID: group.id,
+                    kind: .group,
+                    jpegData: upload.data
+                )
+            }
+        case .configurationMissing, .accessDenied, .unavailable:
+            isPhotoSharingUnavailable = true
+            errorMessage = AppStrings.localized("groups.chat_photo_temporarily_unavailable")
+        case .rejected:
+            errorMessage = AppStrings.localized("groups.chat_image_rejected")
+        case .needsReview:
+            errorMessage = AppStrings.localized("groups.chat_image_review")
+        case .authenticationRequired:
+            errorMessage = AppStrings.auth("sign_in_required")
+        }
+    }
+
+    private func handleImageError(_ error: CommunityGroupChatMediaError) {
+        switch error {
+        case .unavailable, .configurationMissing:
+            isPhotoSharingUnavailable = true
+            errorMessage = AppStrings.localized("groups.chat_photo_temporarily_unavailable")
+        default:
+            errorMessage = error.errorDescription ?? AppStrings.localized("groups.chat_image_error")
+        }
+    }
+
+    private func restorePendingImage(ownerID: UUID) async {
+        guard
+            let pending = await CommunityPendingImageStore.shared.load(
+                ownerID: ownerID, scopeID: group.id, kind: .group
+            ),
+            let image = CommunityImageDecoding.image(
+                from: pending.jpegData, variant: .thumbnail(maxPixelDimension: 256)
+            )
+        else { return }
+        pendingAttachmentID = pending.attachmentID
+        pendingImage = image
+        isPendingImageScan = true
+    }
+
+    private func pollPendingImageScan() async {
+        guard isPendingImageScan, let attachmentID = pendingAttachmentID else { return }
+        let delays: [Duration] = [.seconds(2), .seconds(4), .seconds(8), .seconds(15), .seconds(30), .seconds(30)]
+        for delay in delays {
+            do {
+                try await Task.sleep(for: delay)
+                guard !Task.isCancelled, pendingAttachmentID == attachmentID else { return }
+                let outcome = try await groupChatStore.scanStatus(attachmentID: attachmentID)
+                switch outcome {
+                case .passed:
+                    isPendingImageScan = false
+                    return
+                case .pendingScan:
+                    continue
+                case .rejected:
+                    await clearPendingImage(attachmentID: attachmentID)
+                    errorMessage = AppStrings.localized("groups.chat_image_rejected")
+                    return
+                case .needsReview:
+                    await clearPendingImage(attachmentID: attachmentID)
+                    errorMessage = AppStrings.localized("groups.chat_image_review")
+                    return
+                case .unavailable:
+                    await clearPendingImage(attachmentID: attachmentID)
+                    errorMessage = AppStrings.localized("groups.chat_image_error")
+                    return
+                }
+            } catch is CancellationError {
+                return
+            } catch {
+                continue
+            }
+        }
+        errorMessage = AppStrings.localized("groups.chat_image_error")
+    }
+
+    private func clearPendingImage(attachmentID: UUID) async {
+        pendingAttachmentID = nil
+        pendingImage = nil
+        isPendingImageScan = false
+        try? await groupChatStore.cancelImage(attachmentID: attachmentID)
+        if let ownerID = authenticationStore.user?.id {
+            await CommunityPendingImageStore.shared.remove(
+                ownerID: ownerID, scopeID: group.id, kind: .group
+            )
         }
     }
 

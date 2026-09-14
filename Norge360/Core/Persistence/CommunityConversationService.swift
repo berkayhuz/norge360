@@ -14,6 +14,7 @@ protocol CommunityConversationsProviding: Sendable {
     func send(conversationID: UUID, body: String) async throws -> UUID
     func send(conversationID: UUID, body: String, attachmentID: UUID) async throws -> UUID
     func stageImage(conversationID: UUID, jpegData: Data) async throws -> UUID
+    func scanStatus(attachmentID: UUID) async throws -> CommunityPrivateImageScanOutcome
     func imageURL(attachmentID: UUID) async throws -> URL
     func cancelImage(attachmentID: UUID) async throws
     func markRead(conversationID: UUID) async throws
@@ -203,6 +204,10 @@ actor CommunityConversationService: CommunityConversationsProviding {  // swiftl
 
     func stageImage(conversationID: UUID, jpegData: Data) async throws -> UUID {
         try await mediaService.stageImage(conversationID: conversationID, jpegData: jpegData)
+    }
+
+    func scanStatus(attachmentID: UUID) async throws -> CommunityPrivateImageScanOutcome {
+        try await mediaService.scanStatus(attachmentID: attachmentID)
     }
 
     func imageURL(attachmentID: UUID) async throws -> URL {

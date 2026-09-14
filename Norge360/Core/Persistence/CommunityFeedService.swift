@@ -9,22 +9,31 @@ protocol CommunityFeedProviding: Sendable {
     func loadFeedPage(cursor: String?, limit: Int) async throws -> CommunityPage<CommunityFeedItem>
     func loadMemberProfile(userID: UUID) async throws -> CommunityProfile?
     func loadMemberPosts(userID: UUID) async throws -> [CommunityFeedItem]
+    func loadMemberPostsPage(
+        userID: UUID, cursor: String?, limit: Int
+    ) async throws -> CommunityPage<CommunityFeedItem>
     func loadMemberReplies(userID: UUID) async throws -> [CommunityFeedItem]
+    func loadMemberRepliesPage(
+        userID: UUID, cursor: String?, limit: Int
+    ) async throws -> CommunityPage<CommunityFeedItem>
     func loadMemberMedia(userID: UUID) async throws -> [CommunityFeedItem]
+    func loadMemberMediaPage(userID: UUID, cursor: String?, limit: Int) async throws -> CommunityPage<CommunityFeedItem>
     func loadLikedPosts(userID: UUID) async throws -> [CommunityFeedItem]
+    func loadSavedPostIDs() async throws -> [UUID]
     func loadMemberStats(userID: UUID) async throws -> CommunityMemberProfileStats?
     func loadPosts(ids: [UUID]) async throws -> [CommunityFeedItem]
     func loadPost(id: UUID) async throws -> CommunityFeedItem?
     func searchHashtags(prefix: String) async throws -> [CommunityHashtagSuggestion]
     func loadHashtagPosts(tag: String) async throws -> [CommunityFeedItem]
-    func loadGroupPosts(groupID: UUID) async throws -> [CommunityFeedItem]
+    func loadGroupPosts(groupID: UUID, cursor: String?, limit: Int) async throws -> CommunityPage<CommunityFeedItem>
     func createPost(title: String, body: String, kind: CommunityPostKind, groupID: UUID?, media: [CommunityImageUpload])
         async throws
     func updatePost(id: UUID, body: String) async throws
     func deletePost(id: UUID) async throws
     func removeGroupPost(id: UUID, groupID: UUID) async throws
     func toggleLike(postID: UUID) async throws -> Bool
-    func loadComments(postID: UUID) async throws -> [CommunityCommentItem]
+    func toggleSave(postID: UUID) async throws -> Bool
+    func loadComments(postID: UUID, cursor: String?, limit: Int) async throws -> CommunityPage<CommunityCommentItem>
     func createComment(postID: UUID, body: String) async throws
     func updateComment(id: UUID, body: String) async throws
     func deleteComment(id: UUID) async throws
@@ -37,6 +46,16 @@ protocol CommunityFeedProviding: Sendable {
     func blockUser(id: UUID) async throws
     func loadBlockedMembers() async throws -> [CommunityBlockedMember]
     func unblockUser(id: UUID) async throws
+}
+
+extension CommunityFeedProviding {
+    func loadMemberMediaPage(
+        userID: UUID,
+        cursor: String?,
+        limit: Int
+    ) async throws -> CommunityPage<CommunityFeedItem> {
+        CommunityPage(items: try await loadMemberMedia(userID: userID), nextCursor: nil)
+    }
 }
 
 struct CommunityFeedPageRow: Decodable, Sendable {
@@ -80,6 +99,14 @@ struct CommunityPostCounterRow: Decodable, Sendable {
 struct CommunityPostCommentRow: Decodable, Sendable {
     let comment: CommunityComment
     let author: CommunityProfile
+
+    let nextCursor: String?
+
+    enum CodingKeys: String, CodingKey {
+        case comment
+        case author
+        case nextCursor = "next_cursor"
+    }
 }
 
 enum CommunityFeedError: LocalizedError {
@@ -110,6 +137,19 @@ actor CommunityFeedService: CommunityFeedProviding {
         var seen = Set<UUID>(minimumCapacity: postIDs.count)
         return postIDs.filter { seen.insert($0).inserted }
     }
+
+    nonisolated static func orderedUniqueProfiles(_ profiles: [CommunityProfile]) -> [CommunityProfile] {
+        var seen = Set<UUID>(minimumCapacity: profiles.count)
+        return profiles.filter { seen.insert($0.userID).inserted }
+    }
+
+    nonisolated static func profilesByUserID(_ profiles: [CommunityProfile]) -> [UUID: CommunityProfile] {
+        profiles.reduce(into: [UUID: CommunityProfile]()) { profilesByID, profile in
+            if profilesByID[profile.userID] == nil {
+                profilesByID[profile.userID] = profile
+            }
+        }
+    }
 }
 
 private struct CommunityFeedPageParameters: Encodable, Sendable {
@@ -130,6 +170,30 @@ private struct CommunityPostCounterParameters: Encodable, Sendable {
     }
 }
 
+private struct CommunityPostCommentsPageParameters: Encodable, Sendable {
+    let targetPostID: UUID
+    let pageCursor: String?
+    let pageLimit: Int
+
+    enum CodingKeys: String, CodingKey {
+        case targetPostID = "target_post_id"
+        case pageCursor = "page_cursor"
+        case pageLimit = "page_limit"
+    }
+}
+
+private struct CommunityMemberMediaPageParameters: Encodable, Sendable {
+    let targetUserID: UUID
+    let pageCursor: String?
+    let pageLimit: Int
+
+    enum CodingKeys: String, CodingKey {
+        case targetUserID = "target_user_id"
+        case pageCursor = "page_cursor"
+        case pageLimit = "page_limit"
+    }
+}
+
 extension CommunityFeedService {
     func loadFeedPage(cursor: String?, limit: Int) async throws -> CommunityPage<CommunityFeedItem> {
         let rows: [CommunityFeedPageRow] =
@@ -147,37 +211,130 @@ extension CommunityFeedService {
     }
 
     func loadMemberPosts(userID: UUID) async throws -> [CommunityFeedItem] {
+        try await loadMemberPostsPage(userID: userID, cursor: nil, limit: 30).items
+    }
+
+    func loadMemberPostsPage(
+        userID: UUID,
+        cursor: String?,
+        limit: Int
+    ) async throws -> CommunityPage<CommunityFeedItem> {
         let session = try await client.auth.session
-        let posts: [CommunityPost] =
-            try await client
+        let decodedCursor = try cursor.map(CommunityKeysetCursor.init(encoded:))
+        let pageLimit = min(max(limit, 1), 30)
+        var request =
+            client
             .from("community_posts")
             .select(SupabaseSelectColumns.communityPost)
             .eq("author_id", value: userID.uuidString)
+        if let decodedCursor {
+            guard Self.cursorDateFormatter.date(from: decodedCursor.value) != nil else {
+                throw CommunityPaginationError.invalidCursor
+            }
+            let value = Self.postgrestLiteral(decodedCursor.value)
+            request = request.or(
+                "created_at.lt.\(value),and(created_at.eq.\(value),id.lt.\(decodedCursor.id.uuidString))"
+            )
+        }
+        let posts: [CommunityPost] =
+            try await request
             .order("created_at", ascending: false)
-            .limit(30)
+            .order("id", ascending: false)
+            .limit(pageLimit + 1)
             .execute()
             .value
-        return try await makeFeedItems(posts: posts, session: session)
+        let hasMore = posts.count > pageLimit
+        let pagePosts = Array(posts.prefix(pageLimit))
+        let nextCursor: String?
+        if hasMore, let lastPost = pagePosts.last {
+            nextCursor = try CommunityKeysetCursor(
+                value: Self.cursorDateFormatter.string(from: lastPost.createdAt),
+                id: lastPost.id
+            ).encoded()
+        } else {
+            nextCursor = nil
+        }
+        return CommunityPage(
+            items: try await makeFeedItems(posts: pagePosts, session: session),
+            nextCursor: nextCursor
+        )
     }
 
     func loadMemberReplies(userID: UUID) async throws -> [CommunityFeedItem] {
+        try await loadMemberRepliesPage(userID: userID, cursor: nil, limit: 30).items
+    }
+
+    func loadMemberRepliesPage(
+        userID: UUID,
+        cursor: String?,
+        limit: Int
+    ) async throws -> CommunityPage<CommunityFeedItem> {
         let session = try await client.auth.session
-        let comments: [CommunityComment] =
-            try await client
+        let decodedCursor = try cursor.map(CommunityKeysetCursor.init(encoded:))
+        let pageLimit = min(max(limit, 1), 30)
+        var request =
+            client
             .from("community_comments")
             .select(SupabaseSelectColumns.communityComment)
             .eq("author_id", value: userID.uuidString)
+        if let decodedCursor {
+            guard Self.cursorDateFormatter.date(from: decodedCursor.value) != nil else {
+                throw CommunityPaginationError.invalidCursor
+            }
+            let value = Self.postgrestLiteral(decodedCursor.value)
+            request = request.or(
+                "created_at.lt.\(value),and(created_at.eq.\(value),id.lt.\(decodedCursor.id.uuidString))"
+            )
+        }
+        let comments: [CommunityComment] =
+            try await request
             .order("created_at", ascending: false)
-            .limit(30)
+            .order("id", ascending: false)
+            .limit(pageLimit + 1)
             .execute()
             .value
-        let postIDs = Self.orderedUniquePostIDs(comments.map(\.postID))
-        return try await loadPostItems(postIDs: postIDs, session: session)
+        let pageComments = Array(comments.prefix(pageLimit))
+        let pagePostIDs = Self.orderedUniquePostIDs(pageComments.map(\.postID))
+        let nextCursor: String?
+        if comments.count > pageLimit, let lastComment = pageComments.last {
+            nextCursor = try CommunityKeysetCursor(
+                value: Self.cursorDateFormatter.string(from: lastComment.createdAt),
+                id: lastComment.id
+            ).encoded()
+        } else {
+            nextCursor = nil
+        }
+        return CommunityPage(
+            items: try await loadPostItems(postIDs: pagePostIDs, session: session),
+            nextCursor: nextCursor
+        )
     }
 
     func loadMemberMedia(userID: UUID) async throws -> [CommunityFeedItem] {
-        let posts = try await loadMemberPosts(userID: userID)
-        return posts.filter { !$0.media.isEmpty }
+        try await loadMemberMediaPage(userID: userID, cursor: nil, limit: 30).items
+    }
+
+    func loadMemberMediaPage(
+        userID: UUID,
+        cursor: String?,
+        limit: Int
+    ) async throws -> CommunityPage<CommunityFeedItem> {
+        let session = try await client.auth.session
+        let rows: [PostIDRow] =
+            try await client
+            .rpc(
+                "list_community_member_media_posts_page",
+                params: CommunityMemberMediaPageParameters(
+                    targetUserID: userID,
+                    pageCursor: cursor,
+                    pageLimit: limit
+                )
+            )
+            .execute()
+            .value
+        let postIDs = Self.orderedUniquePostIDs(rows.map(\.postID))
+        let items = try await loadPostItems(postIDs: postIDs, session: session)
+        return CommunityPage(items: items, nextCursor: rows.first?.nextCursor)
     }
 
     func loadLikedPosts(userID: UUID) async throws -> [CommunityFeedItem] {
@@ -188,6 +345,15 @@ extension CommunityFeedService {
             .execute()
             .value
         return try await loadPostItems(postIDs: likedPostIDs.map(\.postID), session: session)
+    }
+
+    func loadSavedPostIDs() async throws -> [UUID] {
+        let rows: [PostIDRow] =
+            try await client
+            .rpc("list_own_community_saved_post_ids")
+            .execute()
+            .value
+        return rows.map(\.postID)
     }
 
     func loadMemberStats(userID: UUID) async throws -> CommunityMemberProfileStats? {
@@ -264,18 +430,60 @@ extension CommunityFeedService {
         return try await makeFeedItems(posts: posts, session: session)
     }
 
-    func loadGroupPosts(groupID: UUID) async throws -> [CommunityFeedItem] {
+    func loadGroupPosts(groupID: UUID, cursor: String?, limit: Int) async throws -> CommunityPage<CommunityFeedItem> {
         let session = try await client.auth.session
-        let posts: [CommunityPost] =
-            try await client
+        let decodedCursor = try cursor.map(CommunityKeysetCursor.init(encoded:))
+        let pageLimit = min(max(limit, 1), 30)
+        var request =
+            client
             .from("community_posts")
             .select(SupabaseSelectColumns.communityPost)
             .eq("group_id", value: groupID.uuidString)
+        if let decodedCursor {
+            guard Self.cursorDateFormatter.date(from: decodedCursor.value) != nil else {
+                throw CommunityPaginationError.invalidCursor
+            }
+            let value = Self.postgrestLiteral(decodedCursor.value)
+            request = request.or(
+                "created_at.lt.\(value),and(created_at.eq.\(value),id.lt.\(decodedCursor.id.uuidString))"
+            )
+        }
+        let posts: [CommunityPost] =
+            try await request
             .order("created_at", ascending: false)
-            .limit(50)
+            .order("id", ascending: false)
+            .limit(pageLimit + 1)
             .execute()
             .value
-        return try await makeFeedItems(posts: posts, session: session)
+        let hasMore = posts.count > pageLimit
+        let pagePosts = Array(posts.prefix(pageLimit))
+        let nextCursor: String?
+        if hasMore, let lastPost = pagePosts.last {
+            nextCursor = try CommunityKeysetCursor(
+                value: Self.cursorDateFormatter.string(from: lastPost.createdAt),
+                id: lastPost.id
+            ).encoded()
+        } else {
+            nextCursor = nil
+        }
+        return CommunityPage(
+            items: try await makeFeedItems(posts: pagePosts, session: session),
+            nextCursor: nextCursor
+        )
+    }
+
+    private static var cursorDateFormatter: ISO8601DateFormatter {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return formatter
+    }
+
+    private static func postgrestLiteral(_ value: String) -> String {
+        let escaped =
+            value
+            .replacingOccurrences(of: "\\", with: "\\\\")
+            .replacingOccurrences(of: "\"", with: "\\\"")
+        return "\"" + escaped + "\""
     }
 
     // The parallel profile/media/count fetches intentionally stay together.
@@ -392,27 +600,15 @@ extension CommunityFeedService {
     }
 
     func deletePost(id: UUID) async throws {
-        let media: [CommunityPostMedia] =
-            try await client
-            .from("community_post_media")
-            .select(SupabaseSelectColumns.communityPostMedia)
-            .eq("post_id", value: id.uuidString)
-            .execute()
-            .value
-
         try await client
             .from("community_posts")
             .delete()
             .eq("id", value: id.uuidString)
             .execute()
 
-        // The database cascade removes media metadata. Object storage needs a
-        // separate cleanup call; failure here must not make a deleted post
-        // reappear, so it is deliberately best-effort.
-        let paths = media.map(\.storagePath)
-        if !paths.isEmpty {
-            _ = try? await client.storage.from("post-media").remove(paths: paths)
-        }
+        // The database cascade queues every deleted media path for the
+        // server-only Storage cleanup worker. Do not make post deletion wait
+        // for a best-effort client-side object-storage request.
     }
 
     func removeGroupPost(id: UUID, groupID: UUID) async throws {
@@ -459,20 +655,33 @@ extension CommunityFeedService {
             .value
     }
 
-    func loadComments(postID: UUID) async throws -> [CommunityCommentItem] {
+    func toggleSave(postID: UUID) async throws -> Bool {
+        try await client
+            .rpc("toggle_community_post_save", params: ["target_post_id": postID.uuidString])
+            .execute()
+            .value
+    }
+
+    func loadComments(postID: UUID, cursor: String?, limit: Int) async throws -> CommunityPage<CommunityCommentItem> {
         let rows: [CommunityPostCommentRow] =
             try await client
             .rpc(
                 "list_community_post_comments",
-                params: ["target_post_id": postID.uuidString]
+                params: CommunityPostCommentsPageParameters(
+                    targetPostID: postID,
+                    pageCursor: cursor,
+                    pageLimit: limit
+                )
             )
             .execute()
             .value
-        let signedAuthors = await profilesWithSignedAvatars(rows.map(\.author))
-        let authorsByID = Dictionary(uniqueKeysWithValues: signedAuthors.map { ($0.userID, $0) })
-        return rows.map { row in
+        let uniqueAuthors = Self.orderedUniqueProfiles(rows.map(\.author))
+        let signedAuthors = await profilesWithSignedAvatars(uniqueAuthors)
+        let authorsByID = Self.profilesByUserID(signedAuthors)
+        let items = rows.map { row in
             CommunityCommentItem(comment: row.comment, author: authorsByID[row.author.userID] ?? row.author)
         }
+        return CommunityPage(items: items, nextCursor: rows.first?.nextCursor)
     }
 
     func createComment(postID: UUID, body: String) async throws {
@@ -754,8 +963,10 @@ extension CommunityFeedService {
 
 private struct PostIDRow: Decodable, Sendable {
     let postID: UUID
+    let nextCursor: String?
 
     enum CodingKeys: String, CodingKey {
         case postID = "post_id"
+        case nextCursor = "next_cursor"
     }
 }

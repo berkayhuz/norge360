@@ -65,8 +65,25 @@ struct CommunityFollowListView: View {
 
     private func load() async {
         isLoading = true
+        errorMessage = nil
         defer { isLoading = false }
         do {
+            try await followStore.loadState(for: userID, forceRefresh: true)
+
+            let state = followStore.states[userID]
+            let relationshipCount: Int
+            switch relationship {
+            case .followers:
+                relationshipCount = state?.followersCount ?? 0
+            case .following:
+                relationshipCount = state?.followingCount ?? 0
+            }
+
+            guard relationshipCount > 0 else {
+                profiles = []
+                return
+            }
+
             profiles = try await followStore.profiles(for: userID, relationship: relationship)
         } catch {
             errorMessage = AppStrings.localized("follow.unavailable")

@@ -106,7 +106,8 @@ private struct CommunityModerationReportDetailView: View {
         NavigationStack {
             Group {
                 if moderationStore.isLoadingContext && moderationStore.context == nil {
-                    ProgressView()
+                    NorgeSkeletonList(rowCount: 2, showsMedia: false)
+                        .padding(16)
                 } else {
                     Form {
                         reportSection

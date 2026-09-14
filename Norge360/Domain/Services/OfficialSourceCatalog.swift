@@ -15,6 +15,34 @@ enum OfficialSourceCatalog {
         verificationNote: verificationNote
     )
 
+    static let udiStudyPermit = OfficialSource(
+        name: "UDI — Study permit",
+        url: URL(string: "https://www.udi.no/en/want-to-apply/studies/"),
+        lastVerifiedAt: verifiedDate,
+        verificationNote: verificationNote
+    )
+
+    static let udiFamilyImmigration = OfficialSource(
+        name: "UDI — Family immigration",
+        url: URL(string: "https://www.udi.no/en/want-to-apply/family-immigration/"),
+        lastVerifiedAt: verifiedDate,
+        verificationNote: verificationNote
+    )
+
+    static let udiSelfEmployment = OfficialSource(
+        name: "UDI — Skilled workers and self-employed persons",
+        url: URL(string: "https://www.udi.no/en/want-to-apply/work-immigration/skilled-workers/"),
+        lastVerifiedAt: verifiedDate,
+        verificationNote: verificationNote
+    )
+
+    static let udiWantToApply = OfficialSource(
+        name: "UDI — Want to apply",
+        url: URL(string: "https://www.udi.no/en/want-to-apply/"),
+        lastVerifiedAt: verifiedDate,
+        verificationNote: verificationNote
+    )
+
     static let taxDeductionCardForForeignWorkers = OfficialSource(
         name: "Skatteetaten — Tax deduction card for foreign employees",
         url: URL(string: "https://www.skatteetaten.no/en/forms/tax-deduction-card-for-foreign-citizens/"),

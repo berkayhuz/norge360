@@ -48,7 +48,7 @@ actor CommunityGroupsService: CommunityGroupsProviding {
                 client
                 .from("community_groups")
                 .select(SupabaseSelectColumns.communityGroup)
-                .ilike("name", value: "%\(searchQuery)%")
+                .ilike("name", pattern: "%\(searchQuery)%")
             if let cursorFilter { request = request.or(cursorFilter) }
             groups =
                 try await request
@@ -192,6 +192,7 @@ actor CommunityGroupsService: CommunityGroupsProviding {
         try await client.from("community_group_memberships").select(SupabaseSelectColumns.communityGroupMembership).eq(
             "group_id", value: groupID.uuidString
         )
+        .limit(500)
         .execute().value
     }
 
@@ -273,18 +274,6 @@ actor CommunityGroupsService: CommunityGroupsProviding {
         ).execute()
     }
     func updatePhoto(groupID: UUID, image: CommunityImageUpload) async throws -> CommunityGroup {
-        let existingGroups: [CommunityGroup] =
-            try await client
-            .from("community_groups")
-            .select(SupabaseSelectColumns.communityGroup)
-            .eq("id", value: groupID.uuidString)
-            .limit(1)
-            .execute()
-            .value
-        guard let existingGroup = existingGroups.first else {
-            throw CommunityGroupError.notFound
-        }
-
         let path = "\(groupID.uuidString.lowercased())/\(UUID().uuidString.lowercased()).jpg"
         try await client.storage.from("group-media").upload(
             path, data: image.data,
@@ -299,9 +288,9 @@ actor CommunityGroupsService: CommunityGroupsProviding {
                 "id", value: groupID.uuidString
             ).limit(1).execute().value
             guard let group = groups.first else { throw CommunityGroupError.notFound }
-            if let oldPath = existingGroup.photoPath, oldPath != path {
-                _ = try? await client.storage.from("group-media").remove(paths: [oldPath])
-            }
+            // The photo replacement RPC queues the previous path in the
+            // server-owned cleanup outbox. This keeps the UI mutation fast
+            // and makes transient Storage failures retryable.
             return await groupsWithSignedPhotos([group])[0]
         } catch {
             _ = try? await client.storage.from("group-media").remove(paths: [path])

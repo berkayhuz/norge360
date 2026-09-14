@@ -8,11 +8,19 @@ enum SupabaseSelectColumns {
         "user_id", "preferred_locale",
     ].joined(separator: ",")
 
-    static let relocationPlan = ["user_id", "plan"].joined(separator: ",")
+    static let relocationPlan = ["user_id", "plan", "revision"].joined(separator: ",")
 
     static let communityEvent = [
         "id", "host_id", "group_id", "title", "description", "area_label", "venue_name",
+        "county_code", "municipality_code", "district_name", "neighborhood_name", "street_name",
+        "category", "theme", "format", "age_range", "alcohol_policy", "price_type", "language",
+        "is_indoor", "is_family_friendly", "is_pet_friendly", "is_accessible", "food_provided",
+        "registration_required",
         "starts_at", "capacity", "created_at", "updated_at",
+    ].joined(separator: ",")
+
+    static let communityEventMedia = [
+        "id", "event_id", "storage_path", "sort_order", "width", "height", "created_at",
     ].joined(separator: ",")
 
     static let communityEventRSVP = [

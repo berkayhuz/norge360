@@ -89,17 +89,32 @@ actor CommunityContentCache {
         let value: Value
     }
 
+    private struct CacheFile {
+        let url: URL
+        let modifiedAt: Date
+        let fileSize: Int
+    }
+
     /// A record that has not been used for this long is removed on the next
     /// cache access. CachesDirectory is also purgeable by iOS at any time.
     private let retention: TimeInterval = 3 * 24 * 60 * 60
+    private let maxItemCount: Int
+    private let maxTotalBytes: Int
     private let fileManager: FileManager
     private let directory: URL
     private var lastPruneAt: Date = .distantPast
 
-    init(fileManager: FileManager = .default) {
+    init(
+        fileManager: FileManager = .default,
+        directory: URL? = nil,
+        maxItemCount: Int = 100,
+        maxTotalBytes: Int = 10 * 1024 * 1024
+    ) {
         self.fileManager = fileManager
+        self.maxItemCount = max(maxItemCount, 1)
+        self.maxTotalBytes = max(maxTotalBytes, 1)
         let cachesDirectory = fileManager.urls(for: .cachesDirectory, in: .userDomainMask)[0]
-        directory = cachesDirectory.appendingPathComponent("Norge360Community", isDirectory: true)
+        self.directory = directory ?? cachesDirectory.appendingPathComponent("Norge360Community", isDirectory: true)
     }
 
     func loadFeed(for userID: UUID, maximumAge: TimeInterval) -> [CommunityFeedItem]? {
@@ -223,6 +238,14 @@ actor CommunityContentCache {
         }
     }
 
+    #if DEBUG
+        func cachedFileCount() -> Int {
+            (try? fileManager.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil))?.filter {
+                $0.pathExtension == "json"
+            }.count ?? 0
+        }
+    #endif
+
     private func sanitizedFeedItem(_ item: CommunityFeedItem) -> CommunityFeedItem {
         var sanitized = item
         sanitized.author = item.author.map { CachedPublicProfile($0).profile }
@@ -243,6 +266,13 @@ actor CommunityContentCache {
     ) -> CacheSnapshot<Value>? {
         pruneIfNeeded()
         let url = fileURL(for: key)
+        guard let attributes = try? fileManager.attributesOfItem(atPath: url.path),
+            let fileSize = attributes[.size] as? Int,
+            fileSize <= maxTotalBytes
+        else {
+            try? fileManager.removeItem(at: url)
+            return nil
+        }
         guard let data = try? Data(contentsOf: url),
             let entry = try? JSONDecoder().decode(Entry<Value>.self, from: data),
             Date().timeIntervalSince(entry.savedAt) <= retention
@@ -271,6 +301,7 @@ actor CommunityContentCache {
                     ofItemAtPath: url.path
                 )
             #endif
+            enforceBounds()
         } catch {
             // Caching is an optional performance improvement; never prevent a
             // community screen from working because local storage is full.
@@ -296,6 +327,39 @@ actor CommunityContentCache {
             let lastAccess = values?.contentModificationDate ?? .distantPast
             if now.timeIntervalSince(lastAccess) > retention {
                 try? fileManager.removeItem(at: file)
+            }
+        }
+        enforceBounds()
+    }
+
+    private func enforceBounds() {
+        guard
+            let files = try? fileManager.contentsOfDirectory(
+                at: directory,
+                includingPropertiesForKeys: [.contentModificationDateKey, .fileSizeKey]
+            )
+        else { return }
+
+        let cacheFiles = files.compactMap { file -> CacheFile? in
+            guard file.pathExtension == "json",
+                let values = try? file.resourceValues(forKeys: [.contentModificationDateKey, .fileSizeKey]),
+                let modifiedAt = values.contentModificationDate,
+                let fileSize = values.fileSize
+            else { return nil }
+            return CacheFile(url: file, modifiedAt: modifiedAt, fileSize: fileSize)
+        }.sorted {
+            if $0.modifiedAt == $1.modifiedAt { return $0.url.path < $1.url.path }
+            return $0.modifiedAt > $1.modifiedAt
+        }
+
+        var totalBytes = 0
+        for (index, file) in cacheFiles.enumerated() {
+            let exceedsItemLimit = index >= maxItemCount
+            let exceedsByteLimit = totalBytes + file.fileSize > maxTotalBytes
+            if exceedsItemLimit || exceedsByteLimit {
+                try? fileManager.removeItem(at: file.url)
+            } else {
+                totalBytes += file.fileSize
             }
         }
     }

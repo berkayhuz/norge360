@@ -77,7 +77,8 @@ begin
       'a2000000-0000-4000-8000-000000000001'::uuid,
       'a2000000-0000-4000-8000-000000000002'::uuid
     ]
-  );
+  )
+  where claim_state = 'claimed';
   if claimed_count <> 2 then
     raise exception 'expected two initial push delivery claims, got %', claimed_count;
   end if;
@@ -90,7 +91,8 @@ begin
       'a2000000-0000-4000-8000-000000000001'::uuid,
       'a2000000-0000-4000-8000-000000000002'::uuid
     ]
-  );
+  )
+  where claim_state = 'claimed';
   if claimed_count <> 0 then
     raise exception 'active delivery lease was claimed twice';
   end if;
@@ -147,7 +149,8 @@ begin
       'a2000000-0000-4000-8000-000000000001'::uuid,
       'a2000000-0000-4000-8000-000000000002'::uuid
     ]
-  );
+  )
+  where claim_state = 'claimed';
   if reclaimed_count <> 0 then
     raise exception 'terminal push delivery was claimed again';
   end if;

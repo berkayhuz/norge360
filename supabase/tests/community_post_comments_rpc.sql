@@ -32,6 +32,12 @@ values
     'A visible comment'
   ),
   (
+    '70000000-0000-4000-8000-000000000013',
+    '70000000-0000-4000-8000-000000000010',
+    '70000000-0000-4000-8000-000000000003',
+    'Z visible comment'
+  ),
+  (
     '70000000-0000-4000-8000-000000000012',
     '70000000-0000-4000-8000-000000000010',
     '70000000-0000-4000-8000-000000000004',
@@ -56,13 +62,46 @@ begin
   select count(*)::integer, max(comment->>'body'), max(author->>'username')
     into returned_count, returned_body, returned_username
   from public.list_community_post_comments(
-    '70000000-0000-4000-8000-000000000010'
+    '70000000-0000-4000-8000-000000000010',
+    null,
+    50
   );
 
-  if returned_count <> 1
-    or returned_body <> 'A visible comment'
+  if returned_count <> 2
+    or returned_body <> 'Z visible comment'
     or returned_username <> 'comments_author' then
     raise exception 'comment RPC returned hidden, unrelated, or incomplete rows';
+  end if;
+end $$;
+
+do $$
+declare
+  first_body text;
+  second_body text;
+  next_cursor text;
+begin
+  select page.comment->>'body', page.next_cursor
+    into first_body, next_cursor
+  from public.list_community_post_comments(
+    '70000000-0000-4000-8000-000000000010',
+    null,
+    1
+  ) as page
+  limit 1;
+
+  select page.comment->>'body'
+    into second_body
+  from public.list_community_post_comments(
+    '70000000-0000-4000-8000-000000000010',
+    next_cursor,
+    1
+  ) as page
+  limit 1;
+
+  if first_body <> 'A visible comment'
+    or next_cursor is null
+    or second_body <> 'Z visible comment' then
+    raise exception 'comment cursor did not advance in stable order';
   end if;
 end $$;
 

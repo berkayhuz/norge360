@@ -1,9 +1,17 @@
 import Foundation
 
+enum CommunityProfileLoadState: Equatable {
+    case idle
+    case loading
+    case loaded
+    case failed
+}
+
 @MainActor
 final class CommunityProfileStore: ObservableObject {
     @Published private(set) var profile: CommunityProfile?
     @Published private(set) var isLoading = false
+    @Published private(set) var loadState: CommunityProfileLoadState = .idle
 
     private let service: any CommunityProfileProviding
     private var activeUserID: UUID?
@@ -14,7 +22,7 @@ final class CommunityProfileStore: ObservableObject {
         self.service = service
     }
 
-    var requiresSetup: Bool { profile == nil }
+    var requiresSetup: Bool { loadState == .loaded && profile == nil }
 
     func updateAuthenticatedUser(_ user: AuthenticatedUser?) {
         guard activeUserID != user?.id else { return }
@@ -23,6 +31,7 @@ final class CommunityProfileStore: ObservableObject {
         loadGeneration &+= 1
         activeUserID = user?.id
         profile = nil
+        loadState = user == nil ? .idle : .loading
 
         guard user != nil else {
             isLoading = false
@@ -63,6 +72,7 @@ final class CommunityProfileStore: ObservableObject {
                 isPublic: true
             )
         )
+        loadState = .loaded
     }
 
     func isUsernameAvailable(_ username: String) async throws -> Bool {
@@ -71,14 +81,17 @@ final class CommunityProfileStore: ObservableObject {
 
     func updateAvatar(with image: CommunityImageUpload) async throws {
         profile = try await service.updateAvatar(with: image)
+        loadState = .loaded
     }
 
     func updateCover(with image: CommunityImageUpload) async throws {
         profile = try await service.updateCover(with: image)
+        loadState = .loaded
     }
 
     func updateVisibility(isPublic: Bool) async throws {
         profile = try await service.updateVisibility(isPublic: isPublic)
+        loadState = .loaded
     }
 
     func updateFieldVisibility(showNorwayStatus: Bool, showLocation: Bool) async throws {
@@ -86,10 +99,12 @@ final class CommunityProfileStore: ObservableObject {
             showNorwayStatus: showNorwayStatus,
             showLocation: showLocation
         )
+        loadState = .loaded
     }
 
     func updatePreferredLanguage(_ language: AppLanguage) async throws {
         profile = try await service.updatePreferredLanguage(language)
+        loadState = .loaded
     }
 
     func updateDetails(_ input: CommunityProfileDetailsInput) async throws {
@@ -114,6 +129,7 @@ final class CommunityProfileStore: ObservableObject {
                 isPublic: profile.isPublic,
                 biography: CommunityContentRules.normalizedBiography(input.biography)
             ))
+        loadState = .loaded
     }
 
     private func startProfileLoad() {
@@ -125,9 +141,12 @@ final class CommunityProfileStore: ObservableObject {
                 let loadedProfile = try await service.loadProfile()
                 guard activeUserID == userID, loadGeneration == generation, !Task.isCancelled else { return }
                 profile = loadedProfile
+                loadState = .loaded
             } catch {
                 // Keep the last known profile and its media paths available while
                 // offline. The image cache can continue rendering the last image.
+                guard activeUserID == userID, loadGeneration == generation, !Task.isCancelled else { return }
+                loadState = .failed
             }
             guard activeUserID == userID, loadGeneration == generation else { return }
             isLoading = false

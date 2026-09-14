@@ -3,9 +3,11 @@ import SwiftUI
 /// The Community tab begins with events: the most immediate way to meet people
 /// locally. Groups and the relocation plan stay one tap away in the same context.
 struct CommunityHubView: View {
+    @EnvironmentObject private var tabRouter: AppTabRouter
     @State private var section: CommunitySection = .events
     @State private var isPresentingCreateEvent = false
     @State private var isPresentingCreateGroup = false
+    @State private var isShowingLikedEvents = false
 
     var body: some View {
         NavigationStack {
@@ -13,11 +15,10 @@ struct CommunityHubView: View {
                 CommunitySectionHeader(
                     section: $section,
                     isPresentingCreateEvent: $isPresentingCreateEvent,
-                    isPresentingCreateGroup: $isPresentingCreateGroup
+                    isPresentingCreateGroup: $isPresentingCreateGroup,
+                    isShowingLikedEvents: $isShowingLikedEvents
                 )
                 .padding(.horizontal, NorgeSpacing.medium)
-                .padding(.top, 8)
-                .padding(.bottom, 8)
                 .frame(maxWidth: .infinity)
                 .background(Color.norgeTopBarBackground)
 
@@ -25,18 +26,33 @@ struct CommunityHubView: View {
                     // Keep Events mounted while Groups/Plan is shown. Returning
                     // to it therefore updates only its list state instead of
                     // reconstructing the parent screen and section header.
-                    CommunityEventsView(usesEmbeddedChrome: true)
-                        .opacity(section == .events ? 1 : 0)
-                        .allowsHitTesting(section == .events)
-                        .accessibilityHidden(section != .events)
+                    CommunityEventsView(
+                        usesEmbeddedChrome: true,
+                        tracksTabBarScroll: section == .events
+                    )
+                    .opacity(section == .events ? 1 : 0)
+                    .allowsHitTesting(section == .events)
+                    .accessibilityHidden(section != .events)
 
                     if section == .groups {
-                        CommunityGroupsView(usesEmbeddedChrome: true)
+                        CommunityGroupsView(
+                            usesEmbeddedChrome: true,
+                            tracksTabBarScroll: section == .groups
+                        )
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             }
-            .norgeScreen()
+            .navigationDestination(isPresented: $isShowingLikedEvents) {
+                CommunityEventsView(showsLikedOnly: true)
+            }
+            .onChange(of: isShowingLikedEvents) { _, isPresented in
+                tabRouter.isCommunityLikedEventsFlowActive = isPresented
+                tabRouter.isTabBarHidden = isPresented
+            }
+            .scrollContentBackground(.hidden)
+            .background(Color.norgeAppBackground)
+            .presentationBackground(Color.norgeAppBackground)
             .toolbar(.hidden, for: .navigationBar)
             .sheet(isPresented: $isPresentingCreateEvent) {
                 CreateCommunityEventView()
@@ -58,6 +74,7 @@ private struct CommunitySectionHeader: View {
     @Binding var section: CommunitySection
     @Binding var isPresentingCreateEvent: Bool
     @Binding var isPresentingCreateGroup: Bool
+    @Binding var isShowingLikedEvents: Bool
 
     var body: some View {
         HStack(spacing: 14) {
@@ -85,8 +102,8 @@ private struct CommunitySectionHeader: View {
                         .contentShape(Rectangle())
                 }
                 .accessibilityLabel(AppStrings.localized("events.create"))
-                NavigationLink {
-                    CommunityEventsView(showsLikedOnly: true)
+                Button {
+                    isShowingLikedEvents = true
                 } label: {
                     Image(systemName: "heart")
                         .font(.title3.weight(.semibold))

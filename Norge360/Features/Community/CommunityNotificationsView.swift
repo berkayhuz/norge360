@@ -23,6 +23,10 @@ struct CommunityNotificationsView: View {
 
                     ForEach(notificationsStore.items) { item in
                         notificationLink(for: item)
+                            .onAppear {
+                                guard item.id == notificationsStore.items.last?.id else { return }
+                                Task { await notificationsStore.loadMore() }
+                            }
                             .listRowBackground(Color.norgeAppBackground)
                             .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                 Button(role: .destructive) {

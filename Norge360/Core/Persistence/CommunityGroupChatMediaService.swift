@@ -3,6 +3,7 @@ import Supabase
 
 protocol CommunityGroupChatMediaProviding: Sendable {
     func stageImage(groupID: UUID, jpegData: Data) async throws -> UUID
+    func scanStatus(attachmentID: UUID) async throws -> CommunityPrivateImageScanOutcome
     func imageURL(attachmentID: UUID) async throws -> URL
     func cancelImage(attachmentID: UUID) async throws
 }
@@ -11,13 +12,14 @@ enum CommunityGroupChatMediaError: LocalizedError, Sendable {
     case configurationMissing
     case authenticationRequired
     case accessDenied
+    case pendingScan(UUID)
     case rejected
     case needsReview
     case unavailable
 
     var errorDescription: String? {
         switch self {
-        case .configurationMissing, .accessDenied, .unavailable:
+        case .configurationMissing, .accessDenied, .unavailable, .pendingScan:
             AppStrings.localized("groups.chat_image_error")
         case .authenticationRequired:
             AppStrings.auth("sign_in_required")
@@ -42,11 +44,20 @@ actor CommunityGroupChatMediaService: CommunityGroupChatMediaProviding {
                 jpegData, scopeID: groupID, scopeKey: "groupID", endpoint: "group-chat"
             )
             switch outcome {
-            case "passed": return attachmentID
-            case "rejected": throw CommunityGroupChatMediaError.rejected
-            case "needs_review": throw CommunityGroupChatMediaError.needsReview
-            default: throw CommunityGroupChatMediaError.unavailable
+            case .passed: return attachmentID
+            case .pendingScan: throw CommunityGroupChatMediaError.pendingScan(attachmentID)
+            case .rejected: throw CommunityGroupChatMediaError.rejected
+            case .needsReview: throw CommunityGroupChatMediaError.needsReview
+            case .unavailable: throw CommunityGroupChatMediaError.unavailable
             }
+        } catch let error as CommunityPrivateImageTransportError {
+            throw mappedError(error)
+        }
+    }
+
+    func scanStatus(attachmentID: UUID) async throws -> CommunityPrivateImageScanOutcome {
+        do {
+            return try await transport.scanStatus(attachmentID: attachmentID, endpoint: "group-chat")
         } catch let error as CommunityPrivateImageTransportError {
             throw mappedError(error)
         }

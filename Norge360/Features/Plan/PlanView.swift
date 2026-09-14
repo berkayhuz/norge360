@@ -13,6 +13,16 @@ struct PlanView: View {
                 List {
                     Section {
                         VStack(alignment: .leading, spacing: 12) {
+                            if appState.planLoadFailed {
+                                HStack(alignment: .top, spacing: 8) {
+                                    NorgeInlineFeedback(message: AppStrings.planSyncFailed)
+                                    Spacer(minLength: 0)
+                                    Button(AppStrings.planSyncRetry) {
+                                        appState.retryPlanLoad()
+                                    }
+                                    .font(.footnote.weight(.semibold))
+                                }
+                            }
                             Text("\(plan.completedCount) / \(plan.tasks.count) \(AppStrings.planProgress)")
                                 .font(.title3.weight(.semibold))
                                 .accessibilityLabel(
@@ -26,6 +36,9 @@ struct PlanView: View {
                             Text(AppStrings.planInformationNote)
                                 .font(.footnote)
                                 .foregroundStyle(.secondary)
+                            PlanSyncStatusView(status: appState.planSyncStatus) {
+                                appState.retryPlanSynchronization()
+                            }
                         }
                         .padding(.vertical, 6)
                     }
@@ -57,6 +70,20 @@ struct PlanView: View {
                 .navigationDestination(for: UUID.self) { id in
                     if let task = plan.tasks.first(where: { $0.id == id }) { TaskDetailView(task: task) }
                 }
+            } else if appState.planLoadFailed {
+                VStack(spacing: 20) {
+                    NorgeUnavailableState(
+                        AppStrings.planSyncFailed,
+                        systemImage: "exclamationmark.triangle",
+                        description: AppStrings.planSyncFailed
+                    )
+                    Button(AppStrings.planSyncRetry) {
+                        appState.retryPlanLoad()
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
+                .norgeScreen()
+                .navigationTitle(AppStrings.localized("tabs.plan"))
             } else {
                 VStack(spacing: 20) {
                     NorgeUnavailableState(
@@ -79,6 +106,32 @@ struct PlanView: View {
             OnboardingFlowView()
         }
         .task { await appState.activate() }
+    }
+}
+
+private struct PlanSyncStatusView: View {
+    let status: PlanSyncStatus
+    let retry: () -> Void
+
+    @ViewBuilder
+    var body: some View {
+        switch status {
+        case .idle:
+            EmptyView()
+        case .pending, .syncing:
+            Label(AppStrings.planSyncing, systemImage: "arrow.triangle.2.circlepath")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+        case .failed:
+            HStack(spacing: 8) {
+                Label(AppStrings.planSyncFailed, systemImage: "exclamationmark.triangle")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Button(AppStrings.planSyncRetry, action: retry)
+                    .font(.footnote.weight(.semibold))
+            }
+        }
     }
 }
 

@@ -1,49 +1,6 @@
 import Foundation
 import Supabase
 
-struct CommunityEventDraft: Sendable {
-    let title: String
-    let description: String
-    let areaLabel: String
-    let venueName: String?
-    let startsAt: Date
-    let capacity: Int?
-    let groupID: UUID?
-}
-
-struct CommunityEventItem: Sendable, Identifiable {
-    let event: CommunityEvent
-    let host: CommunityProfile?
-    let currentRSVP: CommunityEventRSVP?
-    let isLiked: Bool
-    let likeCount: Int
-
-    var id: UUID { event.id }
-}
-
-struct CommunityEventCounterRow: Decodable, Sendable {
-    let eventID: UUID
-    let likesCount: Int
-    let isLikedByCurrentUser: Bool
-
-    enum CodingKeys: String, CodingKey {
-        case eventID = "event_id"
-        case likesCount = "likes_count"
-        case isLikedByCurrentUser = "is_liked_by_current_user"
-    }
-}
-
-protocol CommunityEventsProviding: Sendable {
-    func loadUpcomingEvents(groupID: UUID?, cursor: String?, limit: Int) async throws -> CommunityPage<
-        CommunityEventItem
-    >
-    func create(draft: CommunityEventDraft) async throws -> CommunityEvent
-    func setRSVP(eventID: UUID, status: EventRSVPStatus?) async throws
-    func setLiked(eventID: UUID, isLiked: Bool) async throws
-    func invite(eventID: UUID, userID: UUID) async throws
-    func delete(eventID: UUID) async throws
-}
-
 actor CommunityEventsService: CommunityEventsProviding {
     private let client: SupabaseClient
 
@@ -117,6 +74,14 @@ actor CommunityEventsService: CommunityEventsProviding {
             .in("event_id", values: eventIDs.map(\.uuidString))
             .execute()
             .value
+        async let mediaRequest: [CommunityEventMedia] =
+            client
+            .from("community_event_media")
+            .select(SupabaseSelectColumns.communityEventMedia)
+            .in("event_id", values: eventIDs.map(\.uuidString))
+            .order("sort_order")
+            .execute()
+            .value
         async let likeCountersRequest: [CommunityEventCounterRow] =
             client
             .rpc(
@@ -125,7 +90,7 @@ actor CommunityEventsService: CommunityEventsProviding {
             )
             .execute()
             .value
-        let (rsvps, likeCounters) = try await (rsvpsRequest, likeCountersRequest)
+        let (rsvps, eventMedia, likeCounters) = try await (rsvpsRequest, mediaRequest, likeCountersRequest)
 
         let hostIDs = Array(Set(pageEvents.map(\.hostID)))
         let profiles: [CommunityProfile] =
@@ -140,14 +105,23 @@ actor CommunityEventsService: CommunityEventsProviding {
         let profilesByID = Dictionary(uniqueKeysWithValues: profiles.map { ($0.userID, $0) })
         let rsvpsByEvent = Dictionary(uniqueKeysWithValues: rsvps.map { ($0.eventID, $0) })
         let countersByEventID = Dictionary(uniqueKeysWithValues: likeCounters.map { ($0.eventID, $0) })
+        let mediaByEventID = Dictionary(grouping: eventMedia, by: \.eventID)
+        let signedMediaByPath = await signedURLs(
+            for: eventMedia.map(\.storagePath), bucket: "event-media")
         let items = pageEvents.map {
             let counter = countersByEventID[$0.id]
+            let media = (mediaByEventID[$0.id] ?? []).map { media in
+                var signedMedia = media
+                signedMedia.signedURL = signedMediaByPath[media.storagePath]
+                return signedMedia
+            }
             return CommunityEventItem(
                 event: $0,
                 host: profilesByID[$0.hostID],
                 currentRSVP: rsvpsByEvent[$0.id],
                 isLiked: counter?.isLikedByCurrentUser ?? false,
-                likeCount: counter?.likesCount ?? 0
+                likeCount: counter?.likesCount ?? 0,
+                media: media
             )
         }
         return CommunityPage(items: items, nextCursor: nextCursor)
@@ -160,15 +134,85 @@ actor CommunityEventsService: CommunityEventsProviding {
     }
 
     func create(draft: CommunityEventDraft) async throws -> CommunityEvent {
+        let event: CommunityEvent
         if let groupID = draft.groupID {
-            return
+            event =
                 try await client
                 .rpc("create_community_group_event", params: GroupEventCreateParameters(groupID: groupID, draft: draft))
                 .execute()
                 .value
+        } else {
+            event =
+                try await client
+                .rpc("create_community_event", params: EventCreateParameters(draft: draft))
+                .execute()
+                .value
         }
-        return try await client.rpc("create_community_event", params: EventCreateParameters(draft: draft)).execute()
-            .value
+
+        guard !draft.photos.isEmpty else { return event }
+        do {
+            try await uploadMedia(draft.photos, for: event.id)
+            return event
+        } catch {
+            _ = try? await client.rpc("delete_community_event", params: ["target_event_id": event.id.uuidString])
+                .execute()
+            throw error
+        }
+    }
+
+    private func uploadMedia(_ photos: [CommunityImageUpload], for eventID: UUID) async throws {
+        let session = try await client.auth.session
+        let userFolder = session.user.id.uuidString.lowercased()
+        var uploadedPaths: [String] = []
+        do {
+            for (index, photo) in photos.prefix(6).enumerated() {
+                let path = "\(userFolder)/\(eventID.uuidString.lowercased())/\(UUID().uuidString.lowercased()).jpg"
+                try await client.storage
+                    .from("event-media")
+                    .upload(
+                        path,
+                        data: photo.data,
+                        options: FileOptions(
+                            cacheControl: "31536000",
+                            contentType: "image/jpeg",
+                            upsert: false
+                        ))
+                uploadedPaths.append(path)
+                try await client
+                    .from("community_event_media")
+                    .insert(
+                        EventMediaInsert(
+                            eventID: eventID,
+                            storagePath: path,
+                            sortOrder: index,
+                            width: photo.width,
+                            height: photo.height
+                        )
+                    )
+                    .execute()
+            }
+        } catch {
+            if !uploadedPaths.isEmpty {
+                _ = try? await client.storage.from("event-media").remove(paths: uploadedPaths)
+            }
+            throw error
+        }
+    }
+
+    private func signedURLs(for paths: [String], bucket: String) async -> [String: URL] {
+        let uniquePaths = Array(Set(paths)).sorted()
+        guard !uniquePaths.isEmpty,
+            let results = try? await client.storage
+                .from(bucket)
+                .createSignedURLs(paths: uniquePaths, expiresIn: 3_600)
+        else {
+            return [:]
+        }
+
+        return results.reduce(into: [String: URL]()) { signedURLs, result in
+            guard case .success(let path, let signedURL) = result else { return }
+            signedURLs[path] = signedURL
+        }
     }
 
     func setRSVP(eventID: UUID, status: EventRSVPStatus?) async throws {
@@ -197,85 +241,5 @@ actor CommunityEventsService: CommunityEventsProviding {
 
     func delete(eventID: UUID) async throws {
         try await client.rpc("delete_community_event", params: ["target_event_id": eventID.uuidString]).execute()
-    }
-}
-
-private struct EventLikeParameters: Encodable, Sendable {
-    let targetEventID: String
-    let nextLiked: Bool
-
-    init(eventID: UUID, isLiked: Bool) {
-        targetEventID = eventID.uuidString
-        nextLiked = isLiked
-    }
-
-    enum CodingKeys: String, CodingKey {
-        case targetEventID = "target_event_id"
-        case nextLiked = "next_liked"
-    }
-}
-
-private struct EventCounterParameters: Encodable, Sendable {
-    let targetEventIDs: [UUID]
-
-    enum CodingKeys: String, CodingKey {
-        case targetEventIDs = "target_event_ids"
-    }
-}
-
-private struct EventCreateParameters: Encodable, Sendable {
-    let eventTitle: String
-    let eventDescription: String
-    let eventAreaLabel: String
-    let eventVenueName: String?
-    let eventStartsAt: String
-    let eventCapacity: Int?
-
-    init(draft: CommunityEventDraft) {
-        eventTitle = draft.title
-        eventDescription = draft.description
-        eventAreaLabel = draft.areaLabel
-        eventVenueName = draft.venueName
-        eventStartsAt = ISO8601DateFormatter().string(from: draft.startsAt)
-        eventCapacity = draft.capacity
-    }
-
-    enum CodingKeys: String, CodingKey {
-        case eventTitle = "event_title"
-        case eventDescription = "event_description"
-        case eventAreaLabel = "event_area_label"
-        case eventVenueName = "event_venue_name"
-        case eventStartsAt = "event_starts_at"
-        case eventCapacity = "event_capacity"
-    }
-}
-
-private struct GroupEventCreateParameters: Encodable, Sendable {
-    let eventGroupID: UUID
-    let eventTitle: String
-    let eventDescription: String
-    let eventAreaLabel: String
-    let eventVenueName: String?
-    let eventStartsAt: String
-    let eventCapacity: Int?
-
-    init(groupID: UUID, draft: CommunityEventDraft) {
-        eventGroupID = groupID
-        eventTitle = draft.title
-        eventDescription = draft.description
-        eventAreaLabel = draft.areaLabel
-        eventVenueName = draft.venueName
-        eventStartsAt = ISO8601DateFormatter().string(from: draft.startsAt)
-        eventCapacity = draft.capacity
-    }
-
-    enum CodingKeys: String, CodingKey {
-        case eventGroupID = "event_group_id"
-        case eventTitle = "event_title"
-        case eventDescription = "event_description"
-        case eventAreaLabel = "event_area_label"
-        case eventVenueName = "event_venue_name"
-        case eventStartsAt = "event_starts_at"
-        case eventCapacity = "event_capacity"
     }
 }

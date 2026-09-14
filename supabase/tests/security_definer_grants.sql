@@ -36,6 +36,31 @@ do $$
 declare
   signature text;
   routine_oid oid;
+  invoker_routines constant text[] := array[
+    'public.list_community_feed_page(text, integer)',
+    'public.list_community_member_media_posts_page(uuid, text, integer)',
+    'public.list_community_post_comments(uuid, text, integer)',
+    'public.search_community_hashtag_posts(text)',
+    'public.search_community_hashtags(text)',
+    'public.search_community_post_results(text)'
+  ];
+begin
+  foreach signature in array invoker_routines
+  loop
+    routine_oid := to_regprocedure(signature);
+    if routine_oid is not null
+       and (select p.prosecdef from pg_proc as p where p.oid = routine_oid)
+    then
+      raise exception 'read-only projection must remain SECURITY INVOKER: %', signature;
+    end if;
+  end loop;
+end;
+$$;
+
+do $$
+declare
+  signature text;
+  routine_oid oid;
   authenticated_routines constant text[] := array[
     'public.acknowledge_community_group_post_media_cleanup(uuid, text[])',
     'public.ban_community_group_member(uuid, uuid)',
@@ -43,8 +68,10 @@ declare
     'public.can_access_community_group_chat(uuid)',
     'public.can_manage_community_group(uuid)',
     'public.can_post_to_community_group(uuid)',
+    'public.can_view_community_group(uuid)',
     'public.can_view_community_user(uuid)',
     'public.community_follow_state(uuid)',
+    'public.consume_community_request_rate_limit(text, integer, integer, uuid)',
     'public.create_community_event(text, text, text, timestamp with time zone, integer)',
     'public.create_community_event(text, text, text, timestamp with time zone, integer, text)',
     'public.create_community_group(text, text, text, text, text, text)',
@@ -79,7 +106,9 @@ declare
     'public.list_community_group_chat_messages_page(uuid, integer, timestamp with time zone, uuid)',
     'public.list_community_group_join_requests(uuid)',
     'public.list_community_liked_post_ids(uuid)',
-    'public.list_community_post_comments(uuid)',
+    'public.list_community_member_media_posts_page(uuid, text, integer)',
+    'public.list_community_post_comments(uuid, text, integer)',
+    'public.list_own_community_saved_post_ids()',
     'public.list_own_community_blocks()',
     'public.manage_community_group_member(uuid, uuid, text, text)',
     'public.mark_community_conversation_read(uuid)',
@@ -96,6 +125,7 @@ declare
     'public.search_community_hashtag_posts(text)',
     'public.search_community_hashtags(text)',
     'public.search_community_posts(text)',
+    'public.search_community_post_results(text)',
     'public.search_community_profiles(text)',
     'public.send_community_group_chat_message(uuid, text)',
     'public.send_community_group_chat_message_with_attachment(uuid, text, uuid)',
@@ -107,6 +137,7 @@ declare
     'public.swap_own_community_profile_media(text, text)',
     'public.toggle_community_follow(uuid)',
     'public.toggle_community_post_like(uuid)',
+    'public.toggle_community_post_save(uuid)',
     'public.transfer_community_group_ownership(uuid, uuid)',
     'public.unban_community_group_member(uuid, uuid)',
     'public.update_community_conversation_inbox_preferences(uuid, boolean, boolean, boolean, boolean, text, text)',
@@ -171,9 +202,16 @@ declare
     'public.process_community_group_chat_push_fanout(uuid, integer)',
     'public.prune_community_group_chat_signals()',
     'public.prune_community_message_signals(integer)',
+    'public.requeue_expired_community_push_deliveries(integer)',
     'public.queue_community_event_reminders()',
     'public.queue_community_media_scan(text, uuid, uuid)',
-    'public.resolve_community_report(uuid, uuid, text, text, text)'
+    'public.resolve_community_report(uuid, uuid, text, text, text)',
+    'public.export_community_account_metadata(uuid)',
+    'public.export_community_account_section(uuid, text, integer, integer)',
+    'public.purge_community_storage_cleanup_outbox(integer)',
+    'public.purge_community_transport_retention(integer)',
+    'public.stage_community_direct_message_attachment(uuid, uuid, text, integer)',
+    'public.stage_community_group_chat_attachment(uuid, uuid, text, integer)'
   ];
 begin
   foreach signature in array worker_routines

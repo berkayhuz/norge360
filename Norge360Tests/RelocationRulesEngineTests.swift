@@ -10,6 +10,44 @@ final class RelocationRulesEngineTests: XCTestCase {
         XCTAssertTrue(engine.makeTasks(for: profile).contains { $0.slug == "residence-permit-work" })
     }
 
+    func testNonEEAReasonsReceiveDedicatedOfficialGuidance() {
+        let reasons: [(MovingReason, String)] = [
+            (.study, "residence-permit-study"),
+            (.familyImmigration, "residence-permit-family"),
+            (.selfEmployment, "residence-permit-self-employment"),
+            (.other, "immigration-general-guidance"),
+        ]
+
+        for (reason, expectedSlug) in reasons {
+            let profile = makeProfile(isEEA: false, reason: reason, household: .alone)
+            let task = engine.makeTasks(for: profile).first { $0.slug == expectedSlug }
+            XCTAssertNotNil(task)
+            XCTAssertNotNil(task?.officialSource.url)
+        }
+    }
+
+    func testCurrentStatusStayDurationAndJobOfferChangeGuidance() {
+        let profile = RelocationProfile(
+            citizenship: "Canada", isEEACitizen: false, currentlyInNorway: true,
+            movingReason: .work, stayDuration: .threeToTwelveMonths,
+            destinationCity: "Oslo", householdType: .alone, hasJobOffer: false)
+        let slugs = Set(engine.makeTasks(for: profile).map(\.slug))
+
+        XCTAssertTrue(slugs.contains("nationality-specific-guidance"))
+        XCTAssertTrue(slugs.contains("stay-duration-guidance"))
+        XCTAssertTrue(slugs.contains("current-norway-status-guidance"))
+        XCTAssertTrue(slugs.contains("work-offer-guidance"))
+    }
+
+    func testEmptyCitizenshipDoesNotCreateNationalitySpecificTask() {
+        let profile = RelocationProfile(
+            citizenship: "  ", isEEACitizen: true, currentlyInNorway: false,
+            movingReason: .study, stayDuration: .underThreeMonths,
+            destinationCity: "Oslo", householdType: .alone, hasJobOffer: false)
+
+        XCTAssertFalse(engine.makeTasks(for: profile).contains { $0.slug == "nationality-specific-guidance" })
+    }
+
     func testHouseholdWithChildrenReceivesChildrenGuidance() {
         let profile = makeProfile(isEEA: true, reason: .study, household: .partnerAndChildren)
         XCTAssertTrue(engine.makeTasks(for: profile).contains { $0.slug == "school-kindergarten-guidance" })
@@ -22,6 +60,32 @@ final class RelocationRulesEngineTests: XCTestCase {
         XCTAssertEqual(plan.completedCount, 1)
         XCTAssertEqual(plan.progressFraction, 1.0 / Double(plan.tasks.count), accuracy: 0.0001)
         XCTAssertEqual(PlanProgress.completedTasks(in: plan.tasks), 1)
+    }
+
+    func testTaskDefinitionsUseLocalizationKeysAndVersionedContent() throws {
+        let profile = makeProfile(isEEA: true, reason: .work, household: .alone)
+        let task = try XCTUnwrap(engine.makeTasks(for: profile).first { $0.slug == "tax-card-guidance" })
+
+        XCTAssertEqual(task.definition.titleKey, "task.tax_card.title")
+        XCTAssertEqual(task.definition.taskDescriptionKey, "task.tax_card.description")
+        XCTAssertEqual(task.definition.contentVersion, RelocationTaskDefinition.currentContentVersion)
+        XCTAssertEqual(task.definition.rulesVersion, RelocationTaskDefinition.currentRulesVersion)
+    }
+
+    func testRebuildingTasksPreservesProgressCompletionDateAndStableID() throws {
+        let profile = makeProfile(isEEA: true, reason: .work, household: .alone)
+        var existingTasks = engine.makeTasks(for: profile)
+        let taskIndex = try XCTUnwrap(existingTasks.firstIndex { $0.slug == "tax-card-guidance" })
+        let originalID = existingTasks[taskIndex].id
+        let completedAt = Date(timeIntervalSince1970: 1_700_000_000)
+        existingTasks[taskIndex].setStatus(.completed, now: completedAt)
+
+        let rebuiltTasks = engine.makeTasks(for: profile, preserving: existingTasks)
+        let rebuiltTask = try XCTUnwrap(rebuiltTasks.first { $0.slug == "tax-card-guidance" })
+
+        XCTAssertEqual(rebuiltTask.id, originalID)
+        XCTAssertEqual(rebuiltTask.status, .completed)
+        XCTAssertEqual(rebuiltTask.completedAt, completedAt)
     }
 
     func testLongStayReceivesOfficialMoveAndIdentityGuidance() {

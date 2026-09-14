@@ -3,6 +3,7 @@ import Supabase
 
 protocol CommunityDirectChatMediaProviding: Sendable {
     func stageImage(conversationID: UUID, jpegData: Data) async throws -> UUID
+    func scanStatus(attachmentID: UUID) async throws -> CommunityPrivateImageScanOutcome
     func imageURL(attachmentID: UUID) async throws -> URL
     func cancelImage(attachmentID: UUID) async throws
 }
@@ -18,8 +19,22 @@ actor CommunityDirectChatMediaService: CommunityDirectChatMediaProviding {
         let (attachmentID, outcome) = try await transport.stageJPEG(
             jpegData, scopeID: conversationID, scopeKey: "conversationID", endpoint: "direct-chat"
         )
-        guard outcome == "passed" else { throw CommunityDirectChatMediaError.unavailable }
-        return attachmentID
+        switch outcome {
+        case .passed:
+            return attachmentID
+        case .pendingScan:
+            throw CommunityDirectChatMediaError.pendingScan(attachmentID)
+        case .rejected:
+            throw CommunityDirectChatMediaError.rejected
+        case .needsReview:
+            throw CommunityDirectChatMediaError.needsReview
+        case .unavailable:
+            throw CommunityDirectChatMediaError.unavailable
+        }
+    }
+
+    func scanStatus(attachmentID: UUID) async throws -> CommunityPrivateImageScanOutcome {
+        try await transport.scanStatus(attachmentID: attachmentID, endpoint: "direct-chat")
     }
 
     func imageURL(attachmentID: UUID) async throws -> URL {
@@ -31,4 +46,9 @@ actor CommunityDirectChatMediaService: CommunityDirectChatMediaProviding {
     }
 }
 
-enum CommunityDirectChatMediaError: LocalizedError, Sendable { case unavailable }
+enum CommunityDirectChatMediaError: LocalizedError, Sendable {
+    case pendingScan(UUID)
+    case rejected
+    case needsReview
+    case unavailable
+}

@@ -28,6 +28,7 @@ struct CommunityProfileQuickPreview: View {
         }
         .frame(width: 200, alignment: .leading)
         .padding(NorgeSpacing.medium)
+        .background(Color.norgeAppBackground)
         .task(id: profile?.userID) {
             guard let userID = profile?.userID else { return }
             stats = try? await feedStore.memberStats(for: userID)
