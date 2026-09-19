@@ -21,7 +21,7 @@
     "@types/node": "^26.5.1",
     "tsx": "^4.20.3",
     "typescript": "^5.9.2",
-    "wrangler": "^4.130.0"
+    "wrangler": "^4.132.0"
   },
   "overrides": {
     "sharp": "0.35.4"
